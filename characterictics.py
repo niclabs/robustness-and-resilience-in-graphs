@@ -78,15 +78,15 @@ def entropyRankFromMatrix(m):
     """
     m: Adjancecy matrix
     """
-    w, vl, vr = linalg.eig(m, left = True)
-    l = len(vl)
+    w, u, v = linalg.eig(m, left = True)
+    l = len(u)
     s = np.empty(l)
-    for i in range(l):        
-        #absvl = np.absolute(vl[i])
-        #absvr = np.absolute(vr[i])
-        absvl = np.abs(vl[i].real)
-        absvr = np.abs(vr[i].real)
-        s[i] = np.dot(absvl, absvr)
+    for i in range(l):
+        absu = np.absolute(u[:,i])
+        absv = np.absolute(v[:,i])
+        #absu = np.abs(u[:,i].real)
+        #absv = np.abs(v[:,i].real)
+        s[i] = np.dot(absu, absv)
 
     s = s/sum(s)
     return s
@@ -96,14 +96,15 @@ def entropyRank(g):
     """
     g: Graph
     """
-    return entropyRankFromMatrix(g.get_adjacency().data)
+    m = np.array(g.get_adjacency().data)
+    return entropyRankFromMatrix(m)
 
 def freeEnergyRank(g, e):
     """
     g: Graph
     e: Small number that replaces zeros in the adjacency matrix
     """
-    m = np.array(g.get_adjacency().data, dtype = float)
+    m = np.array(g.get_adjacency().data)
     m[m == 0] = e
     return entropyRankFromMatrix(m)
 
@@ -114,13 +115,10 @@ def freeEnergyRank(g, e):
 
        
 #g = Graph([(0,1), (0,2), (2,3), (3,4), (4,2), (2,5), (5,0), (6,3), (5,6)])
-g = Graph([(0,1),(0,3), (1,3), (3,3)])
-#print(g.get_adjacency())
+#g = Graph([(0,1),(0,3), (1,3), (3,3)])
 #print(randomWalkBetweenness(g))
 #print(criticality(g, 0))
-#print(freeEnergyRank(m))
 
 #Ejemplo matriz paper 24
-m = np.array([[0,1,1,1,0,0,0,0], [1,0,1,1,0,0,0,0], [1,1,0,1,1,0,0,0], [1,1,1,0,0,0,0,0], [0,0,0,0,0,0,1,0], [0,0,0,0,1,0,0,0], [0,0,0,0,0,1,0,1], [0,1,0,0,0,0,0,0]])
-#print(entropyRankFromMatrix(m))
-print(freeEnergyRank(m, 0.003))
+g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
+print(entropyRank(g))
