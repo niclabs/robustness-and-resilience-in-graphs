@@ -7,7 +7,7 @@
 - [x] Random-walk betweenness
 - [x] Criticality
 - [ ] Entropy rank
-- [ ] Free energy rank
+- [x] Free energy rank
 - [ ] Bridgeness
 - [ ] Covering degree
 - [ ] Covering index
