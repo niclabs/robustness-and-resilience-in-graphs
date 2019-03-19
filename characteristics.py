@@ -1,6 +1,7 @@
 from igraph import *
 import random
 import numpy as np
+import math
 from scipy import linalg
 
 def vertexLoad(g, v, n):
@@ -108,6 +109,28 @@ def freeEnergyRank(g, e):
     m[m == 0] = e
     return entropyRankFromMatrix(m)
 
+def bridgeness(g, i, j):
+    """
+    g: Graph
+    i: First component of the edge
+    j: Second component of the edge
+    """
+    cliques = g.cliques() #List of tuples
+    cliquesi = np.empty(0)
+    cliquesj = np.empty(0)
+    cliquese = np.empty(0)
+    for tuples in cliques:
+        l = np.array(tuples)
+        if(i in l):
+            cliquesi.append(l)
+            if (j in l):
+                cliquese.append(l)
+        if(j in l):
+            cliquesj.append(l)
+
+    return np.array(cliques[9])
+    #return math.sqrt(Si * Sj) / Se
+
 
 
     
@@ -120,5 +143,8 @@ def freeEnergyRank(g, e):
 #print(criticality(g, 0))
 
 #Ejemplo matriz paper 24
-g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
-print(entropyRank(g))
+#g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
+#print(entropyRank(g))
+
+g = Graph([(1,2), (2,3) , (2,4), (2,5), (3,4), (3,5), (4,5), (4,6)])
+print(bridgeness(g,2,1))
