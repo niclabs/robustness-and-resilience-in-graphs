@@ -115,21 +115,25 @@ def bridgeness(g, i, j):
     i: First component of the edge
     j: Second component of the edge
     """
-    cliques = g.cliques() #List of tuples
-    cliquesi = np.empty(0)
-    cliquesj = np.empty(0)
-    cliquese = np.empty(0)
+    if(not g.are_connected(i,j)):
+        raise Exception("Edge ("+ str(i) + ", " + str(j)+ ") doesn't exist")
+    cliques = g.cliques() #List of tuples, each one is a clique
+    Si = 1
+    Sj = 1
+    Se = 1
     for tuples in cliques:
         l = np.array(tuples)
         if(i in l):
-            cliquesi.append(l)
+            if(len(l) > Si):
+                Si = len(l)
             if (j in l):
-                cliquese.append(l)
+                if(len(l) > Se):
+                    Se  = len(l)
         if(j in l):
-            cliquesj.append(l)
+            if(len(l) > Sj):
+                Sj = len(l)
 
-    return np.array(cliques[9])
-    #return math.sqrt(Si * Sj) / Se
+    return math.sqrt(Si * Sj) / Se
 
 
 
