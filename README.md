@@ -8,7 +8,7 @@
 - [x] Criticality
 - [ ] Entropy rank
 - [x] Free energy rank
-- [ ] Bridgeness
+- [x] Bridgeness
 - [ ] Covering degree
 - [ ] Covering index
 - [ ] Sensitivity
