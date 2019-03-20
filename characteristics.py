@@ -135,6 +135,48 @@ def bridgeness(g, i, j):
 
     return math.sqrt(Si * Sj) / Se
 
+def searchEdge(m, u = 0, vertex= False):
+    """
+    m: Adjacency matrix
+    return: convenient edge [u v]
+    """
+    if not vertex:
+        maxNeighbors = 0
+        #Buscar u
+        for i in range(len(m)):
+            if(sum(m[i]) > maxNeighbors):
+                u = i
+                maxNeighbors = sum(m[i])
+    
+    #Buscar v
+    sumEndPoint = np.sum(m, axis =0)
+    v = np.argmax(sumEndPoint)
+    return [u, v]
+        
+
+
+
+
+
+
+
+def coveringDegree(g, v):
+    """
+    g: Graph
+    v: Vertex
+    return: The number of minimal vertex cover that contains v
+    """
+    result = np.empty(0)
+    m = np.array(g.get_adjacency().data)
+    if(len(g.neighbors(v)) != 0):
+        #Buscar arco conveniente
+        pass
+    else:
+        #Buscar arco conveniente
+        pass
+    #while(len(edges) != 0):   
+    return edges
+
 
 
     
@@ -151,4 +193,5 @@ def bridgeness(g, i, j):
 #print(entropyRank(g))
 
 g = Graph([(1,2), (2,3) , (2,4), (2,5), (3,4), (3,5), (4,5), (4,6)])
-print(bridgeness(g,2,1))
+m = np.array([[1, 2, 3], [4, 5, 7], [8, 4, 5]])
+print(np.sum(m, axis= 0))
