@@ -135,47 +135,66 @@ def bridgeness(g, i, j):
 
     return math.sqrt(Si * Sj) / Se
 
-def searchEdge(m, u = 0, vertex= False):
+def searchEdge(m, u = 0, vertex= False, directed= False):
     """
+    Auxiliary function for coveringDegree
     m: Adjacency matrix
+    u: 
+    vertex: Condition that indicates if u is given
     return: convenient edge [u v]
     """
+    if (np.count_nonzero(m) == 0): #m is zero
+        return
     if not vertex:
-        maxNeighbors = 0
-        #Buscar u
-        for i in range(len(m)):
-            if(sum(m[i]) > maxNeighbors):
-                u = i
-                maxNeighbors = sum(m[i])
-    
-    #Buscar v
-    sumEndPoint = np.sum(m, axis =0)
-    v = np.argmax(sumEndPoint)
+        #Find u
+        sumIncEdges = np.sum(m, axis= 0) #Amount of incident edges of each vertex
+        u = np.argmax(sumNeighbors)
+    aux_m = m #Auxiliary matrix to verify conditions
+    aux_m[:, u] = 0
+    if not directed:
+        aux_m[u] = 0
+    if (np.count_nonzero(m) == 0): #vertex cover is u
+        return [u]
+         
+    #Find v
+    uNeighbors = np.where(m[u] == 1)[0]
+    v = uNeighbors[0]
+    max = 0
+    sumColumns = np.sum(m, axis = 0)
+    for n in uNeighbors:
+        n_i = sumColumns[n]
+        if(max < n_i):
+            v = n
+            max = n_i
     return [u, v]
-        
-
-
-
-
-
-
 
 def coveringDegree(g, v):
     """
     g: Graph
     v: Vertex
     return: The number of minimal vertex cover that contains v
-    """
-    result = np.empty(0)
+    """   
+    result = []
     m = np.array(g.get_adjacency().data)
-    if(len(g.neighbors(v)) != 0):
-        #Buscar arco conveniente
-        pass
+    if(np.sum(m, axis= 0)[v] == 0): #v has no incident edges
+        return 0
     else:
-        #Buscar arco conveniente
-        pass
-    #while(len(edges) != 0):   
-    return edges
+        edge = searchEdge(m, v, vertex=True)
+    #While de adjacency matrix isn't zero  
+    while(np.count_nonzero(m) != 0):
+        #TODO: incluir cuando edge es solo un vertice
+        result.append(edge[0])
+        result.append(edge[1])
+        #Remove all edges incident on u or v
+        m[:, edge[0]] = 0
+        m[:, edge[1]] = 0
+        if not g.is_directed():
+            m[edge[0]] = 0
+            m[edge[1]] = 0
+        edge = searchEdge(m)
+        print(edge)
+    return result
+    #return len(result) #TODO:en lugar de contar acá, tener una variable que vaya guardando la cantidad
 
 
 
@@ -192,6 +211,6 @@ def coveringDegree(g, v):
 #g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
 #print(entropyRank(g))
 
-g = Graph([(1,2), (2,3) , (2,4), (2,5), (3,4), (3,5), (4,5), (4,6)])
-m = np.array([[1, 2, 3], [4, 5, 7], [8, 4, 5]])
-print(np.sum(m, axis= 0))
+g = Graph([(0,1), (1,2) , (1,3), (3,4)])
+m = np.array(g.get_adjacency().data)
+#print(searchEdge(m,0, vertex=True))
