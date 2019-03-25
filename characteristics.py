@@ -196,6 +196,33 @@ def coveringDegree(g, v):
     return result
     #return len(result) #TODO:en lugar de contar acá, tener una variable que vaya guardando la cantidad
 
+def coveringDegree2(g, v):
+    """
+    g: Graph
+    v: Vertex
+    return: The number of minimal vertex cover that contains v
+    """
+    m = np.array(g.get_adjacency().data)
+    if(np.sum(m, axis=0)[v] == 0): #v has no incident edges
+        return 0
+    result = []
+    result.append(v)
+    if not g.is_directed():
+        #TODO: Para todos los vecinos de v borrar todos los arcos incidentes
+        pass
+    m[:,0] = 0 #Delete edges incident to v
+    while (np.count_nonzero(m) != 0):
+        u = np.argmax(np.sum(m, axis = 0))
+        result.append(u)
+        if not g.is_directed():
+            #TODO: Para todos los vecinos de u borrar todos los arcos incidentes
+            pass
+        m[:,u] = 0
+    return result
+
+
+
+
 
 
     
