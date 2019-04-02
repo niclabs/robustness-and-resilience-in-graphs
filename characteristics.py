@@ -145,7 +145,7 @@ def coveringDegree(g, v):
     if(np.sum(m, axis=0)[v] == 0): #v has no incident edges
         return 0
     result = 0
-    result += 1
+    result+= 1
     if not g.is_directed():
         #For each neighbor of v, delete incident edges
         nv = np.where(m[v] == 1)[0]
@@ -158,10 +158,37 @@ def coveringDegree(g, v):
         if not g.is_directed():
             #For each neighbor of u, delete incident edges
             nu = np.where(m[u] == 1)[0]
-            for i in nv:
+            for i in nu:
                 m[:,i] = 0
         m[:,u] = 0
     return result
+
+
+def mcv(m, directed = False):
+    """
+    m: Adjacency matrix of a graph
+    return: The set of minimal vertex covers of m
+    """
+    if (np.count_nonzero(m) == 0):
+        return
+    else:
+        result = []
+        s = np.sum(m, axis = 0)
+        umax = np.argmax(s)
+        max = np.where(s == umax)[0] #Arreglo de indices que contienen el max numero de arcos incidentes
+        for u in max:
+            mc = np.copy(m)
+            if not directed:
+                #For each neighbor of u, delete incident edges
+                nu = np.where(mc[u] == 1)[0]
+                for i in nu:
+                    mc[:,i] = 0
+            mc[:,u] = 0
+        return result
+
+
+def coveringIndex(g, v):
+    return 
 
 
 
@@ -181,6 +208,8 @@ def coveringDegree(g, v):
 #g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
 #print(entropyRank(g))
 
-g = Graph([(0,1), (1,2) , (1,3), (3,4)])
-print(coveringDegree(g, 1))
+#g = Graph([(0,1), (1,2) , (1,3), (3,4)], directed =True)
+g = Graph([(0,1), (1,2),(1,3)], directed =True)
+m = np.array(g.get_adjacency().data)
+print(mcv(m, directed = True))
 
