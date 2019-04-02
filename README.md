@@ -9,6 +9,6 @@
 - [ ] Entropy rank
 - [x] Free energy rank
 - [x] Bridgeness
-- [ ] Covering degree
+- [x] Covering degree
 - [ ] Covering index
 - [ ] Sensitivity
