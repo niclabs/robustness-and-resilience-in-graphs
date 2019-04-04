@@ -10,5 +10,5 @@
 - [x] Free energy rank
 - [x] Bridgeness
 - [x] Covering degree
-- [ ] Covering index
+- [x] Covering index
 - [ ] Sensitivity

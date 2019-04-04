@@ -135,7 +135,7 @@ def bridgeness(g, i, j):
 
     return math.sqrt(Si * Sj) / Se
 
-def coveringDegreev(g, v):
+def coveringDegree(g, v):
     """
     g: Graph
     v: Vertex
@@ -185,16 +185,31 @@ def MCV(g):
     """
     m = g.get_adjacency().data
     covers = mcv(m, [], [], g.is_directed())
-    return
-
-
-
-
+    result = []
+    min = len(covers[0])
+    for cover in covers:
+        l = len(cover)
+        if l < min:
+            min = l
+    for cover in covers:
+        if(len(cover) == min):
+            result.append(cover)
+    return result
 
 def coveringIndex(g, v):
+    """
+    g: Graph
+    v: Vertex
+    """
     m = g.get_adjacency().data
-    a = len(mcv(m, [], [], g.is_directed()))
-    return 
+    c = len(mcv(m, [], [], g.is_directed()))
+    mVertCov = MCV(g)
+    a = 0
+    for cover in mVertCov:
+        if v in cover:
+            a += 1
+    b = coveringDegree(g, v)
+    return a + b/c
 
 
 
