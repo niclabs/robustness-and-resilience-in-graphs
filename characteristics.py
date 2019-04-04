@@ -135,7 +135,7 @@ def bridgeness(g, i, j):
 
     return math.sqrt(Si * Sj) / Se
 
-def coveringDegree(g, v):
+def coveringDegreev(g, v):
     """
     g: Graph
     v: Vertex
@@ -144,50 +144,56 @@ def coveringDegree(g, v):
     m = np.array(g.get_adjacency().data)
     if(np.sum(m, axis=0)[v] == 0): #v has no incident edges
         return 0
+    covers = mcv(m, [], [], g.is_directed())
     result = 0
-    result+= 1
-    if not g.is_directed():
-        #For each neighbor of v, delete incident edges
-        nv = np.where(m[v] == 1)[0]
-        for i in nv:
-            m[:,i] = 0
-    m[:,v] = 0 #Delete edges incident to v
-    while (np.count_nonzero(m) != 0):
-        u = np.argmax(np.sum(m, axis = 0))
-        result += 1
-        if not g.is_directed():
-            #For each neighbor of u, delete incident edges
-            nu = np.where(m[u] == 1)[0]
-            for i in nu:
-                m[:,i] = 0
-        m[:,u] = 0
+    for cover in covers:
+        if v in cover:
+            result += 1
     return result
 
 
-def mcv(m, directed = False):
+def mcv(m,result, partial,  directed):
     """
     m: Adjacency matrix of a graph
     return: The set of minimal vertex covers of m
     """
     if (np.count_nonzero(m) == 0):
-        return
+        partial.sort()    
+        if not partial in result:
+            result.append(partial)
+        return result
     else:
-        result = []
         s = np.sum(m, axis = 0)
-        umax = np.argmax(s)
-        max = np.where(s == umax)[0] #Arreglo de indices que contienen el max numero de arcos incidentes
+        max = np.where(s > 0)[0] #Array that contains al vertex with incident edges
         for u in max:
             mc = np.copy(m)
+            partialCopy = list(partial)
             if not directed:
                 #For each neighbor of u, delete incident edges
                 nu = np.where(mc[u] == 1)[0]
                 for i in nu:
                     mc[:,i] = 0
             mc[:,u] = 0
+            partialCopy.append(u)
+            result = mcv(mc, result, partialCopy, directed)
         return result
+
+def MCV(g):
+    """
+    g: Graph
+    return: The set of minimum vertex covers of G
+    """
+    m = g.get_adjacency().data
+    covers = mcv(m, [], [], g.is_directed())
+    return
+
+
+
 
 
 def coveringIndex(g, v):
+    m = g.get_adjacency().data
+    a = len(mcv(m, [], [], g.is_directed()))
     return 
 
 
@@ -209,7 +215,7 @@ def coveringIndex(g, v):
 #print(entropyRank(g))
 
 #g = Graph([(0,1), (1,2) , (1,3), (3,4)], directed =True)
-g = Graph([(0,1), (1,2),(1,3)], directed =True)
+g = Graph([(0,1), (1,2), (1,3)])
 m = np.array(g.get_adjacency().data)
-print(mcv(m, directed = True))
+print(mcv(m, [], [],g.is_directed()))
 
