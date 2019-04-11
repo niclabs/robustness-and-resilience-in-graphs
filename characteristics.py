@@ -211,8 +211,48 @@ def coveringIndex(g, v):
     b = coveringDegree(g, v)
     return a + b/c
 
+def sensitivity(g, f, v, w):
+    """
+    g:Graph
+    f: Centrality function: f(d_1, ..., d_n) with n the number of vertex
+    v: Vertex
+    w: Vertex
+    return: Sensitivity of node v with respect to the node w
+    """
+    return
 
+def splittingNumber(g, k):
+    """
+    g: Graph
+    k: 
+    return: The average number of edges that need to be removed to break  g into k connected components
+    """
 
+    numOfLoops = 0 #TODO: k??
+    dev = 1 #Se puede cambiar
+    givenComponents = 0 #Int
+
+    i = 0
+    numOfComponents = 0
+    cond = True
+    while (cond):
+        #TODO: make all links functioning
+        numOfLinks[i] = 0 #TODO: definirlo
+
+        while (numOfComponents < givenComponents):
+            #TODO:choose randomly an uninterrupted link
+            numOfLinks[i] += 1
+            #TODO: interrup the link
+            #TODO:compute numOfComponents
+
+            if(i > 1 and i > numOfLoops):
+                mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
+                mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
+
+                if(abs(mean1 - mean2) < dev):
+                    cond = False
+        i += 1
+    return i
 
 
 

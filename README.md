@@ -12,3 +12,16 @@
 - [x] Covering degree
 - [x] Covering index
 - [ ] Sensitivity
+
+5.1 Component-based characteristics
+
+- [ ] Splitting number
+- [ ] Random-robustness index
+- [ ] No-name
+- [ ] Connectivity robustness function
+- [ ] k-resilence factor
+- [ ] Resilence factor
+- [ ] Perturbation score
+- [ ] Preferential perturbation
+- [ ] Maximun perturbation score
+
