@@ -116,7 +116,7 @@ def bridgeness(g, i, j):
     j: Second component of the edge
     """
     if(not g.are_connected(i,j)):
-        raise Exception("Edge ("+ str(i) + ", " + str(j)+ ") doesn't exist")
+        raise Exception("Edge doesn't exist")
     cliques = g.cliques() #List of tuples, each one is a clique
     Si = 1
     Sj = 1
@@ -157,6 +157,8 @@ def mcv(m,result, partial,  directed):
     m: Adjacency matrix of a graph
     return: The set of minimal vertex covers of m
     """
+    if (len(m) == 0):
+        return []
     if (np.count_nonzero(m) == 0):
         partial.sort()    
         if not partial in result:
@@ -270,7 +272,10 @@ def splittingNumber(g, k):
 #print(entropyRank(g))
 
 #g = Graph([(0,1), (1,2) , (1,3), (3,4)], directed =True)
-g = Graph([(0,1), (1,2), (1,3)])
-m = np.array(g.get_adjacency().data)
-print(mcv(m, [], [],g.is_directed()))
+#g = Graph([(0,1), (1,2), (1,3)])
+#m = np.array(g.get_adjacency().data)
+#print(mcv(m, [], [],g.is_directed()))
+
+
+
 

@@ -2,13 +2,13 @@
 
 4.1 Characteristics for ranking elements
 
-- [x] Vertex load
+- [x] Vertex load + test
 - [x] Betweenness (Already in igraph)
 - [x] Random-walk betweenness
 - [x] Criticality
 - [ ] Entropy rank
 - [x] Free energy rank
-- [x] Bridgeness
+- [x] Bridgeness + test
 - [x] Covering degree
 - [x] Covering index
 - [ ] Sensitivity
