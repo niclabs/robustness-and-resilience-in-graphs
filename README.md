@@ -13,6 +13,10 @@
 - [x] Covering index
 - [ ] Sensitivity
 
+Extras
+- [x] mcv(G): The set of minimal vertex covers of G + test
+- [x] MCV(G): The set of minimun vertex covers of G + test
+
 5.1 Component-based characteristics
 
 - [ ] Splitting number

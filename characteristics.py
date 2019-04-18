@@ -166,7 +166,7 @@ def mcv(m,result, partial,  directed):
         return result
     else:
         s = np.sum(m, axis = 0)
-        max = np.where(s > 0)[0] #Array that contains al vertex with incident edges
+        max = np.where(s > 0)[0] #Array that contains all vertex with incident edges
         for u in max:
             mc = np.copy(m)
             partialCopy = list(partial)
@@ -271,11 +271,6 @@ def splittingNumber(g, k):
 #g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
 #print(entropyRank(g))
 
-#g = Graph([(0,1), (1,2) , (1,3), (3,4)], directed =True)
-#g = Graph([(0,1), (1,2), (1,3)])
-#m = np.array(g.get_adjacency().data)
-#print(mcv(m, [], [],g.is_directed()))
-
-
-
-
+g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
+m = g.get_adjacency().data
+print(mcv(m, [], [], g.is_directed()))
