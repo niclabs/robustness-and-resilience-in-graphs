@@ -230,22 +230,27 @@ def splittingNumber(g, k):
     return: The average number of edges that need to be removed to break  g into k connected components
     """
 
-    numOfLoops = 0 #TODO: k??
+    numOfLoops = 0 #TODO: definir
     dev = 1 #Se puede cambiar
-    givenComponents = 0 #Int
+    givenComponents = 0 #Int TODO: Definir, k??
 
     i = 0
     numOfComponents = 0
     cond = True
+    l = g.ecount()
+    numOfLinks = np.zeros(l) #TODO: definir bien
     while (cond):
-        #TODO: make all links functioning
-        numOfLinks[i] = 0 #TODO: definirlo
+        auxGraph = g #make all links functioning
+        numOfLinks[i] = 0
 
         while (numOfComponents < givenComponents):
-            #TODO:choose randomly an uninterrupted link
+            #Choose randomly an uninterrupted link
+            numberTotalLinks = auxGraph.ecount()
+            linkId = random.randint(0, numberTotalLinks - 1)            
+
             numOfLinks[i] += 1
-            #TODO: interrup the link
-            #TODO:compute numOfComponents
+            auxGraph.delete_edges([linkId]) #interrup the link
+            numOfComponents = len(auxGraph.components())#compute numOfComponents
 
             if(i > 1 and i > numOfLoops):
                 mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
@@ -271,6 +276,6 @@ def splittingNumber(g, k):
 #g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
 #print(entropyRank(g))
 
-g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
-m = g.get_adjacency().data
-print(mcv(m, [], [], g.is_directed()))
+#g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
+g = Graph([(0,1), (1,2), (1,5), (2,3),(5,3)])
+print(len(g.components()))

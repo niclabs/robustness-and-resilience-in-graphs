@@ -135,13 +135,38 @@ class coveringDegreeTest(unittest.TestCase):
         self.gResult0 = 2
         self.gResult1 = 1
         self.gResult4 = 0
+        self.directed = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
+        self.dResult2 = 0
+        self.dResult1 = 1
 
     def testGraph(self):
         self.assertEqual(coveringDegree(self.g, 0), self.gResult0)
         self.assertEqual(coveringDegree(self.g, 1), self.gResult1)
         self.assertEqual(coveringDegree(self.g, 4), self.gResult4)
+    
+    def testDirectedGraph(self):
+        self.assertEqual(coveringDegree(self.directed, 2), self.dResult2)
+        self.assertEqual(coveringDegree(self.directed, 1), self.dResult1)
 
+class coveringIndexTest(unittest.TestCase):
+    def setUp(self):
+        self.g = Graph([(0,1), (1,2), (1,5), (2,3),(5,3)])
+        self.gResult4 = 0
+        self.gResult2 = 1/3
+        self.e = 0.001
+        self.directed = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
+        self.dResult1 = 2
+        self.dResult2 = 0
 
+    
+    def testGraph(self):
+        self.assertEqual(coveringIndex(self.g, 4), self.gResult4)
+        self.assertTrue(coveringIndex(self.g, 2) > self.gResult2 - self.e)
+        self.assertTrue(coveringIndex(self.g, 2) < self.gResult2 + self.e)
+
+    def testDirectedGraph(self):
+        self.assertEqual(coveringIndex(self.directed, 1), self.dResult1)
+        self.assertEqual(coveringIndex(self.directed, 2), self.dResult2)
 
         
 

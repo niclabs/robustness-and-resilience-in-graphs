@@ -9,11 +9,11 @@
 - [ ] Entropy rank
 - [x] Free energy rank
 - [x] Bridgeness + test
-- [x] Covering degree
-- [x] Covering index
+- [x] Covering degree + test
+- [x] Covering index + test
 - [ ] Sensitivity
 
-Extras
+Auxiliary features
 - [x] mcv(G): The set of minimal vertex covers of G + test
 - [x] MCV(G): The set of minimun vertex covers of G + test
 
