@@ -223,24 +223,26 @@ def sensitivity(g, f, v, w):
     """
     return
 
-def splittingNumber(g, k):
+def splittingNumber(g, k, dev= 1):
     """
     g: Graph
-    k: 
+    k:
+    dev:
     return: The average number of edges that need to be removed to break  g into k connected components
     """
 
     numOfLoops = 0 #TODO: definir
-    dev = 1 #Se puede cambiar
-    givenComponents = 0 #Int TODO: Definir, k??
+    givenComponents = k
 
     i = 0
     numOfComponents = 0
     cond = True
     l = g.ecount()
-    numOfLinks = np.zeros(l) #TODO: definir bien
+    k = 3 #TODO: Calculate
+    numOfLinks = np.zeros(k)
     while (cond):
-        auxGraph = g #make all links functioning
+        auxGraph = g.copy() #make all links functioning
+        numOfComponents = len(auxGraph.components()) #Calculate numOfcomponents
         numOfLinks[i] = 0
 
         while (numOfComponents < givenComponents):
@@ -255,16 +257,24 @@ def splittingNumber(g, k):
             if(i > 1 and i > numOfLoops):
                 mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
                 mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
-
                 if(abs(mean1 - mean2) < dev):
-                    cond = False
+                    return (mean1 + mean2)/2
         i += 1
-    return i
 
-
-
-    
-
+def robutnessMeasure53(g):
+    """
+    g: Graph
+    return
+    """
+    n = g.vcouunt()
+    Ct = 0
+    for i in range(n):
+        degrees = g.degree()
+        v = 0 #TODO: Tomar el vértice de mayor grado
+        g.delete_vertices([v])
+        Ci = 0 #TODO: El orden de la componente más grande
+        Ct += Ci
+    return Ct / n
 
        
 #g = Graph([(0,1), (0,2), (2,3), (3,4), (4,2), (2,5), (5,0), (6,3), (5,6)])
@@ -277,5 +287,5 @@ def splittingNumber(g, k):
 #print(entropyRank(g))
 
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
-g = Graph([(0,1), (1,2), (1,5), (2,3),(5,3)])
-print(len(g.components()))
+g = Graph([(0,1), (1,2)])
+print(g.degree())
