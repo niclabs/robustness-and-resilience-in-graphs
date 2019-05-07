@@ -5,14 +5,8 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 
-*.vscode
+.vscode
 .DS_Store
-
-### Python ###
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
 
 # User-specific stuff:
 .idea/**/workspace.xml
