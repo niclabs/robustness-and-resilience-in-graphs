@@ -270,11 +270,67 @@ def robutnessMeasure53(g):
     Ct = 0
     for i in range(n):
         degrees = g.degree()
-        v = 0 #TODO: Tomar el vértice de mayor grado
+        v = np.argmax(degrees) #Vertex of maximun degree
         g.delete_vertices([v])
-        Ci = 0 #TODO: El orden de la componente más grande
+        C = g.components() #Components of the graph
+        Ci = 0 #TODO: Revisar que sea el orden de la componente más grande
+        for comp in C:
+            compOrder = comp.vcount()
+            if(compOrder > Ci):
+                Ci = compOrder 
         Ct += Ci
     return Ct / n
+
+def conenectivityRobustnessFunction(g, k):
+    """
+    g: Graph
+    k: Number of vertices removed
+    return 
+    """
+    n = g.vcount()
+    if(k > n):
+        return -1 #Error
+    for i in range(k): #Delete k random vertices
+        numberV = g.vcount()
+        v = random.randint(0, numberV - 1) #Choose a random vertex
+        g.delete_vertices([v]) #Delete vertex
+    C = g.components() #Components of the graph
+    S = 0
+    for comp in C: #Get the largest connected component
+        compOrder = comp.vcount()
+        if(compOrder > S):
+                S = compOrder
+    return S / (n - k)
+
+def kResilienceFactor(g, k):
+    """
+    g: Graph
+    k:
+    return: The percentage of connected components of g that remain connected after the removal k - 1 vertices 
+    """
+    original = len(g.components()) #Number of original connected components
+    for i in range(k):
+        numberV = g.vcount()
+        v = random.randint(0, numberV -1)
+        g.delete_vertices([v]) #Delete vertex
+    new = len(g.components())
+    return (new/original) * 100
+
+def resilienceFactor(g):
+    n = g.vcount()
+    if( n < 3):
+        return -1 #Error
+    result = np.zeros(n-2)
+    for i in range(2, n):
+        auxGraph = g.copy()
+        result[i-2] = kResilienceFactor(auxGraph, i)
+    return np.mean(result)
+
+def pertubationScore(g):
+    """
+    g: Graph
+    return:
+    """
 
        
 #g = Graph([(0,1), (0,2), (2,3), (3,4), (4,2), (2,5), (5,0), (6,3), (5,6)])

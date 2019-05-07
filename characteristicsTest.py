@@ -168,6 +168,13 @@ class coveringIndexTest(unittest.TestCase):
         self.assertEqual(coveringIndex(self.directed, 1), self.dResult1)
         self.assertEqual(coveringIndex(self.directed, 2), self.dResult2)
 
+class robutnessMeasure53Test(unittest.TestCase):
+    def setUp(self):
+        self.graph = Graph([(0,2), (0,3), (0,4), (1,3), (1,4), (1,5), (2,3), (2,4)])
+        self.result = 2
+
+    def testGraph(self):
+        self.assertEqual(robutnessMeasure53(self.graph), self.result)
         
 
 
