@@ -29,3 +29,14 @@ Auxiliary features
 - [ ] Preferential perturbation
 - [ ] Maximun perturbation score
 
+5.2 Path-based characteristic
+- [ ] Pairwise disconnectivity index
+- [ ] Fragmentation
+- [ ] Self-sufficiency
+- [ ] k vertex-failure resilience
+- [ ] Vertex resilience
+- [ ] k edge-failure resilience
+- [ ] Egde resilience
+- [ ] Path diversity
+- [ ] Percolated path
+- [ ] Percolation centrality

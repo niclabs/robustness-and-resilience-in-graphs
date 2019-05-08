@@ -326,11 +326,52 @@ def resilienceFactor(g):
         result[i-2] = kResilienceFactor(auxGraph, i)
     return np.mean(result)
 
-def pertubationScore(g):
+def pertubationScore(g, p):
     """
     g: Graph
+    p: Perturbation function
     return:
     """
+    BComp = g.components()
+    before = 0
+    for c in BComp:
+        size = c.vcount()
+        if(size > before):
+            before = size
+    aux = p(g)
+    AComp = aux.components()
+    after = 0
+    for c in AComp:
+        size = c.vcount()
+        if(size > after):
+            after = size
+    return (before - after)/ before
+
+def preferentialPerturbation(g1, g2):
+    """
+    g1: Graph
+    g2: Graph
+    return:
+    """
+    return
+
+def maximunPerturbationScore(g1,g2):
+    """
+    g1: Graph
+    g2: Graph
+    return:
+    """
+    return
+
+def pairwiseDisconnectivityIndex(g, v):
+    """
+    g: Graph
+    v: Vertex
+    return
+    """
+    
+
+    
 
        
 #g = Graph([(0,1), (0,2), (2,3), (3,4), (4,2), (2,5), (5,0), (6,3), (5,6)])
