@@ -21,8 +21,8 @@ Auxiliary features
 
 - [ ] Splitting number
 - [ ] Random-robustness index
-- [ ] No-name
-- [ ] Connectivity robustness function
+- [x] Robustness measure + test
+- [x] Connectivity robustness function + test
 - [ ] k-resilence factor
 - [ ] Resilence factor
 - [ ] Perturbation score

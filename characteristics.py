@@ -261,27 +261,30 @@ def splittingNumber(g, k, dev= 1):
                     return (mean1 + mean2)/2
         i += 1
 
-def robutnessMeasure53(g):
+def robustnessMeasure53(g):
     """
     g: Graph
     return
     """
-    n = g.vcouunt()
+    aux = g.copy() #The function doesn't modify the graph
+    n = aux.vcount()
+    if (n < 1):
+        return -1 #Error
     Ct = 0
     for i in range(n):
-        degrees = g.degree()
+        degrees = aux.degree()
         v = np.argmax(degrees) #Vertex of maximun degree
-        g.delete_vertices([v])
-        C = g.components() #Components of the graph
-        Ci = 0 #TODO: Revisar que sea el orden de la componente más grande
+        aux.delete_vertices([v])
+        C = aux.components() #Components of the graph
+        Ci = 0 #Order of the biggest component
         for comp in C:
-            compOrder = comp.vcount()
+            compOrder = len(comp)
             if(compOrder > Ci):
                 Ci = compOrder 
         Ct += Ci
     return Ct / n
 
-def conenectivityRobustnessFunction(g, k):
+def connectivityRobustnessFunction(g, k):
     """
     g: Graph
     k: Number of vertices removed
@@ -290,14 +293,15 @@ def conenectivityRobustnessFunction(g, k):
     n = g.vcount()
     if(k > n):
         return -1 #Error
+    aux = g.copy() #The function doesn't modify the original graph
     for i in range(k): #Delete k random vertices
-        numberV = g.vcount()
+        numberV = aux.vcount()
         v = random.randint(0, numberV - 1) #Choose a random vertex
-        g.delete_vertices([v]) #Delete vertex
-    C = g.components() #Components of the graph
+        aux.delete_vertices([v]) #Delete vertex
+    C = aux.components() #Components of the graph
     S = 0
     for comp in C: #Get the largest connected component
-        compOrder = comp.vcount()
+        compOrder = len(comp)
         if(compOrder > S):
                 S = compOrder
     return S / (n - k)
@@ -308,12 +312,34 @@ def kResilienceFactor(g, k):
     k:
     return: The percentage of connected components of g that remain connected after the removal k - 1 vertices 
     """
-    original = len(g.components()) #Number of original connected components
-    for i in range(k):
-        numberV = g.vcount()
+    n = g.vcount()
+    if(k - 1 > n):
+        return -1 #Error
+    aux = g.copy() #The function doesn't modify the original graph
+    originalComponents = g.components()
+    original = len(originalComponents) #Number of original connected components
+    num = np.arange(n) #New numbering after removing vertices
+    for i in range(k - 1): #Remove k - 1 vertices
+        numberV = aux.vcount()
         v = random.randint(0, numberV -1)
-        g.delete_vertices([v]) #Delete vertex
-    new = len(g.components())
+        aux.delete_vertices([v]) #Delete vertex
+        #Change vertices numbering
+        index = np.where(num == v)[0][0]
+        num[index] = -1
+        for j in range(index, len(num)):
+            if(num[j] != -1):
+                num[j] -= 1
+    
+    newComponents = aux.components() #TODO: Modificar para tener vertices con números originales
+    #Change vertices numbering to original
+    for i in range(len(newComponents)):
+        for j in range(len(newComponents[i])):
+            index =  np.where(num == newComponents[i][j])[0][0]
+            newComponents[i][j] = np.where(num == newComponents[i][j])
+    new = 0
+    for comp in newComponents:
+        if comp in originalComponents:
+            new += 1
     return (new/original) * 100
 
 def resilienceFactor(g):
@@ -384,5 +410,5 @@ def pairwiseDisconnectivityIndex(g, v):
 #print(entropyRank(g))
 
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
-g = Graph([(0,1), (1,2)])
-print(g.degree())
+g = Graph([(1,3)])
+print(kResilienceFactor(g, 3))
