@@ -330,14 +330,18 @@ def kResilienceFactor(g, k):
             if(num[j] != -1):
                 num[j] -= 1
     
-    newComponents = aux.components() #TODO: Modificar para tener vertices con números originales
+    newComponents = aux.components()
+    nComponents = []
+
     #Change vertices numbering to original
     for i in range(len(newComponents)):
+        l = []
         for j in range(len(newComponents[i])):
             index =  np.where(num == newComponents[i][j])[0][0]
-            newComponents[i][j] = np.where(num == newComponents[i][j])
+            l.append(index)
+        nComponents.append(l)
     new = 0
-    for comp in newComponents:
+    for comp in nComponents:
         if comp in originalComponents:
             new += 1
     return (new/original) * 100
@@ -361,14 +365,14 @@ def pertubationScore(g, p):
     BComp = g.components()
     before = 0
     for c in BComp:
-        size = c.vcount()
+        size = len(c)
         if(size > before):
             before = size
     aux = p(g)
     AComp = aux.components()
     after = 0
     for c in AComp:
-        size = c.vcount()
+        size = len(c)
         if(size > after):
             after = size
     return (before - after)/ before
@@ -395,6 +399,26 @@ def pairwiseDisconnectivityIndex(g, v):
     v: Vertex
     return
     """
+    N0 = 0
+    vertices = g.vcount()
+    for i in range(vertices): #count number of ordered pairs of vertices
+        for j in range(vertices):
+            if(i != j):
+                if(g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0): #If there is a path between vertex i and j
+                    N0 += 1
+    
+    aux = g.copy()
+    aux.delete_vertices([v])
+    Nv = 0
+    nvertices = aux.vcount()
+    for i in range(nvertices): #count number of ordered pairs of vertices
+        for j in range(nvertices):
+            if(i != j):
+                if(aux.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0): #If there is a path between vertex i and j
+                    Nv += 1
+
+    return (N0 - Nv)/ N0
+
     
 
     
@@ -410,5 +434,4 @@ def pairwiseDisconnectivityIndex(g, v):
 #print(entropyRank(g))
 
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
-g = Graph([(1,3)])
-print(kResilienceFactor(g, 3))
+#g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)

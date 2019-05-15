@@ -196,7 +196,7 @@ class connectivityRobustnessFunctionTest(unittest.TestCase):
     
     def testTwoVertexGraph(self):
         beforeNumberVertices = self.twoVertexGraph.vcount()
-        self.assertEqual(connectivityRobustnessFunction(g, self.twoVertexGraphK), self.twoVertexGraphResult)
+        self.assertEqual(connectivityRobustnessFunction(self.twoVertexGraph, self.twoVertexGraphK), self.twoVertexGraphResult) #Aqui
         afterNumberVertices = self.twoVertexGraph.vcount()
         self.assertEqual(beforeNumberVertices, afterNumberVertices)
     
@@ -215,15 +215,85 @@ class kResilienceFactorTest(unittest.TestCase):
         self.twoVertexGraphResultK1 = 100
         self.twoVertexGraphK2 = 2
         self.twoVertexGraphResultK2 = 0
+        self.twoVertexGraphK3 = 3
+        self.twoVertexGraphResultK3 = 0
+
+        self.graph = Graph([(1,3)])
+        self.graphK2 = 2
+        self.graphK2result = (2/3) * 100
+        self.graphK3 = 3
+        self.graphK3result1 = (1/3) * 100
+        self.graphK3result2 = (2/3) * 100
+        self.delta = 0.01
     
     def testTwoVertexGraph(self):
         #Remove 0 
-        self.assertEqual(kResilienceFactor(g, self.twoVertexGraphK1), self.twoVertexGraphResultK1)        
+        self.assertEqual(kResilienceFactor(self.twoVertexGraph, self.twoVertexGraphK1), self.twoVertexGraphResultK1)        
         beforeNumberVertices = self.twoVertexGraph.vcount()
         #Remove 1 vertex
-        self.assertEqual(kResilienceFactor(g, self.twoVertexGraphK2), self.twoVertexGraphResultK2)
+        self.assertEqual(kResilienceFactor(self.twoVertexGraph, self.twoVertexGraphK2), self.twoVertexGraphResultK2)
         afterNumberVertices = self.twoVertexGraph.vcount()
-        self.assertEqual(beforeNumberVertices, afterNumberVertices)
+        self.assertEqual(beforeNumberVertices, afterNumberVertices) 
+        #Remove all vertices
+        self.assertEqual(kResilienceFactor(self.twoVertexGraph, self.twoVertexGraphK3), self.twoVertexGraphResultK3)
+
+    def testGraph(self):
+        r1 = kResilienceFactor(self.graph, self.graphK2)
+        self.assertTrue(r1 > self.graphK2result - self.delta)
+        self.assertTrue(r1 < self.graphK2result + self.delta)
+
+        r2 = kResilienceFactor(self.graph, self.graphK3)
+        self.assertTrue(r2 > self.graphK3result1 - self.delta or r2 > self.graphK3result2 - self.delta)
+        self.assertTrue(r2 < self.graphK3result1 + self.delta or r2 < self.graphK3result2 + self.delta)
+
+class resilienceFactorTest(unittest.TestCase):
+    def setUp(self):
+        self.twoVertexGraph = Graph([(0,1)])
+        self.twoVertexGraphResult = -1
+
+        self.threeVertexGraph = Graph([(1,2)])
+        self.threeVertexGraphResult = 50
+
+        self.graph = Graph([(1,3)])
+        self.graphR1 = np.array([(2/3)*100, (1/3)*100])
+        self.graphR2 = np.array([(2/3)*100, (2/3)*100])
+        self.graphResult1 = np.mean(self.graphR1)
+        self.graphResult2 = np.mean(self.graphR2)
+        self.delta = 0.01
+    
+    def testTwoVertexGraph(self):
+        self.assertEqual(resilienceFactor(self.twoVertexGraph), self.twoVertexGraphResult)
+    
+    def testThreeVertexGraph(self):
+        self.assertEqual(resilienceFactor(self.threeVertexGraph), self.threeVertexGraphResult)
+
+    def testGraph(self):
+        r = resilienceFactor(self.graph)
+        self.assertTrue(r > self.graphResult1 - self.delta or r > self.graphResult2 - self.delta)
+        self.assertTrue(r < self.graphResult1 + self.delta or r < self.graphResult2 + self.delta)
+
+
+class pairwiseDisconnectivityIndexTest(unittest.TestCase):
+    def setUp(self):
+        self.graph = Graph([(0,1), (0,2), (1,5), (2,3), (3,4), (4,5)])
+        self.graphv2 = 2
+        self.graphv2Result = 1/3
+        self.delta = 0.01
+
+        self.directed = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
+        self.directedv1 = 1
+        self.directedv1Result = 11/14
+    
+    def testGraph(self):
+        r1 = pairwiseDisconnectivityIndex(self.graph, self.graphv2)
+        self.assertTrue(r1 > self.graphv2Result - self.delta)
+        self.assertTrue(r1 < self.graphv2Result + self.delta)
+    
+    def testDirectedGraph(self):
+        r1 = pairwiseDisconnectivityIndex(self.directed, self.directedv1)
+        self.assertTrue(r1 > self.directedv1Result - self.delta)
+        self.assertTrue(r1 < self.directedv1Result + self.delta)
+
 
 
 

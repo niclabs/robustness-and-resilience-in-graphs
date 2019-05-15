@@ -23,14 +23,14 @@ Auxiliary features
 - [ ] Random-robustness index
 - [x] Robustness measure + test
 - [x] Connectivity robustness function + test
-- [ ] k-resilence factor
-- [ ] Resilence factor
-- [ ] Perturbation score
+- [x] k-resilence factor + test
+- [x] Resilence factor + test
+- [x] Perturbation score
 - [ ] Preferential perturbation
 - [ ] Maximun perturbation score
 
 5.2 Path-based characteristic
-- [ ] Pairwise disconnectivity index
+- [x] Pairwise disconnectivity index + test
 - [ ] Fragmentation
 - [ ] Self-sufficiency
 - [ ] k vertex-failure resilience
