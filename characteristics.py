@@ -3,6 +3,7 @@ import random
 import numpy as np
 import math
 from scipy import linalg
+import itertools
 
 def vertexLoad(g, v, n):
     neighbors = g.neighbors(v)
@@ -425,7 +426,6 @@ def fragmentation(g, strategy, args):
     strategy: Function that makes the removal, returns a graph. strategy(g, args)
     args: Arguments for strategy
     return: 
-    TODO: revisar percolation threshold
     """
     N = g.vcount()
     if(N == 1):
@@ -437,12 +437,147 @@ def fragmentation(g, strategy, args):
         sum+= len(comp)
     return sum / (N * (N - 1))
 
-def SelfSufficiency(g):
+def selfSufficiency(g, l):
     """
     g: Graph
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     return:
     """
-    return
+    comp = g.components()
+    for c in comp:
+        for vertex in c:
+            nonLocal = l[vertex][1] #List of nonlocal services needed at v
+            for n in nonLocal:
+                cond = False
+                for rest in c:
+                    if (rest != vertex):
+                        if(n in l[rest][0]):
+                            cond= True
+                            break
+                if (not cond):
+                    return False
+    return True
+
+def kVertexFailureResilience(g, l, k):
+    """
+    g: Graph
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
+    k: Number of vertices that fail
+    return:
+    """
+    v = g.vcount()
+    nodes = list(range(v))
+    for i in range(1, k+1):
+        combinations = list(itertools.permutations(nodes, i))
+        for comb in combinations:
+            auxGraph = g.copy()
+            auxList = l.copy()
+            auxGraph.delete_vertices(comb)
+            for vertex in sorted(comb, reverse= True):
+                del auxList[vertex]
+            if (not selfSufficiency(auxGraph, auxList)):
+                return False
+    return True
+
+
+def resilience(g, l, function):
+    """
+    g: Graph
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
+    function:
+    return: The largest k for which g is function resilient
+    """
+    k = 1
+    while(True):
+        if(function(g, l, k)):
+            k += 1
+        else:
+            return k
+
+def vertexResilience(g, l):
+    """
+    g: Graph
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
+    return: The largest k for which g is k vertex-failure resilient
+    """
+    return resilience(g, l, kVertexFailureResilience)
+
+def kEdgeFailureResilience(g, l, k):
+    """
+    g: Graph
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
+    k: Number of edges that fail
+    """
+    v = g.ecount()
+    edges = list(range(v))
+    for i in range(1, k+1):
+        combinations = list(itertools.permutations(edges, i))
+        for comb in combinations:
+            auxGraph = g.copy()
+            auxList = l.copy()
+            auxGraph.delete_edges(comb)
+            if (not selfSufficiency(auxGraph, auxList)):
+                return False
+    return True
+
+def edgeResilience(g, l):
+    """
+    g: Graph
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
+    return: The largest k for which g is k edge-failure resilient
+    """
+    return resilience(g, l, kEdgeFailureResilience)
+
+def getSimplePath(g, s, d):
+    """
+    g: Graph
+    s: Source vertex
+    d: Destination vertex
+    return: [[List of nodes of the path], [List of edges of the path]]
+    """
+    if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
+        return -1 #There is no path between s and d
+    nodes = [s]
+    edges = []
+    actual = s
+    while(actual != d):
+        neighbors = g.neighbors(actual, mode= "out")
+        if (len(neighbors) == 0):
+            nodes = [s]
+            edges = []
+            actual = s
+        else:
+            new = random.choice(neighbors)
+            edgeId = g.get_eid(actual, new)
+            nodes.append(new)
+            edges.append(edgeId)
+            actual = new
+    return [nodes, edges]
+
+def pathDiversity(g, s, d):
+    """
+    g: Graph
+    s: Source vertex
+    d: Destination vertex
+    """
+    if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
+        return -1 #There is no path between s and d
+    L0 = g.get_shortest_paths(s, d, output="epath")
+    N0 = g.get_shortest_paths(s, d)
+    Nk, Lk = getSimplePath(g, s, d)
+    L = list(set(L0) & set(Lk))
+    N = list(set(N0) & set(Nk))
+    return 1 - (len(L) + len(N))/(len(L0) + len(N0))
+
+
+            
+
+
+        
+
+
+
+
 
 
 
@@ -464,3 +599,9 @@ def SelfSufficiency(g):
 
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
+
+g = Graph([(0,1), (1,2), (0,3), (0,2)])
+
+
+
+

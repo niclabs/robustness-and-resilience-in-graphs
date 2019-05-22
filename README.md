@@ -31,12 +31,12 @@ Auxiliary features
 
 5.2 Path-based characteristic
 - [x] Pairwise disconnectivity index + test
-- [ ] Fragmentation
-- [ ] Self-sufficiency
-- [ ] k vertex-failure resilience
-- [ ] Vertex resilience
-- [ ] k edge-failure resilience
-- [ ] Egde resilience
+- [x] Fragmentation
+- [x] Self-sufficiency + test
+- [x] k vertex-failure resilience
+- [x] Vertex resilience
+- [x] k edge-failure resilience
+- [x] Egde resilience
 - [ ] Path diversity
 - [ ] Percolated path
 - [ ] Percolation centrality

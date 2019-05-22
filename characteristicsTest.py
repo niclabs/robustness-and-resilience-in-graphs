@@ -294,6 +294,30 @@ class pairwiseDisconnectivityIndexTest(unittest.TestCase):
         self.assertTrue(r1 > self.directedv1Result - self.delta)
         self.assertTrue(r1 < self.directedv1Result + self.delta)
 
+class selfSufficiencyTest(unittest.TestCase):
+    def setUp(self):
+        self.simpleGraph = Graph([(0,3), (1,2), (2,3)])
+        self.ssListSimple = [[[0, 1, 2], [3]], [[1, 3], [2]], [[2, 0], [1]], [[1, 3, 2], [0]]]
+        self.nsListSimple = [[[0, 1, 2], [3]], [[1, 3], [2]], [[2, 0], [7]], [[1, 3, 2], [0]]]
+        self.GraphTwoClusters = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3), (4,5), (4,6), (4,7), (5,7), (5,6), (6,7)])
+        self.ssListTwoClusters = [[[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]], [[4, 5, 6], [7]], [[4, 5, 7], [6]], [[4, 6, 7], [5]], [[5, 6, 7], [4]]]
+        self.nssListTwoClusters = [[[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [5]], [[4, 5, 6], [7]], [[4, 5, 7], [6]], [[4, 6, 7], [5]], [[5, 6, 7], [4]]]
+
+    def testTrueSimple(self):
+        self.assertTrue(selfSufficiency(self.simpleGraph, self.ssListSimple))
+
+    def testFalseSimple(self):
+        self.assertFalse(selfSufficiency(self.simpleGraph, self.nsListSimple))
+
+    def testTrueTwoClusters(self):
+        self.assertTrue(selfSufficiency(self.GraphTwoClusters, self.ssListTwoClusters))
+    
+    def testFalseTwoClusters(self):
+        self.assertFalse(selfSufficiency(self.GraphTwoClusters, self.nssListTwoClusters))
+    
+
+
+
 
 
 
