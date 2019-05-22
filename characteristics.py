@@ -419,6 +419,35 @@ def pairwiseDisconnectivityIndex(g, v):
 
     return (N0 - Nv)/ N0
 
+def fragmentation(g, strategy, args):
+    """
+    g: Graph
+    strategy: Function that makes the removal, returns a graph. strategy(g, args)
+    args: Arguments for strategy
+    return: 
+    TODO: revisar percolation threshold
+    """
+    N = g.vcount()
+    if(N == 1):
+        return -1 #error
+    removed = strategy(g, args)
+    clusters = removed.components()
+    sum = 0
+    for comp in clusters:
+        sum+= len(comp)
+    return sum / (N * (N - 1))
+
+def SelfSufficiency(g):
+    """
+    g: Graph
+    return:
+    """
+    return
+
+
+
+
+
     
 
     
