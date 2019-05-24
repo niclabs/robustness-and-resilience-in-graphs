@@ -528,18 +528,21 @@ def edgeResilience(g, l):
     """
     return resilience(g, l, kEdgeFailureResilience)
 
-def getSimplePath(g, s, d):
+def getSimplePath(g, s, d, seed):
     """
     g: Graph
     s: Source vertex
     d: Destination vertex
+    seed: Seed for randomize, if seed = 0, this parameter is not used
     return: [[List of nodes of the path], [List of edges of the path]]
     """
     if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
-        return -1 #There is no path between s and d
+        raise Exception('There is no path between s and d')
     nodes = [s]
     edges = []
     actual = s
+    if(seed):
+        random.seed(seed)
     while(actual != d):
         neighbors = g.neighbors(actual, mode= "out")
         if (len(neighbors) == 0):
@@ -554,28 +557,22 @@ def getSimplePath(g, s, d):
             actual = new
     return [nodes, edges]
 
-def pathDiversity(g, s, d):
+def pathDiversity(g, s, d, seed):
     """
     g: Graph
     s: Source vertex
     d: Destination vertex
+    seed: Seed for randomize
     """
     if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
-        return -1 #There is no path between s and d
+        raise Exception('There is no path between s and d')
     L0 = g.get_shortest_paths(s, d, output="epath")
     N0 = g.get_shortest_paths(s, d)
-    Nk, Lk = getSimplePath(g, s, d)
-    L = list(set(L0) & set(Lk))
-    N = list(set(N0) & set(Nk))
+    Nk, Lk = getSimplePath(g, s, d, seed)
+    L = list(set(L0) & set(Lk)) #Intersection
+    N = list(set(N0) & set(Nk)) #Intersection
     return 1 - (len(L) + len(N))/(len(L0) + len(N0))
-
-
             
-
-
-        
-
-
 
 
 
@@ -601,7 +598,3 @@ def pathDiversity(g, s, d):
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
 g = Graph([(0,1), (1,2), (0,3), (0,2)])
-
-
-
-
