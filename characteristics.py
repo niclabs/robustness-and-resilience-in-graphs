@@ -552,10 +552,12 @@ def getSimplePath(g, s, d, seed):
             actual = s
         else:
             new = random.choice(neighbors)
-            edgeId = g.get_eid(actual, new)
-            nodes.append(new)
-            edges.append(edgeId)
-            actual = new
+            print(new)
+            if not new in nodes:
+                edgeId = g.get_eid(actual, new)
+                nodes.append(new)
+                edges.append(edgeId)
+                actual = new
     return [nodes, edges]
 
 def pathDiversity(g, s, d, seed):
@@ -598,4 +600,3 @@ def pathDiversity(g, s, d, seed):
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
-g = Graph([(0,1), (1,2), (0,3), (0,2)])

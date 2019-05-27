@@ -37,6 +37,6 @@ Auxiliary features
 - [x] Vertex resilience
 - [x] k edge-failure resilience
 - [x] Egde resilience
-- [x] Path diversity
+- [x] Path diversity + test
 - [ ] Percolated path
 - [ ] Percolation centrality

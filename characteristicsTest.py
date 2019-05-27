@@ -354,6 +354,39 @@ class getSimplePathTest(unittest.TestCase):
 
         self.assertTrue('There is no path between s and d' in context.exception)
 
+class pathDiversityTest(unittest.TestCase):
+    def setUp(self):
+        self.graph = Graph([(0,1), (1,2), (1,3), (1,5), (3,5)])
+        self.seed = 6
+        self.result = 1 - (4/5)
+        self.delta = 0.01
+
+        self.directed = Graph([(0,1), (0,2), (1,3), (2,4), (2,5), (3,4)], directed = True)
+        self.directedResult = 1 - (2/5)
+    
+    def graphTest(self):
+        result= pathDiversity(self.graph, 0, 3, self.seed)
+        self.assertTrue(result > self.result - self.delta)
+        self.assertTrue(result < self.result + self.delta)
+
+        self.assertEqual(pathDiversity(self.graph, 0, 2, self.seed), 0)
+    
+    def directedGraphTest(self):
+        result = pathDiversity(self.graph, 0, 4, self.seed)
+        self.assertTrue(result > self.directedResult - self.delta)
+        self.assertTrue(result < self.directedResult + self.delta)
+
+        self.assertEqual(pathDiversity(self.graph, 0, 5, self.seed), 0)
+    
+    def directedGraphExceptionTest(self):
+        with self.assertRaises(Exception) as context:
+            pathDiversity(self.directed, 3, 0, 0)
+        
+        self.assertTrue('There is no path between s and d' in context.exception)
+
+
+
+
 
 
 
