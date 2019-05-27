@@ -530,6 +530,7 @@ def edgeResilience(g, l):
 
 def getSimplePath(g, s, d, seed):
     """
+    Auxiliary function
     g: Graph
     s: Source vertex
     d: Destination vertex

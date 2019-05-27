@@ -315,7 +315,44 @@ class selfSufficiencyTest(unittest.TestCase):
     def testFalseTwoClusters(self):
         self.assertFalse(selfSufficiency(self.GraphTwoClusters, self.nssListTwoClusters))
     
+class getSimplePathTest(unittest.TestCase):
+    def setUp(self):
+        self.seed = 5
+        self.directed = Graph([(0,1), (0,2), (1,3), (2,3), (2, 4)], directed = True)
+        self.directedOneWay = [[0, 2, 4], [1, 4]]
+        self.directedTwoWays = [[0, 1 , 3], [0, 2]]
 
+        self.graph = Graph([(0,1), (1,2), (1,3), (1,5), (3,5)])
+        self.graphOneWay = [[0, 1, 2], [0, 1]]
+        self.graphTwoWays = [[0, 1, 3], [0, 2]]
+    
+    def directedGraphTest(self):
+        #There is only one way, with or without seed
+        self.assertEqual(getSimplePath(self.directed, 0, 4, 0), self.directedOneWay)
+        self.assertEqual(getSimplePath(self.directed, 0, 4, self.seed), self.directedOneWay)
+
+        #There is two ways
+        self.assertEqual(getSimplePath(self.directed, 0, 3, self.seed), self.directedTwoWays)
+
+    def directedGraphExceptionTest(self):
+        with self.assertRaises(Exception) as context:
+            getSimplePath(self.directed, 3, 4, 0)
+
+        self.assertTrue('There is no path between s and d' in context.exception)
+    
+    def graphTest(self):
+        #There is only one way, with or without seed
+        self.assertEqual(getSimplePath(self.graph, 0, 2, 0), self.graphOneWay)
+        self.assertEqual(getSimplePath(self.graph, 0, 2, self.seed), self.graphOneWay)
+
+        #There is two ways
+        self.assertEqual(getSimplePath(self.graph, 0, 3, self.seed), self.graphTwoWays)
+    
+    def graphExceptionTest(self):
+        with self.assertRaises(Exception) as context:
+            getSimplePath(self.graph, 2, 4, 0)
+
+        self.assertTrue('There is no path between s and d' in context.exception)
 
 
 
