@@ -465,7 +465,11 @@ def kVertexFailureResilience(g, l, k):
     k: Number of vertices that fail
     return:
     """
+    if k == 0:
+        return selfSufficiency(g, l)
     v = g.vcount()
+    if k > v:
+        raise Exception('Number of vertices to fail can not be greater than the total of vertices')
     nodes = list(range(v))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(nodes, i))
@@ -552,12 +556,15 @@ def getSimplePath(g, s, d, seed):
             actual = s
         else:
             new = random.choice(neighbors)
-            print(new)
             if not new in nodes:
                 edgeId = g.get_eid(actual, new)
                 nodes.append(new)
                 edges.append(edgeId)
                 actual = new
+            else:
+                nodes = [s]
+                edges = []
+                actual = s
     return [nodes, edges]
 
 def pathDiversity(g, s, d, seed):
@@ -572,9 +579,9 @@ def pathDiversity(g, s, d, seed):
     L0 = g.get_shortest_paths(s, d, output="epath")
     N0 = g.get_shortest_paths(s, d)
     Nk, Lk = getSimplePath(g, s, d, seed)
-    L = list(set(L0) & set(Lk)) #Intersection
-    N = list(set(N0) & set(Nk)) #Intersection
-    return 1 - (len(L) + len(N))/(len(L0) + len(N0))
+    L = list(set(L0[0]) & set(Lk)) #Intersection
+    N = list(set(N0[0]) & set(Nk)) #Intersection
+    return 1 - (len(L) + len(N))/(len(L0[0]) + len(N0[0]))
             
 
 
@@ -599,4 +606,9 @@ def pathDiversity(g, s, d, seed):
 
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
+
+#g = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3)])
+#l = [ [[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]]]
+#print(kVertexFailureResilience(g, l, 1))
+
 

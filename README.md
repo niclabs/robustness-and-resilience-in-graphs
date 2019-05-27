@@ -33,10 +33,13 @@ Auxiliary features
 - [x] Pairwise disconnectivity index + test
 - [x] Fragmentation
 - [x] Self-sufficiency + test
-- [x] k vertex-failure resilience
+- [x] k vertex-failure resilience + test
 - [x] Vertex resilience
 - [x] k edge-failure resilience
 - [x] Egde resilience
 - [x] Path diversity + test
 - [ ] Percolated path
 - [ ] Percolation centrality
+
+Auxiliary features
+- [x] getSimplePath(G, s, d) + test

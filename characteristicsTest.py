@@ -314,7 +314,36 @@ class selfSufficiencyTest(unittest.TestCase):
     
     def testFalseTwoClusters(self):
         self.assertFalse(selfSufficiency(self.GraphTwoClusters, self.nssListTwoClusters))
+
+class kVertexFailureResilienceTest(unittest.TestCase):
+    def setUp(self):
+        self.simpleGraph = Graph([(0,3), (1,2), (2,3), (3,4)])
+        self.ssListSimple = [[[0, 1, 2], [3]], [[1, 3], [2]], [[2, 0], [1]], [[1, 3, 2], [0]], [[3], [1]]]
+
+        self.graph = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3)])
+        self.graphList = [ [[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]]]
     
+    def testSimpleGraph(self):
+        #k = 0
+        self.assertTrue(kVertexFailureResilience(self.simpleGraph, self.ssListSimple, 0))
+
+        #k = 1
+        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 1))
+
+        #k = 2
+        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 2))
+    
+    def testSimpleGraphException(self):
+        with self.assertRaises(Exception) as context:
+            kVertexFailureResilience(self.simpleGraph, self.ssListSimple, self.simpleGraph.vcount() + 1)
+
+        self.assertTrue('Number of vertices to fail can not be greater than the total of vertices' in str(context.exception))
+
+    def testGraph(self):
+        self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, 1))
+        self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, 2))
+        self.assertFalse(kVertexFailureResilience(self.graph, self.graphList, 3))
+
 class getSimplePathTest(unittest.TestCase):
     def setUp(self):
         self.seed = 5
@@ -326,7 +355,7 @@ class getSimplePathTest(unittest.TestCase):
         self.graphOneWay = [[0, 1, 2], [0, 1]]
         self.graphTwoWays = [[0, 1, 3], [0, 2]]
     
-    def directedGraphTest(self):
+    def testDirectedGraph(self):
         #There is only one way, with or without seed
         self.assertEqual(getSimplePath(self.directed, 0, 4, 0), self.directedOneWay)
         self.assertEqual(getSimplePath(self.directed, 0, 4, self.seed), self.directedOneWay)
@@ -334,13 +363,13 @@ class getSimplePathTest(unittest.TestCase):
         #There is two ways
         self.assertEqual(getSimplePath(self.directed, 0, 3, self.seed), self.directedTwoWays)
 
-    def directedGraphExceptionTest(self):
+    def testDirectedGraphException(self):
         with self.assertRaises(Exception) as context:
             getSimplePath(self.directed, 3, 4, 0)
 
-        self.assertTrue('There is no path between s and d' in context.exception)
+        self.assertTrue('There is no path between s and d' in str(context.exception))
     
-    def graphTest(self):
+    def testGraph(self):
         #There is only one way, with or without seed
         self.assertEqual(getSimplePath(self.graph, 0, 2, 0), self.graphOneWay)
         self.assertEqual(getSimplePath(self.graph, 0, 2, self.seed), self.graphOneWay)
@@ -348,11 +377,11 @@ class getSimplePathTest(unittest.TestCase):
         #There is two ways
         self.assertEqual(getSimplePath(self.graph, 0, 3, self.seed), self.graphTwoWays)
     
-    def graphExceptionTest(self):
+    def testgraphException(self):
         with self.assertRaises(Exception) as context:
             getSimplePath(self.graph, 2, 4, 0)
 
-        self.assertTrue('There is no path between s and d' in context.exception)
+        self.assertTrue('There is no path between s and d' in str(context.exception))
 
 class pathDiversityTest(unittest.TestCase):
     def setUp(self):
@@ -364,25 +393,25 @@ class pathDiversityTest(unittest.TestCase):
         self.directed = Graph([(0,1), (0,2), (1,3), (2,4), (2,5), (3,4)], directed = True)
         self.directedResult = 1 - (2/5)
     
-    def graphTest(self):
+    def testGraph(self):
         result= pathDiversity(self.graph, 0, 3, self.seed)
         self.assertTrue(result > self.result - self.delta)
         self.assertTrue(result < self.result + self.delta)
 
         self.assertEqual(pathDiversity(self.graph, 0, 2, self.seed), 0)
     
-    def directedGraphTest(self):
-        result = pathDiversity(self.graph, 0, 4, self.seed)
+    def testDirectedGraph(self):
+        result = pathDiversity(self.directed, 0, 4, self.seed)
         self.assertTrue(result > self.directedResult - self.delta)
         self.assertTrue(result < self.directedResult + self.delta)
 
         self.assertEqual(pathDiversity(self.graph, 0, 5, self.seed), 0)
     
-    def directedGraphExceptionTest(self):
+    def testDirectedGraphException(self):
         with self.assertRaises(Exception) as context:
             pathDiversity(self.directed, 3, 0, 0)
         
-        self.assertTrue('There is no path between s and d' in context.exception)
+        self.assertTrue('There is no path between s and d' in str(context.exception))
 
 
 
