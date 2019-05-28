@@ -34,12 +34,26 @@ Auxiliary features
 - [x] Fragmentation
 - [x] Self-sufficiency + test
 - [x] k vertex-failure resilience + test
-- [x] Vertex resilience
-- [x] k edge-failure resilience
-- [x] Egde resilience
+- [x] Vertex resilience + test
+- [x] k edge-failure resilience + test
+- [x] Egde resilience + test
 - [x] Path diversity + test
-- [ ] Percolated path
-- [ ] Percolation centrality
+- [x] Percolated path
+- [x] Percolation centrality
 
 Auxiliary features
 - [x] getSimplePath(G, s, d) + test
+- [x] resilience
+
+5.3 Degree-based characteristics
+- [x] Degree entropy
+- [x] Relative entropy
+
+5.4 Density-based characteristics
+- [ ] Hub density
+- [ ] No name
+
+5.5 Distance-based characteristics
+- [ ] Geographical diversity
+- [ ] Effective geographical path diversity
+- [ ] Total graph geographical diversity

@@ -337,12 +337,72 @@ class kVertexFailureResilienceTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             kVertexFailureResilience(self.simpleGraph, self.ssListSimple, self.simpleGraph.vcount() + 1)
 
-        self.assertTrue('Number of vertices to fail can not be greater than the total of vertices' in str(context.exception))
+        self.assertTrue('Number of vertices to fail can not be greater than the total vertices' in str(context.exception))
 
     def testGraph(self):
         self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, 1))
         self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, 2))
         self.assertFalse(kVertexFailureResilience(self.graph, self.graphList, 3))
+
+class vertexResilienceTest(unittest.TestCase):
+    def setUp(self):
+        self.graph = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3)])
+        self.graphList = [ [[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]]]
+        self.graphResult = 2
+
+        self.nsGraph = Graph([(0,2), (0,3), (0,4), (2,4), (3,4)])
+        self.nsGraphList = [[[0, 1, 2], [3]], [[1], [2]], [[3, 1], [2]], [[2, 3], [1]], [[4], [0]]]
+        self.nsGraphResult = 0
+
+    def testGraph(self):
+        self.assertEqual(vertexResilience(self.graph, self.graphList), self.graphResult)
+
+    def testnsGraph(self):
+        self.assertEqual(vertexResilience(self.nsGraph, self.nsGraphList), self.nsGraphResult)
+
+class kEdgeFailureResilienceTest(unittest.TestCase):
+    def setUp(self):
+        self.simpleGraph = Graph([(0,3), (1,2), (2,3), (3,4)])
+        self.ssListSimple = [[[0, 1, 2], [3]], [[1, 3], [2]], [[2, 0], [1]], [[1, 3, 2], [0]], [[3], [1]]]
+
+        self.graph = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3)])
+        self.graphList = [ [[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]]]
+    
+    def testSimpleGraph(self):
+        #k = 0
+        self.assertTrue(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 0))
+
+        #k = 1
+        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 1))
+
+    def testSimpleGraphException(self):
+        with self.assertRaises(Exception) as context:
+            kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, self.simpleGraph.ecount() + 1)
+
+        self.assertTrue('Number of edges to fail can not be greater than the total edges' in str(context.exception))
+
+    def testGraph(self):
+        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, 0))
+        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, 1))
+        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, 2))
+        self.assertFalse(kEdgeFailureResilience(self.graph, self.graphList, 3))
+
+class edgeResilienceTest(unittest.TestCase):
+    def setUp(self):
+        self.graph = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3)])
+        self.graphList = [ [[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]]]
+        self.graphResult = 2
+
+        self.nsGraph = Graph([(0,2), (0,3), (0,4), (2,4), (3,4)])
+        self.nsGraphList = [[[0, 1, 2], [3]], [[1], [2]], [[3, 1], [2]], [[2, 3], [1]], [[4], [0]]]
+        self.nsGraphResult = 0
+    
+    def testGraph(self):
+        self.assertEqual(edgeResilience(self.graph, self.graphList), self.graphResult)
+
+    def testnsGraph(self):
+        self.assertEqual(edgeResilience(self.nsGraph, self.nsGraphList), self.nsGraphResult)
+
 
 class getSimplePathTest(unittest.TestCase):
     def setUp(self):

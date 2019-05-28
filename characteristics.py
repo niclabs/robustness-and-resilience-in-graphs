@@ -469,7 +469,7 @@ def kVertexFailureResilience(g, l, k):
         return selfSufficiency(g, l)
     v = g.vcount()
     if k > v:
-        raise Exception('Number of vertices to fail can not be greater than the total of vertices')
+        raise Exception('Number of vertices to fail can not be greater than the total vertices')
     nodes = list(range(v))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(nodes, i))
@@ -496,7 +496,7 @@ def resilience(g, l, function):
         if(function(g, l, k)):
             k += 1
         else:
-            return k
+            return k - 1
 
 def vertexResilience(g, l):
     """
@@ -512,14 +512,19 @@ def kEdgeFailureResilience(g, l, k):
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     k: Number of edges that fail
     """
-    v = g.ecount()
-    edges = list(range(v))
+    if k == 0:
+        return selfSufficiency(g, l)
+    e = g.ecount()
+    if k > e:
+        raise Exception('Number of edges to fail can not be greater than the total edges')
+    edges = list(range(e))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(edges, i))
         for comb in combinations:
             auxGraph = g.copy()
             auxList = l.copy()
-            auxGraph.delete_edges(comb)
+            for edge in sorted(comb, reverse= True):
+                auxGraph.delete_edges(edge)
             if (not selfSufficiency(auxGraph, auxList)):
                 return False
     return True
@@ -576,12 +581,93 @@ def pathDiversity(g, s, d, seed):
     """
     if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
         raise Exception('There is no path between s and d')
-    L0 = g.get_shortest_paths(s, d, output="epath")
-    N0 = g.get_shortest_paths(s, d)
+    L0 = g.get_shortest_paths(s, d, output="epath")[0]
+    N0 = g.get_shortest_paths(s, d)[0]
     Nk, Lk = getSimplePath(g, s, d, seed)
-    L = list(set(L0[0]) & set(Lk)) #Intersection
-    N = list(set(N0[0]) & set(Nk)) #Intersection
-    return 1 - (len(L) + len(N))/(len(L0[0]) + len(N0[0]))
+    L = list(set(L0) & set(Lk)) #Intersection
+    N = list(set(N0) & set(Nk)) #Intersection
+    return 1 - (len(L) + len(N))/(len(L0) + len(N0))
+
+def percolatedPath(g, s, d, state):
+    """
+    g: Graph
+    s: Source vertex
+    d: Destination vertex
+    state: Name of the parameter that indicates the percolation state
+    return: The shortest path from s to d such that s is infected
+    """
+    if(g.vs[s].attributes()[state] == 0):
+        raise Exception('Vertex s is not percolated')
+    if(g.vertex_disjoint_paths(s, d, neighbors = "ignore") == 0):
+        raise Exception('There is no path between s and d')
+    return g.get_shortest_paths(s, d)[0]
+
+def percolationCentrality(g, v, state):
+    """
+    g: Graph
+    v: Vertex
+    state: Name of the parameter that indicates the percolation state
+    """
+    n = g.vcount()
+    if (n == 2):
+        raise Exception('Number of vertices can not be 2')
+    xv = g.vs[v].attributes()[state]
+
+    #Sum of x_i
+    sumxi = 0
+    for i in range(n):
+        sumxi += g.vs[i].attributes()[state]
+    
+    sum = 0
+    for s in range(n):
+        for r in range(n):
+            if(s != v and v!= r):
+                paths = g.get_all_shortest_paths(s, r)
+                omegasr_v = 0
+                for p in paths:
+                    if v in p:
+                        omegasr_v += 1
+                sum += (omegasr_v / len(paths)) * (g.vs[s].attributes()[state] / (sumxi - xv))
+
+    return (1 / (n - 2)) * sum
+
+def getDegreeDistribution(g):
+    h = g.degree_distribution() #Degree distribution
+    bins = list(h.bins())
+    n = g.vcount()
+    p_k = np.zeros(n)
+    for b in bins:
+        min = b[0]
+        p_k[math.floor(min)] += b[2]
+    
+    acump_k = np.add.accumulate(p_k)
+    return acump_k / n
+
+def degreeEntropy(g):
+    """
+    g: Graph
+    return:
+    """
+    pk = getDegreeDistribution(g)
+    sum = 0
+    for i in range(1, g.vcount()):
+        sum += pk[i] * math.log(pk[i])
+    return -sum
+
+def relativeEntropy(g):
+    n = g.vcount()
+    pk = getDegreeDistribution(g)
+    sum = 0
+    for i in range(n):
+        sum += pk[i] * math.log(n * pk[i])
+    return sum
+
+
+
+
+
+    
+
             
 
 
@@ -607,8 +693,9 @@ def pathDiversity(g, s, d, seed):
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
-#g = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3)])
-#l = [ [[0, 1, 2], [3]], [[0, 1, 3], [2]], [[0, 2, 3], [1]], [[1, 2, 3], [0]]]
-#print(kVertexFailureResilience(g, l, 1))
-
-
+g = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3), (0,5)])
+print(relativeEntropy(g))
+h = g.degree_distribution()
+#print(h)
+b = list(h.bins())
+#print(b)
