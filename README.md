@@ -54,6 +54,14 @@ Auxiliary features
 - [ ] No name
 
 5.5 Distance-based characteristics
-- [ ] Geographical diversity
-- [ ] Effective geographical path diversity
-- [ ] Total graph geographical diversity
+- [x] Geographical diversity
+- [x] Effective geographical path diversity
+- [x] Total graph geographical diversity
+- [x] Compensated total graph geographical diversity
+- [x] Functionality
+- [x] Functionality loss
+- [x] Global functionality loss
+- [ ] Temporal efficiency
+- [ ] Delta efficiency
+- [ ] Fragility
+- [ ] Dynamic robustness

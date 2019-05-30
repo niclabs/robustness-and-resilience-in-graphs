@@ -4,6 +4,7 @@ import numpy as np
 import math
 from scipy import linalg
 import itertools
+import sys
 
 def vertexLoad(g, v, n):
     neighbors = g.neighbors(v)
@@ -662,6 +663,128 @@ def relativeEntropy(g):
         sum += pk[i] * math.log(n * pk[i])
     return sum
 
+def geographicalDiversity(g, p):
+    """
+    g: Graph
+    p: Path between two nodes : p = [L, N], where L =  links id, N = nodes id
+    return: The minimun distance between any node members of vector p and the shortest path
+    """
+    N = p[1]
+    s = N[0]
+    d = N[len(N) -1]
+    shortestPath = g.get_shortest_paths(s, d)[0]
+    m = float('inf')
+    cond = False
+    for node in N:
+        for node_s in shortestPath:
+            if(g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
+                distance = g.shortest_paths_dijkstra(node, node_s)[0]
+                if(distance < m):
+                    m = distance
+                    cond = True
+    
+    if(cond):
+        return m
+    else:
+        raise Exception('There is no path between any node members of vector p and the shortest path')
+
+def getAllSimplePaths(g, s, d):
+    return []
+
+def effectiveGeographicalPathDiversity(g, s, d, l):
+    """
+    g: Graph
+    s: Source node
+    d: Destination node
+    l: lambda value
+    return:
+    """
+    k = 0
+    simplePaths = getAllSimplePaths(g, s, d)
+    for path in simplePaths:
+        k += geographicalDiversity(g, path)
+    
+    return 1 - math.exp(- l * k)
+
+def totalGraphGeographicalDiversity(g, l):
+    """
+    g: Graph
+    l : lambda value for effective geographical path diversity
+    return: The average of effective geographical path diversity of all vertex pairs within g.
+    """
+    nodes = list(range(g.vcount()))
+    pairs = list(itertools.permutations(nodes, 2)) #This list does not contain pairs (v,v)
+    sum = 0
+    for p in pairs:
+        sum += effectiveGeographicalPathDiversity(g, p[0], p[1], l)
+    return sum / len(pairs)
+
+def compensatedTotalGeographicalGraphDiversity(g, l):
+    """
+    g: Graph
+    l : lambda value for total graph geographical path diversity
+    return: The total graph geographical diversity weighted by the total number of edges of g
+    """
+    e = g.ecount()
+    return totalGraphGeographicalDiversity(g, l) * e
+
+def functionality(g, i, v, attack):
+    """
+    g: Graph
+    i: Attack numer i that eliminates vertex v_i
+    v: Vertex
+    attack: Attack sequence
+    """
+    v = g.vcount()
+    if(i > v):
+        raise Exception('i can not be greater than the total number of vertices')
+    result = np.zeros(i + 1)
+    result[0] = 1
+    k = 1
+    aux = g.copy()
+    aux.delete_vertices([attack[0]])
+    while(k <= i):
+        distance = aux.shortest_paths_dijkstra(v, k)[0]
+        degree = aux.degree(k)
+        result[k] = result[k - 1] - (1 / ((distance ** 2) * degree)) * result[k - 1]
+        k += 1
+        aux.delete_edges([attack[k]])
+    return result[i]
+
+def functionalityLoss(g, v, attack):
+    """
+    g: Graph
+    v: Vertex
+    k: Number of attacks
+    attack: Attack sequence
+    return: The sum of the differences of vertex functionality before and after the attack over the sequence of k attacks
+    """
+    sum = 0
+    k = len(attack)
+    for i in range(1, k):
+        sum += functionality(g, i -1, v, attack) - functionality(g, i , v, attack)
+    return sum
+
+def globalFunctionalityLoss(g, attack):
+    """
+    g: Graph
+    attack: Attack sequence
+    edge: Condition that indicates if the attack is for edges
+    """
+    sum = 0
+    v = g.vcount()
+    for i in range(v):
+        if i not in attack:
+            sum += functionalityLoss(g, i, attack)
+        
+
+
+
+
+
+
+
+
 
 
 
@@ -693,9 +816,8 @@ def relativeEntropy(g):
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
-g = Graph([(0,1), (0,2), (0,3), (1,3), (1,2), (2,3), (0,5)])
-print(relativeEntropy(g))
-h = g.degree_distribution()
-#print(h)
-b = list(h.bins())
-#print(b)
+g = Graph([(0,1), (0,2), (1,3), (1,2), (2,3), (0,5)])
+nodes = list(range(5))
+pairs = list(itertools.permutations(nodes, 2)) 
+print(pairs[0][0])
+print(pairs[0][1])
