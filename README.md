@@ -20,7 +20,7 @@ Auxiliary features
 5.1 Component-based characteristics
 
 - [ ] Splitting number
-- [ ] Random-robustness index
+- [x] Random-robustness index
 - [x] Robustness measure + test
 - [x] Connectivity robustness function + test
 - [x] k-resilence factor + test
