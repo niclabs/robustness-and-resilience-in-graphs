@@ -835,7 +835,22 @@ def temporalEfficiency(g, t2):
             if(i != j):
                 if(g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
                     sum += (1 / shortestTemporalDistance(g, i, j, t2))
-    return sum
+    return (1 / (v * (v - 1))) * sum
+
+def deltaEfficiency(g, i):
+    """
+    g: Graph
+    i: Vertex
+    return: Efficiency of vertex i
+    """
+    sum = 0
+    v = g.vcount()
+    for j in range(v):
+        if (j != i):
+            if(g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
+                    sum += (1 / shortestTemporalDistance(g, i, j, float('inf')))
+    return (1 / (v - 1)) * sum
+
 
         
 
