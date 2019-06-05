@@ -61,7 +61,10 @@ Auxiliary features
 - [x] Functionality
 - [x] Functionality loss
 - [x] Global functionality loss
-- [ ] Temporal efficiency
+- [x] Temporal efficiency
 - [ ] Delta efficiency
 - [ ] Fragility
 - [ ] Dynamic robustness
+
+Auxiliary features
+- [x] Shortest temporal distance

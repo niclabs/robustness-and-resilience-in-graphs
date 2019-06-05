@@ -713,6 +713,12 @@ def geographicalDiversity(g, p):
         raise Exception('There is no path between any node members of vector p and the shortest path')
 
 def getAllSimplePaths(g, s, d):
+    """
+    g: Graph
+    s: Source vertex
+    d: Destination vertex
+    """
+    #TODO
     return []
 
 def effectiveGeographicalPathDiversity(g, s, d, l):
@@ -801,6 +807,39 @@ def globalFunctionalityLoss(g, attack):
         if i not in attack:
             sum += functionalityLoss(g, i, attack)
         
+def shortestTemporalDistance(g, s, d, t2):
+    """
+    g: Graph
+    s: Source vertex
+    d: Destination vertex
+    t2: 
+    return:
+    """
+    if(g.vertex_disjoint_paths(s, d, neighbors = "ignore") != 0): #If there is a way between vertex s and d
+        path_len = g.shortest_paths_dijkstra(s, d)[0]
+        if(path_len > t2):
+            return float('inf')
+        else:
+            return path_len
+
+def temporalEfficiency(g, t2):
+    """
+    g: Graph
+    t2:
+    return:
+    """
+    sum = 0
+    v = g.vcount()
+    for i in range(v):
+        for j in range(v):
+            if(i != j):
+                if(g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
+                    sum += (1 / shortestTemporalDistance(g, i, j, t2))
+    return sum
+
+        
+
+
 
 
 
