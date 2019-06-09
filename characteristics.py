@@ -744,7 +744,8 @@ def effectiveGeographicalPathDiversity(g, s, d, l):
     return:
     """
     k = 0
-    simplePaths = getAllSimplePaths(g, s, d)
+    visited = [False] * g.vcount()
+    simplePaths = getAllSimplePaths(g, s, d, visited)
     for path in simplePaths:
         k += geographicalDiversity(g, path)
     
