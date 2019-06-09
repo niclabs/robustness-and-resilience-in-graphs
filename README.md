@@ -68,6 +68,7 @@ Auxiliary features
 
 Auxiliary features
 - [x] Shortest temporal distance
+- [x] Get all simple paths between two vertices
 
 5.6 Random-walk based characteristics
 - [x] Network criticality

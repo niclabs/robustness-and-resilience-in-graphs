@@ -712,14 +712,28 @@ def geographicalDiversity(g, p):
     else:
         raise Exception('There is no path between any node members of vector p and the shortest path')
 
-def getAllSimplePaths(g, s, d):
+def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
     """
     g: Graph
     s: Source vertex
     d: Destination vertex
+    visited: List of booleans each represent if the vertex is visited
+    partial: Partial path
+    result: actual result
+    return: A list of all the simple paths between vertex s and d
     """
-    #TODO
-    return []
+    partial.append(s)
+    visited[s] = True
+    if(s == d):
+        result.append(partial)
+        return result
+    neighbors = g.neighbors(s)
+    for n in neighbors:
+        if (not visited[n]):
+            result = getAllSimplePaths(g, n, d, visited, partial, result)
+            visited[n] = True
+
+    return result
 
 def effectiveGeographicalPathDiversity(g, s, d, l):
     """
