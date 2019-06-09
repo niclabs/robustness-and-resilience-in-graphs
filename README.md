@@ -63,8 +63,35 @@ Auxiliary features
 - [x] Global functionality loss
 - [x] Temporal efficiency
 - [x] Delta efficiency
-- [ ] Fragility
-- [ ] Dynamic robustness
+- [x] Fragility
+- [x] Dynamic robustness
 
 Auxiliary features
 - [x] Shortest temporal distance
+
+5.6 Random-walk based characteristics
+- [x] Network criticality
+
+Auxiliary features
+- [x] Criticality of vertex
+- [x] Criticality of edge
+- [ ] Edge betweenness
+
+5.7 Flow-based characteristics
+- [ ] Electrical nodal robustness
+- [ ] Relative area index
+
+5.8 Spectral characteristics
+- [ ] Reconstructability coefficient
+- [ ] Normalized subgraph centrality
+- [ ] Generalized robustness index
+- [ ] Local neutral connectivity
+- [ ] Closed-walk number
+- [ ] Redundancy of alternative paths
+- [ ] Neutral connectivity
+- [ ] Subgraph centrality
+- [ ] Normalized local natural connectivity
+
+5.9 Other characteristics
+- [ ] Effective graph resistence
+- [ ] Viral conductance
