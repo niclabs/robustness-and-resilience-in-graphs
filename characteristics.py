@@ -656,27 +656,50 @@ def percolationCentrality(g, v, state):
 
     return (1 / (n - 2)) * sum
 
-def getDegreeDistribution(g):
-    h = g.degree_distribution() #Degree distribution
+def getDegreeDistribution(g, myMode='ALL'):
+    """
+    g: Graph
+    myMode: degree distribution mode, it can be 'ALL', 'IN' or 'OUT'
+    return: List with the degree distribution
+    """
+    h = g.degree_distribution(mode= myMode) #Degree distribution
     bins = list(h.bins())
-    n = g.vcount()
-    p_k = np.zeros(n)
+    p_k = np.zeros(len(bins))
+    i = 0
     for b in bins:
-        min = b[0]
-        p_k[math.floor(min)] += b[2]
+        p_k[i] += b[2]
+        i += 1
     
-    acump_k = np.add.accumulate(p_k)
-    return acump_k / n
+    return p_k / g.vcount()
+
+def getProbabilityDegree(g, k, myMode='ALL'):
+    """
+    g: Graph
+    k:
+    myMode: degree distribution mode, it can be 'ALL', 'IN' or 'OUT'
+    return: The probability p(k) of the degree distribution
+    """
+    h = g.degree_distribution(mode= myMode) #Degree distribution
+    bins = list(h.bins())
+    acc = 0
+    for b in bins:
+        min = math.floor(b[0])
+        if(min <= k):
+            acc += b[2]
+        else:
+            break
+    
+    return acc / g.vcount()    
 
 def degreeEntropy(g):
     """
     g: Graph
     return:
     """
-    pk = getDegreeDistribution(g)
     sum = 0
     for i in range(1, g.vcount()):
-        sum += pk[i] * math.log(pk[i])
+        p_i = getProbabilityDegree(g, i)
+        sum += p_i * math.log(p_i)
     return -sum
 
 def relativeEntropy(g):
@@ -717,7 +740,7 @@ def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
     g: Graph
     s: Source vertex
     d: Destination vertex
-    visited: List of booleans each represent if the vertex is visited
+    visited: List of booleans each represent if the vertex is visited, type: numpy array
     partial: Partial path
     result: actual result
     return: A list of all the simple paths between vertex s and d
@@ -949,6 +972,33 @@ def networkCriticality(g, w, onlyEdges=False, both=False):
     return sum
 
 
+def electricalNodalRobustness(g, i, attribute):
+    """
+    g: Graph
+    i: vertex
+    attribute: Name of the edge attribute that contains the flow
+    return: The electrical nodal robustness of a vertex i
+    """
+    edges = g.adjacent(i) #id's of the edges vertex i is incident on
+    L = len(edges)
+    f = np.zeros(L)
+    sum = 0   
+    for j in range(L):
+        fi = g.es[edges[j]].attributes()[attribute]
+        f[j] = fi
+    
+    sumf = np.sum(f)
+    k = 0
+    for e in edges:
+        edge = g.get_edgelist[e:e+1][0]
+        incidentVertex = edge[1]
+        Li = g.degree(incidentVertex, mode="OUT")
+        pi = (f[k] / sumf)
+        sum += ( 1 / (L * Li)) * pi * math.log(pi)
+        
+    return - sum
+
+
     
 
        
@@ -965,5 +1015,3 @@ def networkCriticality(g, w, onlyEdges=False, both=False):
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
 g = Graph([(0,1), (2,1)], directed=True)
-incident = g.neighbors(1, mode= 'IN')
-print(incident)
