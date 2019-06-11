@@ -729,8 +729,10 @@ def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
         return result
     neighbors = g.neighbors(s)
     for n in neighbors:
+        partial_aux = partial.copy()
+        visited_aux = visited.copy()
         if (not visited[n]):
-            result = getAllSimplePaths(g, n, d, visited, partial, result)
+            result = getAllSimplePaths(g, n, d, visited_aux, partial_aux, result)
             visited[n] = True
 
     return result
@@ -900,7 +902,7 @@ def criticalityOfVertex(g, v, w):
     return: Criticality of vertex v
     """
     sum = 0
-    neighbors = g.neighbors(v, mode= 'IN') #TODO: revisar que sean los incidentes
+    neighbors = g.neighbors(v, mode= 'IN')
     for n in neighbors:
         link_id = g.get_eid(n, v)
         sum += g.es[link_id].attributes()[w]
@@ -946,35 +948,6 @@ def networkCriticality(g, w, onlyEdges=False, both=False):
                     sum += criticalityOfEdge(g, i, j, w)
     return sum
 
-    
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-            
-
-
-
-
-
-
-
-    
 
     
 
@@ -991,8 +964,6 @@ def networkCriticality(g, w, onlyEdges=False, both=False):
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
-g = Graph([(0,1), (0,2), (1,3), (1,2), (2,3), (0,5)])
-nodes = list(range(5))
-pairs = list(itertools.permutations(nodes, 2)) 
-print(pairs[0][0])
-print(pairs[0][1])
+g = Graph([(0,1), (2,1)], directed=True)
+incident = g.neighbors(1, mode= 'IN')
+print(incident)
