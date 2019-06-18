@@ -79,7 +79,7 @@ Auxiliary features
 - [ ] Edge betweenness
 
 5.7 Flow-based characteristics
-- [ ] Electrical nodal robustness
+- [x] Electrical nodal robustness
 - [ ] Relative area index
 
 5.8 Spectral characteristics

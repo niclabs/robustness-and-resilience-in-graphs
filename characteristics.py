@@ -998,6 +998,17 @@ def electricalNodalRobustness(g, i, attribute):
         
     return - sum
 
+def reconstructabilityCoefficient(g):
+    """
+    g: Graph
+    """
+    A = np.array(g.get_adjacency().data)
+    eigenvalues, eigenvectors = np.linalg.eig(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
+    #TODO: Ordenar eigenvalues y eigenvectors
+    for j in range(1, len(eigenvalues)):
+        return
+
+
 
     
 
@@ -1015,3 +1026,4 @@ def electricalNodalRobustness(g, i, attribute):
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
 g = Graph([(0,1), (2,1)], directed=True)
+print(reconstructabilityCoefficient(g))
