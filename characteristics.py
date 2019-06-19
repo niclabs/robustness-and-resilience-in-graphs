@@ -1006,7 +1006,7 @@ def reconstructabilityCoefficient(g):
     eigenvalues, eigenvectors = np.linalg.eig(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     #Ordenar eigenvalues y eigenvectors, eigenvalues de menor a mayor en valor abs, con sus respectivos eigenvector
     pairs = zip(eigenvalues, eigenvectors)
-    values, vectors = zip(*(sorted(pairs)))
+    values, vectors = zip(*(sorted(pairs, lambda t: abs(t[0]))))
     eigenvalues = np.array(values)
     eigenvectors = np.array(vectors)
     result = 0
