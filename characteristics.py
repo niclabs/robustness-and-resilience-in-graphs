@@ -1004,9 +1004,18 @@ def reconstructabilityCoefficient(g):
     """
     A = np.array(g.get_adjacency().data)
     eigenvalues, eigenvectors = np.linalg.eig(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
-    #TODO: Ordenar eigenvalues y eigenvectors
+    #Ordenar eigenvalues y eigenvectors, eigenvalues de menor a mayor en valor abs, con sus respectivos eigenvector
+    pairs = zip(eigenvalues, eigenvectors)
+    values, vectors = zip(*(sorted(pairs)))
+    eigenvalues = np.array(values)
+    eigenvectors = np.array(vectors)
+    result = 0
+    
     for j in range(1, len(eigenvalues)):
+        eigenvalues[j] = 0
+        #TODO: Comparar
         return
+    return result
 
 
 
