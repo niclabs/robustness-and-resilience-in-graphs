@@ -85,8 +85,8 @@ Auxiliary features
 5.8 Spectral characteristics
 - [x] Reconstructability coefficient
 - [x] Normalized subgraph centrality
-- [ ] Generalized robustness index
-- [ ] Local neutral connectivity
+- [x] Generalized robustness index
+- [x] Local neutral connectivity
 - [ ] Closed-walk number
 - [ ] Redundancy of alternative paths
 - [ ] Neutral connectivity

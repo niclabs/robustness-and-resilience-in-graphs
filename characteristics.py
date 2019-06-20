@@ -1059,6 +1059,15 @@ def generalizedRobustnessIndex(g, k):
         sum += (math.log(eigenvectors[1][i]) - (math.log( math.sinh(eigenvalues[1]) ** -0.5) + math.log(normalizedSubgraphCentrality(g, i, k)) / 2 ))  ** 2
     return math.sqrt (sum / v)
 
+def localNaturalConnectivity(g):
+    """
+    g: Graph
+    """
+    A = np.array(g.get_adjacency().data)
+    eigenvalues, eigenvectors = np.linalg.eig(A)
+    mean = np.mean(eigenvalues)
+    return np.log(mean)
+
 
 
        
@@ -1075,4 +1084,7 @@ def generalizedRobustnessIndex(g, k):
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
 g = Graph([(0,1), (2,1)], directed=True)
-print(reconstructabilityCoefficient(g))
+A = np.array(g.get_adjacency().data)
+eigenvalues, eigenvectors = np.linalg.eig(A)
+print(eigenvalues)
+
