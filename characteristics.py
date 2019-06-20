@@ -2,7 +2,7 @@ from igraph import *
 import random
 import numpy as np
 import math
-from scipy import linalg
+from scipy import linalg, heaviside
 import itertools
 import sys
 
@@ -998,23 +998,6 @@ def electricalNodalRobustness(g, i, attribute):
         
     return - sum
 
-def heavysideStep(m):
-    """
-    """
-    new_m = m.copy()
-    l = len(new_m)
-    for i in range(l):
-        for j in range(l):
-            if(new_m[i][j] < 0):
-                new_m[i][j] = 0
-            elif(new_m[i][j] == 0):
-                new_m[i][j] = 0.5
-            else:
-                new_m[i][j] = 1
-    return new_m
-
-    
-
 
 def reconstructabilityCoefficient(g):
     """
@@ -1032,7 +1015,7 @@ def reconstructabilityCoefficient(g):
     for j in range(1, len(eigenvalues)):
         eigenvalues[j] = 0
         new_a = eigenvectors * np.diag(eigenvalues) * np.transpose(eigenvectors)
-        new_a = heavysideStep(new_a)
+        new_a = heaviside(new_a, 0.5)
         if(not np.array_equal(new_a, A)): #Compare
             return result
         result += 1
