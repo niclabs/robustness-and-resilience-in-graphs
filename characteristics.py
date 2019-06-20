@@ -998,6 +998,18 @@ def electricalNodalRobustness(g, i, attribute):
         
     return - sum
 
+def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False):
+    """
+    eigenvalues: Array of eigenvalues
+    eigenvectors: Array of eigenvector
+    asc = Sort reverse
+    return: Sorted eigen values and eigen vectors, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
+    """
+    pairs = zip(eigenvalues, eigenvectors)
+    values, vectors = zip(*(sorted(pairs, key = lambda t: abs(t[0]), reverse= asc)))
+    eigenvalues = np.array(values)
+    eigenvectors = np.array(vectors)
+    return eigenvalues, eigenvectors
 
 def reconstructabilityCoefficient(g):
     """
@@ -1005,11 +1017,7 @@ def reconstructabilityCoefficient(g):
     """
     A = np.array(g.get_adjacency().data)
     eigenvalues, eigenvectors = np.linalg.eig(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
-    #Ordenar eigenvalues y eigenvectors, eigenvalues de menor a mayor en valor abs, con sus respectivos eigenvector
-    pairs = zip(eigenvalues, eigenvectors)
-    values, vectors = zip(*(sorted(pairs, key = lambda t: abs(t[0]))))
-    eigenvalues = np.array(values)
-    eigenvectors = np.array(vectors)
+    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
     result = 0
 
     for j in range(1, len(eigenvalues)):
@@ -1020,6 +1028,23 @@ def reconstructabilityCoefficient(g):
             return result
         result += 1
     return result
+
+def normalizedSubgraphCentrality(g, v):
+    """
+    g: Graph
+    v: vertex
+    return: the normalized subgraph centrality of vertex v
+    """
+    A = np.array(g.get_adjacency().data)
+    eigenvalues, eigenvectors = np.linalg.eig(A)
+    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
+    k = len(eigenvalues)
+    sum = 0
+    for i in range(k):
+        sum += (eigenvectors[i][v] ** 2) + math.sinh(eigenvalues[i])
+    return sum
+
+
 
 
        
