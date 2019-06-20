@@ -1044,8 +1044,20 @@ def normalizedSubgraphCentrality(g, v, k):
         sum += (eigenvectors[i][v] ** 2) + math.sinh(eigenvalues[i])
     return sum
 
-def generalizedRobustnessIndex(g):
-
+def generalizedRobustnessIndex(g, k):
+    """
+    g: Graph
+    k: Number of eigenvalues to include into the approximation
+    return:
+    """
+    A = np.array(g.get_adjacency().data)
+    eigenvalues, eigenvectors = np.linalg.eig(A)
+    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
+    sum = 0
+    v = g.vcount()
+    for i in range(v):
+        sum += (math.log(eigenvectors[1][i]) - (math.log( math.sinh(eigenvalues[1]) ** -0.5) + math.log(normalizedSubgraphCentrality(g, i, k)) / 2 ))  ** 2
+    return math.sqrt (sum / v)
 
 
 
