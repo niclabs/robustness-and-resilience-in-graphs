@@ -998,6 +998,24 @@ def electricalNodalRobustness(g, i, attribute):
         
     return - sum
 
+def heavysideStep(m):
+    """
+    """
+    new_m = m.copy()
+    l = len(new_m)
+    for i in range(l):
+        for j in range(l):
+            if(new_m[i][j] < 0):
+                new_m[i][j] = 0
+            elif(new_m[i][j] == 0):
+                new_m[i][j] = 0.5
+            else:
+                new_m[i][j] = 1
+    return new_m
+
+    
+
+
 def reconstructabilityCoefficient(g):
     """
     g: Graph
@@ -1006,20 +1024,20 @@ def reconstructabilityCoefficient(g):
     eigenvalues, eigenvectors = np.linalg.eig(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     #Ordenar eigenvalues y eigenvectors, eigenvalues de menor a mayor en valor abs, con sus respectivos eigenvector
     pairs = zip(eigenvalues, eigenvectors)
-    values, vectors = zip(*(sorted(pairs, lambda t: abs(t[0]))))
+    values, vectors = zip(*(sorted(pairs, key = lambda t: abs(t[0]))))
     eigenvalues = np.array(values)
     eigenvectors = np.array(vectors)
     result = 0
-    
+
     for j in range(1, len(eigenvalues)):
         eigenvalues[j] = 0
-        #TODO: Comparar
-        return
+        new_a = eigenvectors * np.diag(eigenvalues) * np.transpose(eigenvectors)
+        new_a = heavysideStep(new_a)
+        if(not np.array_equal(new_a, A)): #Compare
+            return result
+        result += 1
     return result
 
-
-
-    
 
        
 #g = Graph([(0,1), (0,2), (2,3), (3,4), (4,2), (2,5), (5,0), (6,3), (5,6)])
