@@ -998,15 +998,19 @@ def electricalNodalRobustness(g, i, attribute):
         
     return - sum
 
-def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False):
+def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, abs= True):
     """
     eigenvalues: Array of eigenvalues
     eigenvectors: Array of eigenvector
-    asc = Sort reverse
+    asc: Sort reverse
+    abs: Take tha absolute value to compare
     return: Sorted eigen values and eigen vectors, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     """
     pairs = zip(eigenvalues, eigenvectors)
-    values, vectors = zip(*(sorted(pairs, key = lambda t: abs(t[0]), reverse= asc)))
+    if abs:
+        values, vectors = zip(*(sorted(pairs, key = lambda t: abs(t[0]), reverse= asc)))
+    else:
+        values, vectors = zip(*(sorted(pairs, key = lambda t: t[0], reverse= asc)))
     eigenvalues = np.array(values)
     eigenvectors = np.array(vectors)
     return eigenvalues, eigenvectors
@@ -1064,9 +1068,74 @@ def localNaturalConnectivity(g):
     g: Graph
     """
     A = np.array(g.get_adjacency().data)
-    eigenvalues, eigenvectors = np.linalg.eig(A)
+    eigenvalues = np.linalg.eig(A)[0]
     mean = np.mean(eigenvalues)
     return np.log(mean)
+
+def closedWalkNumber(g):
+    """
+    g: Graph
+    return: A weighted sum of the number of closed walks in a graph
+    """
+    A = np.array(g.get_adjacency().data)
+    eigenvalues = np.linalg.eig(A)[0]
+    exp = np.exp(eigenvalues)
+    return np.sum(exp)
+
+def redundancyOfAlternativePaths(g):
+    """
+    g: Graph
+    return:
+    """
+    return closedWalkNumber(g)
+
+def naturalConAux(m):
+    """
+    Auxiliary function for natural connectivity, used to calculate the natural connectivity of the components of a graph
+    m: Adjacency matrix of a component
+    """
+    eigenvalues = np.linalg.eig(m)[0]
+    n = len(eigenvalues)
+    exp = np.exp(eigenvalues)
+    sum = np.sum(exp)
+    return np.log(sum / n)
+    
+
+def naturalConnectivity(g):
+    """
+    g: Graph
+    """
+    m = g.get_adjacency().data
+    eigenvalues = np.linalg.eig(m)[0]
+    n = len(eigenvalues)
+    comp = g.components()
+    sum = 0
+    for c in comp:
+        aux_m = m.copy()
+        aux_m[np.ix_(c,c)]
+        l_i = naturalConAux(aux_m)
+        n_i = len(c)
+        sum += n_i * np.exp(l_i)
+    
+    return np.log(sum / n)
+
+def subgraphCentrality(g):
+    """
+    g: Graph
+    return: The sum of closed walks for all vertices
+    """
+    return np.log(closedWalkNumber(g))
+
+def normalizedLocalNaturalConnectivity(g):
+    """
+    g: Graph   
+    """
+    m = g.get_adjacency().data
+    eigenvalues = np.linalg.eig(m)[0]
+    n = len(eigenvalues)
+    return np.log(closedWalkNumber(g)/n)
+
+
 
 
 
@@ -1083,8 +1152,7 @@ def localNaturalConnectivity(g):
 #g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
 #g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
 
-g = Graph([(0,1), (2,1)], directed=True)
-A = np.array(g.get_adjacency().data)
-eigenvalues, eigenvectors = np.linalg.eig(A)
+g = Graph([(3,4), (4,5), (5,3), (1,2)])
+m = g.get_adjacency().data
+eigenvalues = np.linalg.eig(m)[0]
 print(eigenvalues)
-

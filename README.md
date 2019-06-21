@@ -46,14 +46,17 @@ Auxiliary features
 - [x] resilience
 
 5.3 Degree-based characteristics
+
 - [x] Degree entropy
 - [x] Relative entropy
 
 5.4 Density-based characteristics
+
 - [ ] Hub density
 - [ ] No name
 
 5.5 Distance-based characteristics
+
 - [x] Geographical diversity
 - [x] Effective geographical path diversity
 - [x] Total graph geographical diversity
@@ -71,6 +74,7 @@ Auxiliary features
 - [x] Get all simple paths between two vertices
 
 5.6 Random-walk based characteristics
+
 - [x] Network criticality
 
 Auxiliary features
@@ -79,20 +83,23 @@ Auxiliary features
 - [ ] Edge betweenness
 
 5.7 Flow-based characteristics
+
 - [x] Electrical nodal robustness
 - [ ] Relative area index
 
 5.8 Spectral characteristics
+
 - [x] Reconstructability coefficient
 - [x] Normalized subgraph centrality
 - [x] Generalized robustness index
 - [x] Local neutral connectivity
-- [ ] Closed-walk number
-- [ ] Redundancy of alternative paths
-- [ ] Neutral connectivity
-- [ ] Subgraph centrality
-- [ ] Normalized local natural connectivity
+- [x] Closed-walk number
+- [x] Redundancy of alternative paths
+- [x] Neutral connectivity
+- [x] Subgraph centrality
+- [x] Normalized local natural connectivity
 
 5.9 Other characteristics
+
 - [ ] Effective graph resistence
 - [ ] Viral conductance
