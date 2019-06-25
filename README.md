@@ -50,6 +50,10 @@ Auxiliary features
 - [x] Degree entropy
 - [x] Relative entropy
 
+Auxiliary features
+- [x] getProbabilityDegree : The probability p(k) of the degree distribution
+- [x] getDegreeDistribution
+
 5.4 Density-based characteristics
 
 - [ ] Hub density
@@ -98,6 +102,10 @@ Auxiliary features
 - [x] Neutral connectivity
 - [x] Subgraph centrality
 - [x] Normalized local natural connectivity
+
+Auxiliary features
+- [x] sortEigenValuesVectors
+- [x] naturalConAux : Natural connectivity auxiliary function
 
 5.9 Other characteristics
 
