@@ -109,5 +109,9 @@ Auxiliary features
 
 5.9 Other characteristics
 
-- [ ] Effective graph resistence
-- [ ] Viral conductance
+- [x] Effective graph resistence
+- [x] Viral conductance
+
+Auxiliary features
+- [x] probis(g, i, s): probability that node i is infected at steady state s
+- [x] y(g, s): Fraction of infected nodes
