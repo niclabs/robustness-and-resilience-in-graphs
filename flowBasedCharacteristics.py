@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from igraph import *
+import scipy
 
 def electricalNodalRobustness(g, i, attribute):
     """
@@ -27,3 +28,22 @@ def electricalNodalRobustness(g, i, attribute):
         sum += ( 1 / (L * Li)) * pi * math.log(pi)
         
     return - sum
+
+def relativeAreaIndex(g, v, w, f, u0, ut):
+    """
+    g: Graph
+    v: vertex
+    w: Weight function over a parameter u
+    f: Maximum flow at v given u, use: f(v, u)
+    u0:
+    ut:
+    return: The relative area index of vertex v
+    """
+    funnum = lambda u : w(u) * (f(v, u0) - f(u))
+    funden = lambda u : w(u) * (f(v, u0))
+    num = 0
+    den = 0
+    for x in range(u0, ut + 1):
+        num += scipy.misc.derivative(funnum, x)
+        den += scipy.misc.derivative(funden, x)
+    return num / den

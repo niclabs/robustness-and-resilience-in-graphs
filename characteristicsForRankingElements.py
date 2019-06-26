@@ -37,6 +37,7 @@ def vertexWalkToEdgesWalk(g, l):
     """
     g: Graph
     l: List, random walk
+    return: Converts a list of vertices into a list of edges
     """
     new_l = []
     for i in range(len(l) - 1):
@@ -245,4 +246,3 @@ def sensitivity(g, f, v, w):
 g = Graph([(3,4), (4,5), (5,3), (1,2)])
 m = g.get_adjacency().data
 eigenvalues = np.linalg.eig(m)[0]
-print(eigenvalues)

@@ -1,4 +1,5 @@
 from igraph import *
+from characteristicsForRankingElements import randomWalk, vertexWalkToEdgesWalk
 
 def criticalityOfEdge(g,i, j, w):
     """
@@ -6,7 +7,7 @@ def criticalityOfEdge(g,i, j, w):
     i: Source vertex of the edge
     j: Incident vertex
     w: String, name of the atribute for link weight
-    return: Criticality of edge e
+    return: Criticality of edge e, it assumes that edge exists
     """
     link_id = g.get_eid(i,j)
     return edgeBetweenness(g, i, j) / g.es[link_id].attributes()[w]
@@ -30,26 +31,34 @@ def edgeBetweenness(g, s, d):
     g: Graph
     s: Source vertex
     d: Destination vertex
-    return:
+    return: The edge betweenness of edge (s,d)
     """
-    #TODO
-    return 0
+    sum = 0
+    edgeId = g.get_eid(s, d)
+    v = g.vcount()
+    for i in range(v):
+        for j in range(v):
+            if(i != j and g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
+                randWalk = randomWalk(g, i, j, [i])
+                edgeList = vertexWalkToEdgesWalk(g, randWalk)
+                sum += edgeList.count(edgeId)
+    return sum
 
-def networkCriticality(g, w, onlyEdges=False, both=False):
+def networkCriticality(g, w, vertices=True, edges=False):
     """
     g: Graph
     w: String, name of the atribute for link weight
-    onlyEdges: If false, then only vertices
-    both
+    vertices: Sum criticality of vertices
+    edges: Sum criticality of edgfes
     return: The sum of criticalities over all elements of G (vertices, edges or both)
     """
     sum = 0
     v = g.vcount()
     for i in range(v):
-        if (not onlyEdges):
+        if vertices:
             sum += criticalityOfVertex(g, i, w)
-        if both:
+        if edges:
             for j in range(v):
-                if (i != j):
+                if (i != j and g.get_eid(i, j, directed=False, error=False) != -1): #If there is a link
                     sum += criticalityOfEdge(g, i, j, w)
     return sum

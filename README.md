@@ -84,12 +84,12 @@ Auxiliary features
 Auxiliary features
 - [x] Criticality of vertex
 - [x] Criticality of edge
-- [ ] Edge betweenness
+- [x] Edge betweenness
 
 5.7 Flow-based characteristics
 
 - [x] Electrical nodal robustness
-- [ ] Relative area index
+- [x] Relative area index
 
 5.8 Spectral characteristics
 
