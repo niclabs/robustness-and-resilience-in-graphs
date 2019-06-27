@@ -78,39 +78,44 @@ def criticality(g,v, edge = False):
         return 0
     return betweenness[v]/s
 
-def entropyRankFromMatrix(m):
+def entropyRankFromMatrix(m, i):
     """
     m: Adjancecy matrix
+    i: vertex
+    return: the entropy rank of vertex i
     """
     w, u, v = linalg.eig(m, left = True)
-    l = len(u)
-    s = np.empty(l)
-    for i in range(l):
-        absu = np.absolute(u[:,i])
-        absv = np.absolute(v[:,i])
-        #absu = np.abs(u[:,i].real)
-        #absv = np.abs(v[:,i].real)
-        s[i] = np.dot(absu, absv)
+    w_index = np.argmax(w)
+    u_vector = u[w_index]
+    v_vector = v[w_index]
+    #Normalize u_vector, sum(u_vector_i) = 1
+    sum_u = np.sum(u_vector)
+    u_vector = u_vector / sum_u
+    #Normalize v_vector, sum(u_vector_i * v_vector_i) = 1
+    v_vector = v_vector / np.dot(u_vector, v_vector)
 
-    s = s/sum(s)
-    return s
+    return u_vector[i] * v_vector[i]
 
 
-def entropyRank(g):
+def entropyRank(g , i):
     """
     g: Graph
+    i: vertex
+    return: the entropy rank of vertex i
     """
     m = np.array(g.get_adjacency().data)
-    return entropyRankFromMatrix(m)
+    return entropyRankFromMatrix(m, i)
 
-def freeEnergyRank(g, e):
+def freeEnergyRank(g, i, e):
     """
     g: Graph
+    i: verterx
     e: Small number that replaces zeros in the adjacency matrix
+    return: the free energy rank of vertex i
     """
     m = np.array(g.get_adjacency().data)
     m[m == 0] = e
-    return entropyRankFromMatrix(m)
+    return entropyRankFromMatrix(m, i)
 
 def bridgeness(g, i, j):
     """
@@ -225,24 +230,3 @@ def sensitivity(g, f, v, w):
     return: Sensitivity of node v with respect to the node w
     """
     return
-
-
-
-
-
-       
-#g = Graph([(0,1), (0,2), (2,3), (3,4), (4,2), (2,5), (5,0), (6,3), (5,6)])
-#g = Graph([(0,1),(0,3), (1,3), (3,3)])
-#print(randomWalkBetweenness(g))
-#print(criticality(g, 0))
-
-#Ejemplo matriz paper 24
-#g = Graph([(0,1), (0,2), (0,3), (1,0), (1,2), (1,3), (2,0), (2,1), (2,3), (2,4), (3,0), (3,1), (3,2), (4,6),(5,4), (6,5), (6,7), (7,1)], directed = True)
-#print(entropyRank(g))
-
-#g = Graph([(0,1), (2,1), (0,4), (2,5), (0,3),(5,3),(5,4)], directed=True)
-#g = Graph([(0,2), (0,4), (1,5), (2,1), (3,1), (5,3)], directed=True)
-
-g = Graph([(3,4), (4,5), (5,3), (1,2)])
-m = g.get_adjacency().data
-eigenvalues = np.linalg.eig(m)[0]

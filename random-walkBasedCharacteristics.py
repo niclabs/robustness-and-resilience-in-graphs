@@ -10,7 +10,8 @@ def criticalityOfEdge(g,i, j, w):
     return: Criticality of edge e, it assumes that edge exists
     """
     link_id = g.get_eid(i,j)
-    return edgeBetweenness(g, i, j) / g.es[link_id].attributes()[w]
+    edgeBet = g.edge_betweenness(directed=g.is_directed())[link_id]
+    return edgeBet / g.es[link_id].attributes()[w]
 
 def criticalityOfVertex(g, v, w):
     """
@@ -25,24 +26,6 @@ def criticalityOfVertex(g, v, w):
         link_id = g.get_eid(n, v)
         sum += g.es[link_id].attributes()[w]
     return g.betweenness(v, directed=g.is_directed(), weights=w) / sum
-
-def edgeBetweenness(g, s, d):
-    """
-    g: Graph
-    s: Source vertex
-    d: Destination vertex
-    return: The edge betweenness of edge (s,d)
-    """
-    sum = 0
-    edgeId = g.get_eid(s, d)
-    v = g.vcount()
-    for i in range(v):
-        for j in range(v):
-            if(i != j and g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
-                randWalk = randomWalk(g, i, j, [i])
-                edgeList = vertexWalkToEdgesWalk(g, randWalk)
-                sum += edgeList.count(edgeId)
-    return sum
 
 def networkCriticality(g, w, vertices=True, edges=False):
     """

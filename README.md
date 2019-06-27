@@ -6,7 +6,7 @@
 - [x] Betweenness (Already in igraph)
 - [x] Random-walk betweenness
 - [x] Criticality
-- [ ] Entropy rank
+- [x] Entropy rank
 - [x] Free energy rank
 - [x] Bridgeness + test
 - [x] Covering degree + test
@@ -14,6 +14,7 @@
 - [ ] Sensitivity
 
 Auxiliary features
+- [x] Entropy rank from matrix
 - [x] mcv(G): The set of minimal vertex covers of G + test
 - [x] MCV(G): The set of minimun vertex covers of G + test
 
@@ -57,7 +58,11 @@ Auxiliary features
 5.4 Density-based characteristics
 
 - [ ] Hub density
-- [ ] No name
+- [x] No name, definition523
+
+Auxiliary features
+- [x] Max degree product
+- [x] Max edge betweenness
 
 5.5 Distance-based characteristics
 
@@ -84,7 +89,6 @@ Auxiliary features
 Auxiliary features
 - [x] Criticality of vertex
 - [x] Criticality of edge
-- [x] Edge betweenness
 
 5.7 Flow-based characteristics
 
