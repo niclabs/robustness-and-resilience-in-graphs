@@ -27,8 +27,12 @@ Auxiliary features
 - [x] k-resilence factor + test
 - [x] Resilence factor + test
 - [x] Perturbation score
-- [ ] Preferential perturbation
-- [ ] Maximun perturbation score
+- [x] Preferential perturbation
+- [x] Maximun perturbation score
+
+Auxiliary features:
+- [x] sizeMaxComponent
+- [x] perturbationScoreTwo
 
 5.2 Path-based characteristic
 - [x] Pairwise disconnectivity index + test
@@ -57,7 +61,7 @@ Auxiliary features
 
 5.4 Density-based characteristics
 
-- [ ] Hub density
+- [x] Hub density
 - [x] No name, definition523
 
 Auxiliary features

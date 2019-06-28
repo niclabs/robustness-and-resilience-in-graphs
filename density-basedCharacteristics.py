@@ -1,6 +1,18 @@
 from igraph import *
 import numpy as np
 
+def hubDensity(g):
+    """
+    g: Graph, each component of the graph is a hub
+    return: The average density of subgraphs induced by hubs
+    """
+    components = g.components()
+    n_components = len(components)
+    sum = 0
+    for c in components:
+        sum += len(c)
+    return sum / n_components
+
 def definition523(g, k, degreeProduct= True):
     """
     g: Graph

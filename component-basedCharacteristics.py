@@ -1,6 +1,7 @@
 import numpy as np
 from igraph import *
 import random
+import itertools
 
 def splittingNumber(g, k, dev= 1):
     """
@@ -159,39 +160,82 @@ def resilienceFactor(g):
         result[i-2] = kResilienceFactor(auxGraph, i)
     return np.mean(result)
 
-def pertubationScore(g, p):
+def perturbationScore(g, p):
     """
     g: Graph
     p: Perturbation function
     return:
     """
-    BComp = g.components()
-    before = 0
-    for c in BComp:
-        size = len(c)
-        if(size > before):
-            before = size
     aux = p(g)
-    AComp = aux.components()
-    after = 0
-    for c in AComp:
-        size = len(c)
-        if(size > after):
-            after = size
+    return perturbationScoreTwo(g, aux)
+
+def sizeMaxComponent(g):
+    """
+    g: Graph
+    return: The size of the biggest component in g
+    """
+    comp = g.components()
+    size = 0
+    for c in comp:
+        actual_size = len(c)
+        if(actual_size > size):
+            size = actual_size
+    return size
+
+def perturbationScoreTwo(g1, g2):
+    """
+    g1: Graph before the perturbation
+    g2: Graph after the perturbation
+    return: The perturbation score given two graphs
+    """
+    before = sizeMaxComponent(g1)
+    after = sizeMaxComponent(g2)
     return (before - after)/ before
 
 def preferentialPerturbation(g1, g2):
     """
     g1: Graph
     g2: Graph
-    return:
+    return: A list of vertices that has to be removed in order to maximize the pertrbation in g1 and minimize the perturbation in g2
     """
-    return
+    max = min(g1.vcount(), g2.vcount()) #Maximum amount of vertices that  can be removed
+    nodes = [] #Removed vertices in the perturbation
+    perturbation1 = float('-inf')
+    perturbation2 = float('inf')
+    nodes = list(range(max))
+    for i in range(1, max + 1):
+        comb = list(itertools.permutations(nodes, i))
+        for l_vertex in comb: #l_vertex: tuples
+            auxg1 = g1.copy()
+            auxg2 = g2.copy()
+            auxg1.delete_vertices(l_vertex)
+            auxg2.delete_vertices(l_vertex)
+            partial_p1 = perturbationScoreTwo(g1, auxg1)
+            partial_p2 = perturbationScoreTwo(g2, auxg2)
+            if(partial_p1 > perturbation1 and  partial_p2 < perturbation2):
+                nodes = np.array(l_vertex)
+                perturbation1 = partial_p1
+                perturbation2 = partial_p2
+    return nodes
 
-def maximunPerturbationScore(g1,g2):
+
+def maximunPerturbationScore(g1, g2):
     """
     g1: Graph
     g2: Graph
-    return:
+    return: The ratio between the preferential perturbation score and the proportion of vertices that are removed,
+            it returns -1 when vertices are not removed
     """
-    return
+    p = preferentialPerturbation(g1, g2)
+    n = len(p)
+    if n == 0:
+        return -1
+    auxg1 = g1.copy()
+    auxg2= g2.copy()
+    auxg1.delete_vertices(p)
+    auxg2.delete_vertices(p)
+    p1 = perturbationScoreTwo(g1, auxg1)
+    p2 = perturbationScoreTwo(g2, auxg2)
+    p12 = p1 - p2
+    n1 = g1.vcount()
+    return p12 / (n / n1)

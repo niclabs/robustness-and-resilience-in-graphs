@@ -3,7 +3,6 @@ import random
 import numpy as np
 import math
 from scipy import linalg
-import itertools
 import sys
 
 def vertexLoad(g, v, n):
