@@ -3,27 +3,32 @@ from igraph import *
 import random
 import itertools
 
-def splittingNumber(g, k, dev= 1):
+def splittingNumber(g, k, seed,  dev= 1):
     """
     g: Graph
-    k:
+    k: 
+    seed: Seed for randomize, if seed = 0, this parameter is not used
     dev:
     return: The average number of edges that need to be removed to break  g into k connected components
     """
 
     numOfLoops = 0 #TODO: definir
-    givenComponents = k
 
+    givenComponents = k
     i = 0
-    numOfComponents = 0
+    #numOfComponents = 0
     cond = True
+
     l = g.ecount()
-    k = 3 #TODO: Calculate
-    numOfLinks = np.zeros(k)
+    numOfLinks = np.zeros(k) #TODO: size of array
+
+    if(seed):
+        random.seed(seed)
+
     while (cond):
         auxGraph = g.copy() #make all links functioning
         numOfComponents = len(auxGraph.components()) #Calculate numOfcomponents
-        numOfLinks[i] = 0
+        #numOfLinks[i] = 0
 
         while (numOfComponents < givenComponents):
             #Choose randomly an uninterrupted link
@@ -38,7 +43,7 @@ def splittingNumber(g, k, dev= 1):
                 mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
                 mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
                 if(abs(mean1 - mean2) < dev):
-                    return (mean1 + mean2)/2
+                    return (mean1 + mean2)/2 #TODO: revisar si entrego esto
         i += 1
 
 def randomRobustnessIndex(g, m):
@@ -239,3 +244,8 @@ def maximunPerturbationScore(g1, g2):
     p12 = p1 - p2
     n1 = g1.vcount()
     return p12 / (n / n1)
+
+
+g = Graph([(0, 1), (1,2), (1,3), (3,4)])
+result = splittingNumber(g, 3, 1)
+print(result)
