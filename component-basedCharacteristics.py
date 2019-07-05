@@ -2,25 +2,26 @@ import numpy as np
 from igraph import *
 import random
 import itertools
+import math
 
-def splittingNumber(g, k, seed,  dev= 1):
+def splittingNumber(g, k, seed, numOfLoops,  dev= 1):
     """
     g: Graph
-    k: 
+    k: Number of components 
     seed: Seed for randomize, if seed = 0, this parameter is not used
-    dev:
-    return: The average number of edges that need to be removed to break  g into k connected components
+    numOfLoops: Parameter for the algorithm
+    dev: Parameter for the algorithm, standard deviation
+    return: The average number of edges that need to be removed to break  g into k connected components, -1 if it's not possible
     """
-
-    numOfLoops = 0 #TODO: definir
-
     givenComponents = k
     i = 0
-    #numOfComponents = 0
     cond = True
 
     l = g.ecount()
-    numOfLinks = np.zeros(k) #TODO: size of array
+    s = 0
+    for j in range(1, l + 1):
+        s += math.factorial(l) / (math.factorial(i) * math.factorial(l - i))
+    numOfLinks = np.zeros(s)
 
     if(seed):
         random.seed(seed)
@@ -28,7 +29,6 @@ def splittingNumber(g, k, seed,  dev= 1):
     while (cond):
         auxGraph = g.copy() #make all links functioning
         numOfComponents = len(auxGraph.components()) #Calculate numOfcomponents
-        #numOfLinks[i] = 0
 
         while (numOfComponents < givenComponents):
             #Choose randomly an uninterrupted link
@@ -43,14 +43,15 @@ def splittingNumber(g, k, seed,  dev= 1):
                 mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
                 mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
                 if(abs(mean1 - mean2) < dev):
-                    return (mean1 + mean2)/2 #TODO: revisar si entrego esto
+                    return (mean1 + mean2)/2
         i += 1
+    return -1
 
 def randomRobustnessIndex(g, m):
     """
     g: Graph
     m:
-    return
+    return:
     """
     v = g.vcount()
     sum = 0
@@ -73,7 +74,7 @@ def randomRobustnessIndex(g, m):
 def robustnessMeasure53(g):
     """
     g: Graph
-    return
+    return:
     """
     aux = g.copy() #The function doesn't modify the graph
     n = aux.vcount()
@@ -247,5 +248,3 @@ def maximunPerturbationScore(g1, g2):
 
 
 g = Graph([(0, 1), (1,2), (1,3), (3,4)])
-result = splittingNumber(g, 3, 1)
-print(result)
