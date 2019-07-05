@@ -11,7 +11,7 @@ def vertexLoad(g, v, n):
     s = sum(nDegree)
     return (s * g.degree(v)) ** n
 
-def randomWalk(g, s, t, l):
+def randomWalk(g, s, t, l, seed = 0):
    """
    Random walk between s and t
    l must contain s
@@ -19,7 +19,10 @@ def randomWalk(g, s, t, l):
    s: Source vertex
    t: Target
    l: List
+   seed: Seed for randomize
    """
+   if(seed):
+       random.seed(seed)
    neighbors = g.neighbors(s)
    if len(neighbors) == 0:
        return l

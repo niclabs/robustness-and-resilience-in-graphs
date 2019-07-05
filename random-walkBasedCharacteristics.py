@@ -1,5 +1,4 @@
 from igraph import *
-from characteristicsForRankingElements import randomWalk, vertexWalkToEdgesWalk
 
 def criticalityOfEdge(g,i, j, w):
     """
