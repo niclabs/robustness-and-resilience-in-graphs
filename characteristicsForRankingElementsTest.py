@@ -23,6 +23,58 @@ class VertexLoadTest(unittest.TestCase):
         self.assertEqual(vertexLoad(self.g, 1, 0), 1, "Error in graph, case v has neighbors and n= 0")
         self.assertEqual(vertexLoad(self.g, 1, 5), 7776, "Error in graph, case v has neighbors and n= 6")
 
+class RandomWalkTest(unittest.TestCase):
+    def setUp(self):
+        self.directed = Graph([(0,1), (0,6), (1,4), (1,3), (2,3), (3,1), (1,2), (5,1)], directed=True)
+        self.directedOneWay = [0, 6]
+        self.directedTwoWays = [0, 1, 3]
+        self.seed = 1
+
+        self.g = Graph([(1,2), (5,4), (4,7), (4,6), (5,6), (6,7)])
+        self.oneWay = [1,2]
+        self.twoWays = [5, 4, 7]
+        
+
+    def testDirectedGraph(self):
+        oneWay = randomWalk(self.directed, 0, 6)
+        self.assertEqual(oneWay, self.directedOneWay)
+        empty = randomWalk(self.directed, 0, 5)
+        self.assertEqual(empty, [])
+        twoPossibleWays = randomWalk(self.directed, 0, 3, self.seed)
+        self.assertEqual(twoPossibleWays, self.directedTwoWays)
+
+    def testGraph(self):
+        oneWay = randomWalk(self.g, 1,2)
+        self.assertEqual(oneWay, self.oneWay)
+        empty = randomWalk(self.g, 2, 0)
+        self.assertEqual(empty, [])
+        twoPossibleWays = randomWalk(self.g, 5, 7, self.seed)
+        self.assertEqual(twoPossibleWays, self.twoWays)
+
+class VertexWalkToEdgesWalkTest(unittest.TestCase):
+    def setUp(self):
+        self.directed = Graph([(0,1), (0,6), (1,4), (1,3), (2,3), (3,1), (1,2), (5,1)], directed=True)
+        self.directedVertexPath = [0, 1, 2, 3, 1, 4]
+        self.directedEdgePath = [0, 6, 4, 5, 2]
+        self.directedEmptyEdge = [1]
+
+        self.g = Graph([(0,1), (1,2), (2,3), (2,5), (3,4), (4,5)])
+        self.VertexPath  = [0, 1, 2, 5, 4, 5, 2]
+        self.edgePath = [0, 1, 3, 5, 5, 3]
+        self.emptyPath = [5]
+
+    def testDirectedGraph(self):
+        edgePath = vertexWalkToEdgesWalk(self.directed, self.directedVertexPath)
+        self.assertEqual(edgePath, self.directedEdgePath)
+        empty = vertexWalkToEdgesWalk(self.directed, self.directedEmptyEdge)
+        self.assertEqual(empty, [])
+    
+    def testGraph(self):
+        edgePath = vertexWalkToEdgesWalk(self.g, self.VertexPath)
+        self.assertEqual(edgePath, self.edgePath)
+        empty = vertexWalkToEdgesWalk(self.directed, self.emptyPath)
+        self.assertEqual(empty, [])
+
 class BridgenessTest(unittest.TestCase):
     def setUp(self):
         self.g = Graph([(0,1), (0,3), (1,3), (1,2), (2,4), (2,5), (2,6), (4,6),(4,5), (5,6)])

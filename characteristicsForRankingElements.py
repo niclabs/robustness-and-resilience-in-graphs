@@ -11,29 +11,30 @@ def vertexLoad(g, v, n):
     s = sum(nDegree)
     return (s * g.degree(v)) ** n
 
-def randomWalk(g, s, t, l, seed = 0):
+def randomWalk(g, i, t, s= 0):
    """
-   Random walk between s and t
-   l must contain s
    g: Graph
-   s: Source vertex
+   i: Source vertex
    t: Target
-   l: List
-   seed: Seed for randomize
+   s: Seed for randomize
+   return: Random walk between s and t, list where each element is a vertex
    """
-   if(seed):
-       random.seed(seed)
-   neighbors = g.neighbors(s)
-   if len(neighbors) == 0:
-       return l
-   else:
-       n = random.choice(neighbors)
-       if n == t:
-           l.append(n)
-           return l
+   if (g.vertex_disjoint_paths(i, t, neighbors = "ignore") == 0): #If there is no path between s and t
+       return []
+   if(s):
+       random.seed(s)
+   l = [i]
+   actual = i
+   while(actual != t):
+       neighbors = g.neighbors(actual, mode='OUT')
+       if len(neighbors) == 0:
+           actual = i
+           l = [i]
        else:
+           n = random.choice(neighbors)
            l.append(n)
-           return randomWalk(g, n, t, l)
+           actual = n
+   return l
 
 def vertexWalkToEdgesWalk(g, l):
     """
@@ -46,7 +47,12 @@ def vertexWalkToEdgesWalk(g, l):
         new_l.append(g.get_eid(l[i], l[i+1]))
     return new_l
 
-def randomWalkBetweenness(g, edge = False):
+def randomWalkBetweenness(g, edge = False, seed = 0):
+    """
+    g: Graph
+    edge: Boolean that indicates if we count edges
+    seed: Seed for randomize
+    """
     if edge:
         sum = np.zeros(g.ecount(), dtype = int)
     else:
@@ -54,9 +60,9 @@ def randomWalkBetweenness(g, edge = False):
     for s in range(g.vcount()):
         for t in range(g.vcount()):
             if s != t and g.vertex_disjoint_paths(s,t, neighbors = "ignore") != 0: #Si hay un camino
-                    walk = randomWalk(g, s, t, [s])
+                    walk = randomWalk(g, s, t, seed)
                     while walk[len(walk) - 1] != t: #Para que el camino llegue a t (sea valido)
-                        walk = randomWalk(g, s, t, [s])
+                        walk = randomWalk(g, s, t, seed)
                     #Luego de encontrado el camino
                     if edge: #Si contamos arcos
                         walk = vertexWalkToEdgesWalk(g, walk)
@@ -65,7 +71,6 @@ def randomWalkBetweenness(g, edge = False):
                     else:
                         for v in range(g.vcount()): #Contar la aparición de cada vértice
                             sum[v] += walk.count(v)
-
     return sum
 
 def criticality(g,v, edge = False):

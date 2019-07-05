@@ -14,6 +14,8 @@
 - [ ] Sensitivity
 
 Auxiliary features
+- [x] Random walk + test
+- [x] Vertex walk to edges walk + test
 - [x] Entropy rank from matrix
 - [x] mcv(G): The set of minimal vertex covers of G + test
 - [x] MCV(G): The set of minimun vertex covers of G + test
