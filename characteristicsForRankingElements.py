@@ -4,6 +4,7 @@ import numpy as np
 import math
 from scipy import linalg
 import sys
+import sympy as sym
 
 def vertexLoad(g, v, n):
     neighbors = g.neighbors(v)
@@ -228,12 +229,44 @@ def coveringIndex(g, v):
     b = coveringDegree(g, v)
     return a + b/c
 
-def sensitivity(g, f, v, w):
+def sensitivity(g, f, w, t, k):
     """
     g:Graph
-    f: Centrality function: f(d_1, ..., d_n) with n the number of vertex
-    v: Vertex
-    w: Vertex
-    return: Sensitivity of node v with respect to the node w
+    f: Centrality function: f(M), where M is the adjacency matrix
+    w: Name of the weight attribute in the graph g
+    t:
+    k:
+    return: The sensitivity matrix
     """
-    return
+    h = sym.Symbol('h')
+    M = sym.Symbol('M')
+    A = weightedMatrix(g, w)
+    n = len(A)
+    dAdt = np.zeros([n, n])
+    deg = g.degree(t)
+    for i in range(n):
+        for j in range(n):
+            Aij = A[i][j]
+            if( i == k or j == k):               
+                value = sym.limit((Aij * (1 + (h / deg)) - Aij) / h, h, 0)
+            else:
+                value = sym.limit((Aij- Aij) / h, h, 0)
+            dAdt[i][j] = value
+    dfdA = sym.diff(f, M)
+    return dfdA * dAdt
+
+def weightedMatrix(g, w):
+    """
+    g: Graph
+    w: Strings that represent the name of the weight attribute in the graph
+    return: The weighted adjacency matrix of graph g
+    """
+    m = g.get_adjacency().data
+    n = len(m)
+    for i in range(n):
+        for  j in range(n):
+            if(m[i][j] != 0):
+                e_id = g.get_eid(i,j)
+                e_weight = g.es[e_id].attributes()[w]
+                m[i][j] = e_weight
+    return m

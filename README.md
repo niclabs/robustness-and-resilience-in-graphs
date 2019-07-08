@@ -19,6 +19,7 @@ Auxiliary features
 - [x] Entropy rank from matrix
 - [x] mcv(G): The set of minimal vertex covers of G + test
 - [x] MCV(G): The set of minimun vertex covers of G + test
+- [x] weightedMatrix(g, w): Weighted matrix of graph g, where w represents the weight attribute name in the graph
 
 5.1 Component-based characteristics
 

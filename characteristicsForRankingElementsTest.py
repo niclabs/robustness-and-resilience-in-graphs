@@ -73,7 +73,7 @@ class VertexWalkToEdgesWalkTest(unittest.TestCase):
         edgePath = vertexWalkToEdgesWalk(self.g, self.VertexPath)
         self.assertEqual(edgePath, self.edgePath)
         empty = vertexWalkToEdgesWalk(self.directed, self.emptyPath)
-        self.assertEqual(empty, [])
+        self.assertEqual(empty, [])    
 
 class BridgenessTest(unittest.TestCase):
     def setUp(self):
