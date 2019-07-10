@@ -1,5 +1,6 @@
 from igraph import *
 import unittest
+import numpy as np
 from characteristicsForRankingElements import *
 
 class VertexLoadTest(unittest.TestCase):
@@ -74,6 +75,22 @@ class VertexWalkToEdgesWalkTest(unittest.TestCase):
         self.assertEqual(edgePath, self.edgePath)
         empty = vertexWalkToEdgesWalk(self.directed, self.emptyPath)
         self.assertEqual(empty, [])    
+
+class RandomWalkBetweennessTest(unittest.TestCase):
+    def setUp(self):
+        self.g = Graph([(0,1), (0,4), (1,4), (4,2)])
+        self.vertices = [15, 15, 8, 0, 19]
+        self.edges = [13, 11, 11, 10]
+        self.seed = 1
+
+    def testVertices(self):
+        vertices = randomWalkBetweenness(self.g, seed = self.seed)
+        self.assertTrue(np.array_equal(self.vertices, vertices))
+    
+    def testEdges(self):
+        edges = randomWalkBetweenness(self.g, edge=True, seed = self.seed)
+        self.assertTrue(np.array_equal(self.edges, edges))
+    
 
 class BridgenessTest(unittest.TestCase):
     def setUp(self):

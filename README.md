@@ -4,14 +4,14 @@
 
 - [x] Vertex load + test
 - [x] Betweenness (Already in igraph)
-- [x] Random-walk betweenness
-- [x] Criticality
+- [x] Random-walk betweenness + test
+- [ ] Criticality
 - [x] Entropy rank
 - [x] Free energy rank
 - [x] Bridgeness + test
 - [x] Covering degree + test
 - [x] Covering index + test
-- [ ] Sensitivity
+- [x] Sensitivity
 
 Auxiliary features
 - [x] Random walk + test

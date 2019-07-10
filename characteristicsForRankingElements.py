@@ -53,6 +53,7 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
     g: Graph
     edge: Boolean that indicates if we count edges
     seed: Seed for randomize
+    return: An array 'a' where a[i] is the randomWalkBetweenness of element i, the element can be a vertex or an edge
     """
     if edge:
         sum = np.zeros(g.ecount(), dtype = int)
@@ -62,9 +63,6 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
         for t in range(g.vcount()):
             if s != t and g.vertex_disjoint_paths(s,t, neighbors = "ignore") != 0: #Si hay un camino
                     walk = randomWalk(g, s, t, seed)
-                    while walk[len(walk) - 1] != t: #Para que el camino llegue a t (sea valido)
-                        walk = randomWalk(g, s, t, seed)
-                    #Luego de encontrado el camino
                     if edge: #Si contamos arcos
                         walk = vertexWalkToEdgesWalk(g, walk)
                         for e in range(g.ecount()):
@@ -74,17 +72,23 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
                             sum[v] += walk.count(v)
     return sum
 
-def criticality(g,v, edge = False):
+def criticality(g, v, w,edge = False, s = 0):
     """
     g: Graph
     v: Vertex or edge for criticality
+    w: String that represent the weight attributte in the graph
     edge: Condition that indicates if v is an edge
+    s: Seed for randomize
+    return: The random-walk betweenness of an element normalized by the weight of the element
     """
-    betweenness = randomWalkBetweenness(g, edge)
-    s = sum(betweenness)
-    if s == 0:
+    betweenness = randomWalkBetweenness(g, edge, seed=s) #Array
+    if edge:
+        weight = g.es[v].attributes()[w]
+    else:
+        weight = g.vs[v].attributes()[w]
+    if weight == 0:
         return 0
-    return betweenness[v]/s
+    return betweenness[v] / weight
 
 def entropyRankFromMatrix(m, i):
     """
