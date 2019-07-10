@@ -6,8 +6,8 @@
 - [x] Betweenness (Already in igraph)
 - [x] Random-walk betweenness + test
 - [x] Criticality + test
-- [x] Entropy rank
-- [x] Free energy rank
+- [x] Entropy rank + test
+- [x] Free energy rank + test
 - [x] Bridgeness + test
 - [x] Covering degree + test
 - [x] Covering index + test
@@ -16,10 +16,10 @@
 Auxiliary features
 - [x] Random walk + test
 - [x] Vertex walk to edges walk + test
-- [x] Entropy rank from matrix
+- [x] Entropy rank from matrix + test
 - [x] mcv(G): The set of minimal vertex covers of G + test
 - [x] MCV(G): The set of minimun vertex covers of G + test
-- [x] weightedMatrix(g, w): Weighted matrix of graph g, where w represents the weight attribute name in the graph
+- [x] weightedMatrix(g, w): Weighted matrix of graph g, where w represents the weight attribute name in the graph + test
 
 5.1 Component-based characteristics
 

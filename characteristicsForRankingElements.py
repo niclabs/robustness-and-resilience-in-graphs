@@ -108,7 +108,6 @@ def entropyRankFromMatrix(m, i):
 
     return u_vector[i] * v_vector[i]
 
-
 def entropyRank(g , i):
     """
     g: Graph
@@ -262,7 +261,7 @@ def sensitivity(g, f, w, t, k):
 def weightedMatrix(g, w):
     """
     g: Graph
-    w: Strings that represent the name of the weight attribute in the graph
+    w: Strings that represent the name of the edge weight attribute in the graph
     return: The weighted adjacency matrix of graph g
     """
     m = g.get_adjacency().data

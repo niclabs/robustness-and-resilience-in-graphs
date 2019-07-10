@@ -140,9 +140,44 @@ class CriticalityTest(unittest.TestCase):
         expected = edgeBetweenness[self.edge] / self.g.es[self.edge].attributes()['weight']
         actual = criticality(self.g, self.edge, 'weight', edge=True, s=self.seed)
         self.assertTrue(actual - self.delta <= expected)
-        self.assertTrue(actual + self.delta >= expected)        
+        self.assertTrue(actual + self.delta >= expected)
 
+class EntropyRankFromMatrixTest(unittest.TestCase):
+    def setUp(self):
+        self.m = np.array([[0,1,1], [1,0,1], [0,1,0]])
+        self.vertex = 1
+        self.delta = 0.1
+        self.result = 0.59
     
+    def testMatrix(self):
+        result= entropyRankFromMatrix(self.m, self.vertex)
+        self.assertTrue(result- self.delta <= self.result)
+        self.assertTrue(result + self.delta >= self.result)
+
+class EntropyRankTest(unittest.TestCase):
+    def setUp(self):
+        self.g = Graph([(0,1), (0,2), (1,0), (1,2), (2,1)], directed=True)
+        self.vertex = 1
+        self.delta = 0.1
+        self.result = 0.59
+    
+    def testGraph(self):
+        result= entropyRank(self.g, self.vertex)
+        self.assertTrue(result- self.delta <= self.result)
+        self.assertTrue(result + self.delta >= self.result)
+
+class FreeEnergyRankTest(unittest.TestCase):
+    def setUp(self):
+        self.g = Graph([(0,1), (0,2), (1,0), (1,2), (2,1)], directed=True)
+        self.e = 0.01
+        self.vertex = 1
+        self.delta = 0.1
+        self.result = 0.59
+    
+    def testGraph(self):
+        result = freeEnergyRank(self.g, self.vertex, self.e)
+        self.assertTrue(result- self.delta <= self.result)
+        self.assertTrue(result + self.delta >= self.result)
 
 class BridgenessTest(unittest.TestCase):
     def setUp(self):
@@ -188,21 +223,6 @@ class mcvTest(unittest.TestCase):
         self.assertEqual(len(result), len(self.directedResult), "Error in directed graph, wrong number of minimal vertex covers")
         for cover in self.directedResult:
             self.assertTrue(cover in result, "Error in directed graph, cover not found")
-
-
-class CoveringDegreeTest(unittest.TestCase):
-    def setUp(self):
-        self.directed = Graph([(0,1), (0,2), (1,2), (1,3), (2,3)], directed=True)
-        self.g = Graph([(0,1), (1,2), (1,3), (1,6), (2,4), (3,4)])
-
-    def testDirectedGraph(self):
-        self.assertEqual(coveringDegree(self.directed, 0), 0, "Error in directed graph, case v has no incident edges")
-        self.assertEqual(coveringDegree(self.directed, 1), 1, "Error in directed graph, case v has incident edges")
-
-    def testGraph(self):
-        self.assertEqual(coveringDegree(self.g, 5), 0, "Error in graph, v has no neighbors")
-        self.assertEqual(coveringDegree(self.g, 6), 2, "Error in graph, case v has incident edges")
-        self.assertEqual(coveringDegree(self.g, 0), 2, "Error in graph, case v has incident edges")
 
 class MCVTest(unittest.TestCase):
     def setUp(self):
@@ -288,6 +308,16 @@ class coveringIndexTest(unittest.TestCase):
     def testDirectedGraph(self):
         self.assertEqual(coveringIndex(self.directed, 1), self.dResult1)
         self.assertEqual(coveringIndex(self.directed, 2), self.dResult2)
+
+class weightedMatrixTest(unittest.TestCase):
+    def setUp(self):
+        self.g = Graph([(0,6), (0,5), (0,1), (1,2), (2,3), (1,4), (4,5), (1,5)])
+        self.g.es['weight'] = [7, 6, 1, 2, 10, 2, 3, 4]
+        self.weighted = np.array([[0,1,0,0,0,6,7], [1,0,2,0,2,4,0], [0,2,0,10,0,0,0], [0,0,10,0,0,0,0], [0,2,0,0,0,3,0], [6,4,0,0,3,0,0], [7,0,0,0,0,0,0]])
+
+    def test(self):
+        m = weightedMatrix(self.g, 'weight')
+        self.assertTrue(np.array_equal(self.weighted, m))
 
 if __name__ == '__main__':
     unittest.main()
