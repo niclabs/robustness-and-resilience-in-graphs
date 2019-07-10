@@ -72,7 +72,7 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
                             sum[v] += walk.count(v)
     return sum
 
-def criticality(g, v, w,edge = False, s = 0):
+def criticality(g, v, w, edge = False, s = 0):
     """
     g: Graph
     v: Vertex or edge for criticality

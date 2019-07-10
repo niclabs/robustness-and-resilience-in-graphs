@@ -90,6 +90,58 @@ class RandomWalkBetweennessTest(unittest.TestCase):
     def testEdges(self):
         edges = randomWalkBetweenness(self.g, edge=True, seed = self.seed)
         self.assertTrue(np.array_equal(self.edges, edges))
+
+class CriticalityTest(unittest.TestCase):
+    def setUp(self):
+        self.seed = 1
+        self.delta = 0.01
+        self.g = Graph([(0,1), (0,4), (1,4), (4,2)])
+        self.vertexWeights = [0, 3, 4, 5, 6]
+        self.edgesWeights = [2, 3, 0, 5]
+        self.vertexWeightZero = 0
+        self.vertexBetweennessZero = 3
+        self.vertex = 1
+        self.edgeWeightZero = 2
+        self.edge = 3
+
+
+    def testVertices(self):            
+        vertexBetweenness = randomWalkBetweenness(self.g, seed=self.seed)
+        #Set weights
+        self.g.vs['weight'] = self.vertexWeights
+
+        #Vertex weight 0
+        expected = 0
+        actual = criticality(self.g, self.vertexWeightZero, 'weight', s=self.seed)
+        self.assertEqual(expected, actual)
+
+        #randomWalkBerweenness 0
+        expected = 0
+        actual = criticality(self.g, self.vertexBetweennessZero, 'weight', s=self.seed)
+        self.assertEqual(expected, actual)
+
+        #General case
+        expected = vertexBetweenness[self.vertex] / self.g.vs[self.vertex].attributes()['weight']
+        actual = criticality(self.g, self.vertex, 'weight', s=self.seed)
+        self.assertTrue(actual - self.delta <= expected)
+        self.assertTrue(actual + self.delta >= expected)
+    
+    def testEdges(self):
+        edgeBetweenness = randomWalkBetweenness(self.g, edge=True, seed=self.seed)
+        #Set weights
+        self.g.es['weight'] = self.edgesWeights
+
+        #Edge weight 0
+        expected = 0
+        actual = criticality(self.g, self.edgeWeightZero, 'weight', edge=True, s=self.seed)
+        self.assertEqual(expected, actual)
+
+        #General case
+        expected = edgeBetweenness[self.edge] / self.g.es[self.edge].attributes()['weight']
+        actual = criticality(self.g, self.edge, 'weight', edge=True, s=self.seed)
+        self.assertTrue(actual - self.delta <= expected)
+        self.assertTrue(actual + self.delta >= expected)        
+
     
 
 class BridgenessTest(unittest.TestCase):

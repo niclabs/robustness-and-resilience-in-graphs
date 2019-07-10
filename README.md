@@ -5,7 +5,7 @@
 - [x] Vertex load + test
 - [x] Betweenness (Already in igraph)
 - [x] Random-walk betweenness + test
-- [ ] Criticality
+- [x] Criticality + test
 - [x] Entropy rank
 - [x] Free energy rank
 - [x] Bridgeness + test
