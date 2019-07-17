@@ -1,6 +1,6 @@
 from igraph import *
 import unittest
-from path-basedCharacteristics import *
+from pathBasedCharacteristics import *
 
 class pairwiseDisconnectivityIndexTest(unittest.TestCase):
     def setUp(self):

@@ -1,6 +1,6 @@
 from igraph import *
 import unittest
-from component-basedCharacteristics import *
+from componentBasedCharacteristics import *
 
 class robustnessMeasure53Test(unittest.TestCase):
     def setUp(self):
