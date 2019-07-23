@@ -88,6 +88,7 @@ Auxiliary features
 Auxiliary features
 - [x] Shortest temporal distance
 - [x] Get all simple paths between two vertices
+- [x] Get list of edges connected to vertex k
 
 5.6 Random-walk based characteristics
 

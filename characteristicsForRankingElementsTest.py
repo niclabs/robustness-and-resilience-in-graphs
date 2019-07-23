@@ -9,20 +9,20 @@ class VertexLoadTest(unittest.TestCase):
         self.g =  Graph([(1,2), (1,3), (3,4)])
     
     def testDirectedGraph(self):
-        self.assertEqual(vertexLoad(self.directed, 0, 1), 0, "Error in diredted graph, case v has no neighbors")
-        self.assertEqual(vertexLoad(self.directed, 0, 0), 1, "Error in diredted graph, case v has no neighbors and n= 0")
-        self.assertEqual(vertexLoad(self.directed, 0, 5), 0, "Error in diredted graph, case v has no neighbors and n= 5")
-        self.assertEqual(vertexLoad(self.directed, 1, 1), 6, "Error in directed graph, case v has neighbors anmd n= 1")
-        self.assertEqual(vertexLoad(self.directed, 1, 0), 1, "Error in directed graph, case v has neighbors and n= 0")
-        self.assertEqual(vertexLoad(self.directed, 1, 5), 7776, "Error in directed graph, case v has neighbors and n= 6")
+        self.assertEqual(vertexLoad(self.directed, v=0, n=1), 0, "Error in diredted graph, case v has no neighbors")
+        self.assertEqual(vertexLoad(self.directed, v=0, n=0), 1, "Error in diredted graph, case v has no neighbors and n= 0")
+        self.assertEqual(vertexLoad(self.directed, v=0, n=5), 0, "Error in diredted graph, case v has no neighbors and n= 5")
+        self.assertEqual(vertexLoad(self.directed, v=1, n=1), 6, "Error in directed graph, case v has neighbors anmd n= 1")
+        self.assertEqual(vertexLoad(self.directed, v=1, n=0), 1, "Error in directed graph, case v has neighbors and n= 0")
+        self.assertEqual(vertexLoad(self.directed, v=1, n=5), 7776, "Error in directed graph, case v has neighbors and n= 6")
 
     def testGraph(self):
-        self.assertEqual(vertexLoad(self.g, 0, 1), 0, "Error in graph, case v has no neighbors")
-        self.assertEqual(vertexLoad(self.g, 0, 0), 1, "Error in graph, case v has no neighbors and n= 0")
-        self.assertEqual(vertexLoad(self.g, 0, 5), 0, "Error in graph, case v has no neighbors and n= 5")
-        self.assertEqual(vertexLoad(self.g, 1, 1), 6, "Error in graph, case v has neighbors anmd n= 1")
-        self.assertEqual(vertexLoad(self.g, 1, 0), 1, "Error in graph, case v has neighbors and n= 0")
-        self.assertEqual(vertexLoad(self.g, 1, 5), 7776, "Error in graph, case v has neighbors and n= 6")
+        self.assertEqual(vertexLoad(self.g, v=0, n=1), 0, "Error in graph, case v has no neighbors")
+        self.assertEqual(vertexLoad(self.g, v=0, n=0), 1, "Error in graph, case v has no neighbors and n= 0")
+        self.assertEqual(vertexLoad(self.g, v=0, n=5), 0, "Error in graph, case v has no neighbors and n= 5")
+        self.assertEqual(vertexLoad(self.g, v=1, n=1), 6, "Error in graph, case v has neighbors anmd n= 1")
+        self.assertEqual(vertexLoad(self.g, v=1, n=0), 1, "Error in graph, case v has neighbors and n= 0")
+        self.assertEqual(vertexLoad(self.g, v=1, n=5), 7776, "Error in graph, case v has neighbors and n= 6")
 
 class RandomWalkTest(unittest.TestCase):
     def setUp(self):
@@ -112,17 +112,17 @@ class CriticalityTest(unittest.TestCase):
 
         #Vertex weight 0
         expected = 0
-        actual = criticality(self.g, self.vertexWeightZero, 'weight', s=self.seed)
+        actual = criticality(self.g, v=self.vertexWeightZero, w='weight', s=self.seed)
         self.assertEqual(expected, actual)
 
         #randomWalkBerweenness 0
         expected = 0
-        actual = criticality(self.g, self.vertexBetweennessZero, 'weight', s=self.seed)
+        actual = criticality(self.g, v=self.vertexBetweennessZero, w='weight', s=self.seed)
         self.assertEqual(expected, actual)
 
         #General case
         expected = vertexBetweenness[self.vertex] / self.g.vs[self.vertex].attributes()['weight']
-        actual = criticality(self.g, self.vertex, 'weight', s=self.seed)
+        actual = criticality(self.g, v=self.vertex, w='weight', s=self.seed)
         self.assertTrue(actual - self.delta <= expected)
         self.assertTrue(actual + self.delta >= expected)
     
@@ -133,12 +133,12 @@ class CriticalityTest(unittest.TestCase):
 
         #Edge weight 0
         expected = 0
-        actual = criticality(self.g, self.edgeWeightZero, 'weight', edge=True, s=self.seed)
+        actual = criticality(self.g, v=self.edgeWeightZero, w='weight', edge=True, s=self.seed)
         self.assertEqual(expected, actual)
 
         #General case
         expected = edgeBetweenness[self.edge] / self.g.es[self.edge].attributes()['weight']
-        actual = criticality(self.g, self.edge, 'weight', edge=True, s=self.seed)
+        actual = criticality(self.g, v=self.edge, w='weight', edge=True, s=self.seed)
         self.assertTrue(actual - self.delta <= expected)
         self.assertTrue(actual + self.delta >= expected)
 
@@ -162,7 +162,7 @@ class EntropyRankTest(unittest.TestCase):
         self.result = 0.59
     
     def testGraph(self):
-        result= entropyRank(self.g, self.vertex)
+        result= entropyRank(self.g, i=self.vertex)
         self.assertTrue(result- self.delta <= self.result)
         self.assertTrue(result + self.delta >= self.result)
 
@@ -175,7 +175,7 @@ class FreeEnergyRankTest(unittest.TestCase):
         self.result = 0.59
     
     def testGraph(self):
-        result = freeEnergyRank(self.g, self.vertex, self.e)
+        result = freeEnergyRank(self.g, i = self.vertex, e= self.e)
         self.assertTrue(result- self.delta <= self.result)
         self.assertTrue(result + self.delta >= self.result)
 
@@ -185,12 +185,12 @@ class BridgenessTest(unittest.TestCase):
         self.directed = Graph([(0,1), (0,3), (1,3), (1,2), (2,4), (2,5), (2,6), (4,6),(4,5), (5,6)], directed=True)
 
     def testGraph(self):
-        v1 = bridgeness(self.g, 1, 2)
+        v1 = bridgeness(self.g, i=1, j=2)
         self.assertTrue(v1 > 1.732 and v1 < 1.733, "Error in graph, case existing edge")
         self.assertRaises(Exception, bridgeness, (self.g, 0, 4))
 
     def testDirectedGraph(self):
-        v1 = bridgeness(self.directed, 1, 2)
+        v1 = bridgeness(self.directed, i=1, j=2)
         self.assertTrue(v1 > 1.732 and v1 < 1.733, "Error in directed graph, case existing edge")
         self.assertRaises(Exception, bridgeness, (self.directed, 0, 4))
 
@@ -281,13 +281,13 @@ class coveringDegreeTest(unittest.TestCase):
         self.dResult1 = 1
 
     def testGraph(self):
-        self.assertEqual(coveringDegree(self.g, 0), self.gResult0)
-        self.assertEqual(coveringDegree(self.g, 1), self.gResult1)
-        self.assertEqual(coveringDegree(self.g, 4), self.gResult4)
+        self.assertEqual(coveringDegree(self.g, v=0), self.gResult0)
+        self.assertEqual(coveringDegree(self.g, v=1), self.gResult1)
+        self.assertEqual(coveringDegree(self.g, v=4), self.gResult4)
     
     def testDirectedGraph(self):
-        self.assertEqual(coveringDegree(self.directed, 2), self.dResult2)
-        self.assertEqual(coveringDegree(self.directed, 1), self.dResult1)
+        self.assertEqual(coveringDegree(self.directed, v=2), self.dResult2)
+        self.assertEqual(coveringDegree(self.directed, v=1), self.dResult1)
 
 class coveringIndexTest(unittest.TestCase):
     def setUp(self):
@@ -301,13 +301,13 @@ class coveringIndexTest(unittest.TestCase):
 
     
     def testGraph(self):
-        self.assertEqual(coveringIndex(self.g, 4), self.gResult4)
-        self.assertTrue(coveringIndex(self.g, 2) > self.gResult2 - self.e)
-        self.assertTrue(coveringIndex(self.g, 2) < self.gResult2 + self.e)
+        self.assertEqual(coveringIndex(self.g, v=4), self.gResult4)
+        self.assertTrue(coveringIndex(self.g, v=2) > self.gResult2 - self.e)
+        self.assertTrue(coveringIndex(self.g, v=2) < self.gResult2 + self.e)
 
     def testDirectedGraph(self):
-        self.assertEqual(coveringIndex(self.directed, 1), self.dResult1)
-        self.assertEqual(coveringIndex(self.directed, 2), self.dResult2)
+        self.assertEqual(coveringIndex(self.directed, v=1), self.dResult1)
+        self.assertEqual(coveringIndex(self.directed, v=2), self.dResult2)
 
 class weightedMatrixTest(unittest.TestCase):
     def setUp(self):

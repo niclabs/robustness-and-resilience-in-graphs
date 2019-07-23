@@ -39,11 +39,11 @@ def reconstructabilityCoefficient(g):
         result += 1
     return result
 
-def normalizedSubgraphCentrality(g, v, k):
+def normalizedSubgraphCentrality(g, v= 0, k=1):
     """
     g: Graph
-    v: vertex
-    k: Number of eigenvalues to include into the approximation
+    v: vertex, default = 0
+    k: Number of eigenvalues to include into the approximation, default = 1
     return: the normalized subgraph centrality of vertex v
     """
     A = np.array(g.get_adjacency().data)
@@ -54,10 +54,10 @@ def normalizedSubgraphCentrality(g, v, k):
         sum += (eigenvectors[i][v] ** 2) + math.sinh(eigenvalues[i])
     return sum
 
-def generalizedRobustnessIndex(g, k):
+def generalizedRobustnessIndex(g, k=1):
     """
     g: Graph
-    k: Number of eigenvalues to include into the approximation
+    k: Number of eigenvalues to include into the approximation, default = 1
     return:
     """
     A = np.array(g.get_adjacency().data)

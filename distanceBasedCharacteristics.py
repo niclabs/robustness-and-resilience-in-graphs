@@ -6,16 +6,15 @@ from igraph import *
 def geographicalDiversity(g, p):
     """
     g: Graph
-    p: Path between two nodes : p = [L, N], where L =  links id, N = nodes id
+    p: Vertex path between two nodes
     return: The minimun distance between any node members of vector p and the shortest path
     """
-    N = p[1]
-    s = N[0]
-    d = N[len(N) -1]
+    s = p[0]
+    d = p[len(p) -1]
     shortestPath = g.get_shortest_paths(s, d)[0]
     m = float('inf')
     cond = False
-    for node in N:
+    for node in p:
         for node_s in shortestPath:
             if(g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
                 distance = g.shortest_paths_dijkstra(node, node_s)[0]
@@ -50,16 +49,14 @@ def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
         if (not visited[n]):
             result = getAllSimplePaths(g, n, d, visited_aux, partial_aux, result)
             visited[n] = True
-
     return result
 
-def effectiveGeographicalPathDiversity(g, s, d, l):
+def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     """
     g: Graph
-    s: Source node
-    d: Destination node
-    l: lambda value
-    return:
+    s: Source node, default = 0
+    d: Destination node, default = 1
+    l: Constant to weight the utility of alternatie paths, default = 1
     """
     k = 0
     visited = [False] * g.vcount()
@@ -69,10 +66,10 @@ def effectiveGeographicalPathDiversity(g, s, d, l):
     
     return 1 - math.exp(- l * k)
 
-def totalGraphGeographicalDiversity(g, l):
+def totalGraphGeographicalDiversity(g, l=1):
     """
     g: Graph
-    l : lambda value for effective geographical path diversity
+    l : Constant for effective geographical path diversity, to weight the utility of alternatie paths, default = 1
     return: The average of effective geographical path diversity of all vertex pairs within g.
     """
     nodes = list(range(g.vcount()))
@@ -82,25 +79,23 @@ def totalGraphGeographicalDiversity(g, l):
         sum += effectiveGeographicalPathDiversity(g, p[0], p[1], l)
     return sum / len(pairs)
 
-def compensatedTotalGeographicalGraphDiversity(g, l):
+def compensatedTotalGeographicalGraphDiversity(g, l=1):
     """
     g: Graph
-    l : lambda value for total graph geographical path diversity
+    l : Constant for total graph geographical path diversity, to weight the utility of alternatie paths, default = 1
     return: The total graph geographical diversity weighted by the total number of edges of g
     """
     e = g.ecount()
     return totalGraphGeographicalDiversity(g, l) * e
 
-def functionality(g, i, v, attack):
+def functionality(g, attack, v = 0, i = 0):
     """
     g: Graph
-    i: Attack numer i that eliminates vertex v_i
-    v: Vertex
-    attack: Attack sequence
+    attack: Sequence of vertices that represents the attack
+    v: Vertex, default = 0
+    i: Attack number i that eliminates vertex v_i, default = 0
+    return: Functionality of vertex v after the attack number i that eliminates vertex vi 
     """
-    v = g.vcount()
-    if(i > v):
-        raise Exception('i can not be greater than the total number of vertices')
     result = np.zeros(i + 1)
     result[0] = 1
     k = 1
@@ -114,12 +109,11 @@ def functionality(g, i, v, attack):
         aux.delete_edges([attack[k]])
     return result[i]
 
-def functionalityLoss(g, v, attack):
+def functionalityLoss(g, attack, v=0):
     """
     g: Graph
-    v: Vertex
-    k: Number of attacks
     attack: Attack sequence
+    v: Vertex, dafault = 0
     return: The sum of the differences of vertex functionality before and after the attack over the sequence of k attacks
     """
     sum = 0
@@ -132,7 +126,7 @@ def globalFunctionalityLoss(g, attack):
     """
     g: Graph
     attack: Attack sequence
-    edge: Condition that indicates if the attack is for edges
+    return: The sum of functionality loss over all vertices in the graph that aren't removed in the attack
     """
     sum = 0
     v = g.vcount()
@@ -145,8 +139,8 @@ def shortestTemporalDistance(g, s, d, t2):
     g: Graph
     s: Source vertex
     d: Destination vertex
-    t2: 
-    return:
+    t2: Limit of the time window
+    return: the smallest length among all the temporal paths between nodes s and d in time window [0, t2]
     """
     if(g.vertex_disjoint_paths(s, d, neighbors = "ignore") != 0): #If there is a way between vertex s and d
         path_len = g.shortest_paths_dijkstra(s, d)[0]
@@ -155,11 +149,11 @@ def shortestTemporalDistance(g, s, d, t2):
         else:
             return path_len
 
-def temporalEfficiency(g, t2):
+def temporalEfficiency(g, t2=1):
     """
     g: Graph
-    t2:
-    return:
+    t2: Limit of temporal distance, default= 1
+    return: The way in which the efficiency of g degrades after an elimination
     """
     sum = 0
     v = g.vcount()
@@ -170,10 +164,10 @@ def temporalEfficiency(g, t2):
                     sum += (1 / shortestTemporalDistance(g, i, j, t2))
     return (1 / (v * (v - 1))) * sum
 
-def deltaEfficiency(g, i):
+def deltaEfficiency(g, i=0):
     """
     g: Graph
-    i: Vertex
+    i: Vertex, default = 0
     return: Efficiency of vertex i
     """
     sum = 0
@@ -184,11 +178,24 @@ def deltaEfficiency(g, i):
                     sum += (1 / shortestTemporalDistance(g, i, j, float('inf')))
     return (1 / (v - 1)) * sum
 
-def fragility(g, t2):
+def get_edges(g, k):
     """
     g: Graph
-    t2:
-    return
+    v: Vertex
+    return: A list of all links id connected to vertex k
+    """
+    neighbors = g.neighbors(k)
+    result = []
+    for n in neighbors:
+        edge_id = g.get_eid(k, n)
+        result.append(edge_id)
+    return result
+
+def fragility(g, t2=1):
+    """
+    g: Graph
+    t2: Limit of temporal distance, default= 1
+    return: The average delta efficiency over single-vertex removals
     """
     sum = 0
     v = g.vcount()
@@ -196,16 +203,20 @@ def fragility(g, t2):
         g_k = g.copy()
         v_k = list(range(v))
         v_k.remove(k)
-        #TODO: remove all links connected to node k
+        #Remove all links connected to node k
+        edges = get_edges(g_k, k)
+        for edge in sorted(edges, reverse= True):
+                g_k.delete_edges(edge)
         for i in v_k:
             for j in v_k:
                 if(i != j and g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0 and g_k.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
                     sum += (1 / shortestTemporalDistance(g, i, j, t2)) - (1 / shortestTemporalDistance(g_k, i, j, t2))
     return (1 / (v * (v - 1) * (v - 2)) * sum) 
 
-def dynamicFragility(g, t2):
+def dynamicFragility(g, t2=1):
     """
     g: Graph
-    t2:
+    t2: Limit of temporal distance, default= 1
+    return: The average delta efficiency over all vertices, weighted by the failure probability of each vertex
     """
     return 1 - fragility(g, t2)

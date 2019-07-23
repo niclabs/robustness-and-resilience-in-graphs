@@ -13,10 +13,10 @@ def hubDensity(g):
         sum += len(c)
     return sum / n_components
 
-def definition523(g, k, degreeProduct= True):
+def definition523(g, k= 1, degreeProduct= True):
     """
     g: Graph
-    k: Number of edge removal
+    k: Number of edge removal, default = 1
     degreeProduct: Degree product is the strategy for the removal, if false, edge betweenness
     return: The average fraction of edges in the largest connected component after k edge removals
     """

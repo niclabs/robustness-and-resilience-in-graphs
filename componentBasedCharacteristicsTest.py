@@ -30,16 +30,16 @@ class connectivityRobustnessFunctionTest(unittest.TestCase):
     
     def testTwoVertexGraph(self):
         beforeNumberVertices = self.twoVertexGraph.vcount()
-        self.assertEqual(connectivityRobustnessFunction(self.twoVertexGraph, self.twoVertexGraphK), self.twoVertexGraphResult) #Aqui
+        self.assertEqual(connectivityRobustnessFunction(self.twoVertexGraph, k= self.twoVertexGraphK), self.twoVertexGraphResult) #Aqui
         afterNumberVertices = self.twoVertexGraph.vcount()
         self.assertEqual(beforeNumberVertices, afterNumberVertices)
     
     def testGraph(self):
         #k = 2
-        self.assertEqual(connectivityRobustnessFunction(self.graph, self.k2), self.k2result)
+        self.assertEqual(connectivityRobustnessFunction(self.graph, k= self.k2), self.k2result)
 
         #k1
-        result = connectivityRobustnessFunction(self.graph, self.k1)
+        result = connectivityRobustnessFunction(self.graph, k=self.k1)
         self.assertTrue(result == self.k1result1 or (result < self.k1result2 + self.delta and result > self.k1result2 - self.delta))
 
 class kResilienceFactorTest(unittest.TestCase):
@@ -62,21 +62,21 @@ class kResilienceFactorTest(unittest.TestCase):
     
     def testTwoVertexGraph(self):
         #Remove 0 
-        self.assertEqual(kResilienceFactor(self.twoVertexGraph, self.twoVertexGraphK1), self.twoVertexGraphResultK1)        
+        self.assertEqual(kResilienceFactor(self.twoVertexGraph, k=self.twoVertexGraphK1), self.twoVertexGraphResultK1)        
         beforeNumberVertices = self.twoVertexGraph.vcount()
         #Remove 1 vertex
-        self.assertEqual(kResilienceFactor(self.twoVertexGraph, self.twoVertexGraphK2), self.twoVertexGraphResultK2)
+        self.assertEqual(kResilienceFactor(self.twoVertexGraph, k=self.twoVertexGraphK2), self.twoVertexGraphResultK2)
         afterNumberVertices = self.twoVertexGraph.vcount()
         self.assertEqual(beforeNumberVertices, afterNumberVertices) 
         #Remove all vertices
-        self.assertEqual(kResilienceFactor(self.twoVertexGraph, self.twoVertexGraphK3), self.twoVertexGraphResultK3)
+        self.assertEqual(kResilienceFactor(self.twoVertexGraph, k=self.twoVertexGraphK3), self.twoVertexGraphResultK3)
 
     def testGraph(self):
-        r1 = kResilienceFactor(self.graph, self.graphK2)
+        r1 = kResilienceFactor(self.graph, k=self.graphK2)
         self.assertTrue(r1 > self.graphK2result - self.delta)
         self.assertTrue(r1 < self.graphK2result + self.delta)
 
-        r2 = kResilienceFactor(self.graph, self.graphK3)
+        r2 = kResilienceFactor(self.graph, k=self.graphK3)
         self.assertTrue(r2 > self.graphK3result1 - self.delta or r2 > self.graphK3result2 - self.delta)
         self.assertTrue(r2 < self.graphK3result1 + self.delta or r2 < self.graphK3result2 + self.delta)
 

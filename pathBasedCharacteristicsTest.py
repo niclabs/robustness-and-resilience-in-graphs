@@ -14,12 +14,12 @@ class pairwiseDisconnectivityIndexTest(unittest.TestCase):
         self.directedv1Result = 11/14
     
     def testGraph(self):
-        r1 = pairwiseDisconnectivityIndex(self.graph, self.graphv2)
+        r1 = pairwiseDisconnectivityIndex(self.graph, vertex=self.graphv2)
         self.assertTrue(r1 > self.graphv2Result - self.delta)
         self.assertTrue(r1 < self.graphv2Result + self.delta)
     
     def testDirectedGraph(self):
-        r1 = pairwiseDisconnectivityIndex(self.directed, self.directedv1)
+        r1 = pairwiseDisconnectivityIndex(self.directed, vertex=self.directedv1)
         self.assertTrue(r1 > self.directedv1Result - self.delta)
         self.assertTrue(r1 < self.directedv1Result + self.delta)
 
@@ -54,24 +54,24 @@ class kVertexFailureResilienceTest(unittest.TestCase):
     
     def testSimpleGraph(self):
         #k = 0
-        self.assertTrue(kVertexFailureResilience(self.simpleGraph, self.ssListSimple, 0))
+        self.assertTrue(kVertexFailureResilience(self.simpleGraph, self.ssListSimple, k=0))
 
         #k = 1
-        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 1))
+        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, k=1))
 
         #k = 2
-        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 2))
+        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, k=2))
     
     def testSimpleGraphException(self):
         with self.assertRaises(Exception) as context:
-            kVertexFailureResilience(self.simpleGraph, self.ssListSimple, self.simpleGraph.vcount() + 1)
+            kVertexFailureResilience(self.simpleGraph, self.ssListSimple, k= self.simpleGraph.vcount() + 1)
 
         self.assertTrue('Number of vertices to fail can not be greater than the total vertices' in str(context.exception))
 
     def testGraph(self):
-        self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, 1))
-        self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, 2))
-        self.assertFalse(kVertexFailureResilience(self.graph, self.graphList, 3))
+        self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, k=1))
+        self.assertTrue(kVertexFailureResilience(self.graph, self.graphList, k=2))
+        self.assertFalse(kVertexFailureResilience(self.graph, self.graphList, k=3))
 
 class vertexResilienceTest(unittest.TestCase):
     def setUp(self):
@@ -99,22 +99,22 @@ class kEdgeFailureResilienceTest(unittest.TestCase):
     
     def testSimpleGraph(self):
         #k = 0
-        self.assertTrue(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 0))
+        self.assertTrue(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, k=0))
 
         #k = 1
-        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, 1))
+        self.assertFalse(kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, k=1))
 
     def testSimpleGraphException(self):
         with self.assertRaises(Exception) as context:
-            kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, self.simpleGraph.ecount() + 1)
+            kEdgeFailureResilience(self.simpleGraph, self.ssListSimple, k= self.simpleGraph.ecount() + 1)
 
         self.assertTrue('Number of edges to fail can not be greater than the total edges' in str(context.exception))
 
     def testGraph(self):
-        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, 0))
-        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, 1))
-        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, 2))
-        self.assertFalse(kEdgeFailureResilience(self.graph, self.graphList, 3))
+        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, k=0))
+        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, k=1))
+        self.assertTrue(kEdgeFailureResilience(self.graph, self.graphList, k=2))
+        self.assertFalse(kEdgeFailureResilience(self.graph, self.graphList, k=3))
 
 class edgeResilienceTest(unittest.TestCase):
     def setUp(self):
@@ -183,22 +183,22 @@ class pathDiversityTest(unittest.TestCase):
         self.directedResult = 1 - (2/5)
     
     def testGraph(self):
-        result= pathDiversity(self.graph, 0, 3, self.seed)
+        result= pathDiversity(self.graph, 3, s=0, seed= self.seed)
         self.assertTrue(result > self.result - self.delta)
         self.assertTrue(result < self.result + self.delta)
 
-        self.assertEqual(pathDiversity(self.graph, 0, 2, self.seed), 0)
+        self.assertEqual(pathDiversity(self.graph, 2, s=0, seed= self.seed), 0)
     
     def testDirectedGraph(self):
-        result = pathDiversity(self.directed, 0, 4, self.seed)
+        result = pathDiversity(self.directed, 4, s=0, seed=self.seed)
         self.assertTrue(result > self.directedResult - self.delta)
         self.assertTrue(result < self.directedResult + self.delta)
 
-        self.assertEqual(pathDiversity(self.graph, 0, 5, self.seed), 0)
+        self.assertEqual(pathDiversity(self.graph, 5, s=0, seed=self.seed), 0)
     
     def testDirectedGraphException(self):
         with self.assertRaises(Exception) as context:
-            pathDiversity(self.directed, 3, 0, 0)
+            pathDiversity(self.directed, 0, s=3, seed=0)
         
         self.assertTrue('There is no path between s and d' in str(context.exception))
     

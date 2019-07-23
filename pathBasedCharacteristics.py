@@ -2,11 +2,11 @@ import itertools
 import random
 from igraph import *
 
-def pairwiseDisconnectivityIndex(g, v):
+def pairwiseDisconnectivityIndex(g, v=0):
     """
     g: Graph
-    v: Vertex
-    return
+    v: Vertex, default = 0
+    return: The pairwise disconnectivity of vertex v
     """
     N0 = 0
     vertices = g.vcount()
@@ -33,7 +33,6 @@ def fragmentation(g, strategy, args):
     g: Graph
     strategy: Function that makes the removal, returns a graph. strategy(g, args)
     args: Arguments for strategy
-    return: 
     """
     N = g.vcount()
     if(N == 1):
@@ -49,7 +48,6 @@ def selfSufficiency(g, l):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    return:
     """
     comp = g.components()
     for c in comp:
@@ -66,12 +64,11 @@ def selfSufficiency(g, l):
                     return False
     return True
 
-def kVertexFailureResilience(g, l, k):
+def kVertexFailureResilience(g, l, k= 1):
     """
     g: Graph
-    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    k: Number of vertices that fail
-    return:
+    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]] 
+    k: Number of vertices that fail, default = 1
     """
     if k == 0:
         return selfSufficiency(g, l)
@@ -96,15 +93,15 @@ def resilience(g, l, function):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    function:
+    function: kVertexFailureResilience or kEdgeFailureResilience
     return: The largest k for which g is function resilient
     """
-    k = 1
+    k_i = 1
     while(True):
-        if(function(g, l, k)):
-            k += 1
+        if(function(g, l, k= k_i)):
+            k_i += 1
         else:
-            return k - 1
+            return k_i - 1
 
 def vertexResilience(g, l):
     """
@@ -114,11 +111,11 @@ def vertexResilience(g, l):
     """
     return resilience(g, l, kVertexFailureResilience)
 
-def kEdgeFailureResilience(g, l, k):
+def kEdgeFailureResilience(g, l, k=1):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    k: Number of edges that fail
+    k: Number of edges that fail, default = 1
     """
     if k == 0:
         return selfSufficiency(g, l)
@@ -180,12 +177,12 @@ def getSimplePath(g, s, d, seed):
                 actual = s
     return [nodes, edges]
 
-def pathDiversity(g, s, d, seed):
+def pathDiversity(g, d, s=0,  seed=0):
     """
-    g: Graph
-    s: Source vertex
+    g: Graph  
     d: Destination vertex
-    seed: Seed for randomize
+    s: Source vertex, default=0
+    seed: Seed for randomize, default = 0
     """
     if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
         raise Exception('There is no path between s and d')
@@ -196,12 +193,12 @@ def pathDiversity(g, s, d, seed):
     N = list(set(N0) & set(Nk)) #Intersection
     return 1 - (len(L) + len(N))/(len(L0) + len(N0))
 
-def percolatedPath(g, s, d, state):
+def percolatedPath(g, d, s=0, state='state'):
     """
     g: Graph
-    s: Source vertex
     d: Destination vertex
-    state: Name of the parameter that indicates the percolation state
+    s: Source vertex, default = 0
+    state: Name of the parameter that indicates the percolation state, default='state'
     return: The shortest path from s to d such that s is infected
     """
     if(g.vs[s].attributes()[state] == 0):
@@ -210,11 +207,11 @@ def percolatedPath(g, s, d, state):
         raise Exception('There is no path between s and d')
     return g.get_shortest_paths(s, d)[0]
 
-def percolationCentrality(g, v, state):
+def percolationCentrality(g, v=0, state='state'):
     """
     g: Graph
-    v: Vertex
-    state: Name of the parameter that indicates the percolation state
+    v: Vertex, default=0
+    state: Name of the parameter that indicates the percolation state, default='state'
     """
     n = g.vcount()
     if (n == 2):

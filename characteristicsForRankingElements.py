@@ -6,7 +6,14 @@ from scipy import linalg
 import sys
 import sympy as sym
 
-def vertexLoad(g, v, n):
+def vertexLoad(g, v=0, n=1):
+    """
+    g: Graph
+    v: Vertex, default=0
+    n: Power, default = 1
+    return: The degree of vertex v multiplied by the sum of the degrees of its neighbors elevated
+            to a power
+    """
     neighbors = g.neighbors(v)
     nDegree = g.degree(neighbors)
     s = sum(nDegree)
@@ -17,7 +24,7 @@ def randomWalk(g, i, t, s= 0):
    g: Graph
    i: Source vertex
    t: Target
-   s: Seed for randomize
+   s: Seed for randomize, default = 0
    return: Random walk between s and t, list where each element is a vertex
    """
    if (g.vertex_disjoint_paths(i, t, neighbors = "ignore") == 0): #If there is no path between s and t
@@ -72,11 +79,11 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
                             sum[v] += walk.count(v)
     return sum
 
-def criticality(g, v, w, edge = False, s = 0):
+def criticality(g, v=0, w='weight', edge = False, s = 0):
     """
     g: Graph
-    v: Vertex or edge for criticality
-    w: String that represent the weight attributte in the graph
+    v: Vertex or edge for criticality, default=0
+    w: String that represent the weight attributte in the graph, default='weight'
     edge: Condition that indicates if v is an edge
     s: Seed for randomize
     return: The random-walk betweenness of an element normalized by the weight of the element
@@ -108,31 +115,31 @@ def entropyRankFromMatrix(m, i):
 
     return u_vector[i] * v_vector[i]
 
-def entropyRank(g , i):
+def entropyRank(g , i=0):
     """
     g: Graph
-    i: vertex
+    i: vertex, defualt=0
     return: the entropy rank of vertex i
     """
     m = np.array(g.get_adjacency().data)
     return entropyRankFromMatrix(m, i)
 
-def freeEnergyRank(g, i, e):
+def freeEnergyRank(g, i=0, e=0.01):
     """
     g: Graph
-    i: verterx
-    e: Small number that replaces zeros in the adjacency matrix
+    i: verterx, default = 0
+    e: Small number that replaces zeros in the adjacency matrix, default = 0.01
     return: the free energy rank of vertex i
     """
     m = np.array(g.get_adjacency().data)
     m[m == 0] = e
     return entropyRankFromMatrix(m, i)
 
-def bridgeness(g, i, j):
+def bridgeness(g, i=0, j=1):
     """
-    g: Graph
-    i: First component of the edge
-    j: Second component of the edge
+    g: Graph, assumes exists edge (0,1) by default
+    i: First component of the edge, default=0
+    j: Second component of the edge default=1
     """
     if(not g.are_connected(i,j)):
         raise Exception("Edge doesn't exist")
@@ -154,10 +161,10 @@ def bridgeness(g, i, j):
 
     return math.sqrt(Si * Sj) / Se
 
-def coveringDegree(g, v):
+def coveringDegree(g, v=0):
     """
     g: Graph
-    v: Vertex
+    v: Vertex, defualt = 0
     return: The number of minimal vertex cover that contains v
     """
     m = np.array(g.get_adjacency().data)
@@ -217,10 +224,10 @@ def MCV(g):
             result.append(cover)
     return result
 
-def coveringIndex(g, v):
+def coveringIndex(g, v=0):
     """
     g: Graph
-    v: Vertex
+    v: Vertex, default=0
     """
     m = g.get_adjacency().data
     c = len(mcv(m, [], [], g.is_directed()))
@@ -232,13 +239,13 @@ def coveringIndex(g, v):
     b = coveringDegree(g, v)
     return a + b/c
 
-def sensitivity(g, f, w, t, k):
+def sensitivity(g, f, t, k, w='weight'):
     """
     g:Graph
     f: Centrality function: f(M), where M is the adjacency matrix
-    w: Name of the weight attribute in the graph g
-    t:
-    k:
+    t: Number of the argument in the adjacency matrix function, ex: A(t_0, ..., t_n)
+    k: Variation matrix is with respect to node k
+    w: Name of the weight attribute in the graph g, default='weight'
     return: The sensitivity matrix
     """
     h = sym.Symbol('h')

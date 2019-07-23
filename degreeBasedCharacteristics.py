@@ -5,7 +5,6 @@ from igraph import *
 def degreeEntropy(g):
     """
     g: Graph
-    return:
     """
     sum = 0
     for i in range(1, g.vcount()):
@@ -16,7 +15,6 @@ def degreeEntropy(g):
 def relativeEntropy(g):
     """
     g: Graph
-    return
     """
     n = g.vcount()
     pk = getDegreeDistribution(g)
@@ -28,7 +26,7 @@ def relativeEntropy(g):
 def getProbabilityDegree(g, k, myMode='ALL'):
     """
     g: Graph
-    k:
+    k: 
     myMode: degree distribution mode, it can be 'ALL', 'IN' or 'OUT'
     return: The probability p(k) of the degree distribution
     """
@@ -40,8 +38,7 @@ def getProbabilityDegree(g, k, myMode='ALL'):
         if(min <= k):
             acc += b[2]
         else:
-            break
-    
+            break   
     return acc / g.vcount()
 
 def getDegreeDistribution(g, myMode='ALL'):
@@ -56,6 +53,5 @@ def getDegreeDistribution(g, myMode='ALL'):
     i = 0
     for b in bins:
         p_k[i] += b[2]
-        i += 1
-    
+        i += 1   
     return p_k / g.vcount()

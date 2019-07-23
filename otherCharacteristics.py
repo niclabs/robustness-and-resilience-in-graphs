@@ -2,10 +2,10 @@ from igraph import *
 import numpy as np
 
 
-def effectiveGraphResistance(g, weight):
+def effectiveGraphResistance(g, weight='weight'):
     """
     g: Graph
-    w: Name of the attribute that contains the weight of each edge
+    w: Name of the attribute that contains the weight of each edge, default = 'weight'
     return: The sum of all effective resistances between all pairs in a network
     """
     q = g.laplacian(weights = weight)
@@ -32,11 +32,11 @@ def viralConductance(g):
     mean = sum / (max + 1)  
     return max * mean
 
-def probis(g, i, s):
+def probis(g, i= 0, s= 0):
     """
     g: Graph
-    i: Vertex
-    s: State
+    i: Vertex, default = 0
+    s: State, default = 0
     return: probability that node i is infected at steady state s.
     """
     neighbors = g.neighbors(i)
@@ -45,11 +45,11 @@ def probis(g, i, s):
         sum += probis(g, j, s)
     return sum / (s + sum)
 
-def y(g, s):
+def y(g, s=0):
     """
     g: Graph
-    s:
-    return: Fraction of infected nodes
+    s: State, default = 0
+    return: Fraction of infected nodes at state s
     """
     sum = 0
     v = g.vcount()

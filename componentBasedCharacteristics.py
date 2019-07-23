@@ -4,12 +4,12 @@ import random
 import itertools
 import math
 
-def splittingNumber(g, k, seed, numOfLoops,  dev= 1):
+def splittingNumber(g, k, numOfLoops=1, seed=0, dev= 1):
     """
     g: Graph
-    k: Number of components 
-    seed: Seed for randomize, if seed = 0, this parameter is not used
-    numOfLoops: Parameter for the algorithm
+    k: Number of components   
+    numOfLoops: Parameter for the algorithm, default = 1
+    seed: Seed for randomize, if seed = 0, this parameter is not used, default=0
     dev: Parameter for the algorithm, standard deviation
     return: The average number of edges that need to be removed to break  g into k connected components, -1 if it's not possible
     """
@@ -47,11 +47,10 @@ def splittingNumber(g, k, seed, numOfLoops,  dev= 1):
         i += 1
     return -1
 
-def randomRobustnessIndex(g, m):
+def randomRobustnessIndex(g, m=1):
     """
     g: Graph
-    m:
-    return:
+    m: number of rounds of attacks, default=1
     """
     v = g.vcount()
     sum = 0
@@ -74,7 +73,7 @@ def randomRobustnessIndex(g, m):
 def robustnessMeasure53(g):
     """
     g: Graph
-    return:
+    return: Messure 5.3
     """
     aux = g.copy() #The function doesn't modify the graph
     n = aux.vcount()
@@ -94,10 +93,10 @@ def robustnessMeasure53(g):
         Ct += Ci
     return Ct / n
 
-def connectivityRobustnessFunction(g, k):
+def connectivityRobustnessFunction(g, k=1):
     """
     g: Graph
-    k: Number of vertices removed
+    k: Number of vertices removed, default = 1
     return 
     """
     n = g.vcount()
@@ -116,10 +115,10 @@ def connectivityRobustnessFunction(g, k):
                 S = compOrder
     return S / (n - k)
 
-def kResilienceFactor(g, k):
+def kResilienceFactor(g, k=2):
     """
     g: Graph
-    k:
+    k: k - 1 vertices will be removed, default k=2
     return: The percentage of connected components of g that remain connected after the removal k - 1 vertices 
     """
     n = g.vcount()
@@ -163,14 +162,13 @@ def resilienceFactor(g):
     result = np.zeros(n-2)
     for i in range(2, n):
         auxGraph = g.copy()
-        result[i-2] = kResilienceFactor(auxGraph, i)
+        result[i-2] = kResilienceFactor(auxGraph, k=i)
     return np.mean(result)
 
 def perturbationScore(g, p):
     """
     g: Graph
-    p: Perturbation function
-    return:
+    p: Perturbation function, returns a graph
     """
     aux = p(g)
     return perturbationScoreTwo(g, aux)
@@ -245,6 +243,3 @@ def maximunPerturbationScore(g1, g2):
     p12 = p1 - p2
     n1 = g1.vcount()
     return p12 / (n / n1)
-
-
-g = Graph([(0, 1), (1,2), (1,3), (3,4)])
