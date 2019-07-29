@@ -19,11 +19,11 @@ def vertexLoad(g, v=0, n=1):
     s = sum(nDegree)
     return (s * g.degree(v)) ** n
 
-def randomWalk(g, i, t, s= 0):
+def randomWalk(g, i=0, t=1, s= 0):
    """
    g: Graph
-   i: Source vertex
-   t: Target
+   i: Source vertex, default=0
+   t: Target, default=1
    s: Seed for randomize, default = 0
    return: Random walk between s and t, list where each element is a vertex
    """
