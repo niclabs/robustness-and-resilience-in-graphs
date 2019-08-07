@@ -3,6 +3,7 @@ from igraph import *
 import random
 import itertools
 import math
+from auxiliaryFunctions import *
 
 def splittingNumber(g, k, numOfLoops=1, seed=0, dev= 1):
     """
@@ -82,7 +83,7 @@ def robustnessMeasure53(g):
     Ct = 0
     for i in range(n):
         degrees = aux.degree()
-        v = np.argmax(degrees) #Vertex of maximun degree
+        v = np.argmax(degrees) #Vertex of maximum degree
         aux.delete_vertices([v])
         C = aux.components() #Components of the graph
         Ci = 0 #Order of the biggest component
@@ -173,29 +174,6 @@ def perturbationScore(g, p):
     aux = p(g)
     return perturbationScoreTwo(g, aux)
 
-def sizeMaxComponent(g):
-    """
-    g: Graph
-    return: The size of the biggest component in g
-    """
-    comp = g.components()
-    size = 0
-    for c in comp:
-        actual_size = len(c)
-        if(actual_size > size):
-            size = actual_size
-    return size
-
-def perturbationScoreTwo(g1, g2):
-    """
-    g1: Graph before the perturbation
-    g2: Graph after the perturbation
-    return: The perturbation score given two graphs
-    """
-    before = sizeMaxComponent(g1)
-    after = sizeMaxComponent(g2)
-    return (before - after)/ before
-
 def preferentialPerturbation(g1, g2):
     """
     g1: Graph
@@ -223,7 +201,7 @@ def preferentialPerturbation(g1, g2):
     return nodes
 
 
-def maximunPerturbationScore(g1, g2):
+def maximumPerturbationScore(g1, g2):
     """
     g1: Graph
     g2: Graph

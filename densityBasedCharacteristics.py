@@ -1,5 +1,6 @@
 from igraph import *
 import numpy as np
+from auxiliaryFunctions import *
 
 def hubDensity(g):
     """
@@ -35,25 +36,3 @@ def definition523(g, k= 1, degreeProduct= True):
                 max_len = c
         sum += max_len
     return sum / k
-
-def maxDegreeProduct(g):
-    """
-    g: Graph
-    return: Edge id of the edge with the max degree product
-    """
-    m = g.ecount()
-    degree = np.zeros(m)
-    for i in range(m):
-        s = g.get_edgelist()[i: i+1][0][0] #Source vertex of the edge
-        d = g.get_edgelist()[i: i+1][0][1] #Destination vertex of the edge
-        degree[i] = g.degree(s) * g.degree(d)
-
-    return degree.index(max(degree))
-
-def maxEdgeBetweenness(g):
-    """
-    g: Graph
-    return: Edge id of the edge with the max edge betweenness
-    """
-    bet = g.edge_betweenness(directed=g.is_directed())
-    return bet.index(max(bet))

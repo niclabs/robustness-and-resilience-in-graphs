@@ -2,6 +2,7 @@ import math
 import itertools
 import numpy as np
 from igraph import *
+from auxiliaryFunctions import *
 
 def geographicalDiversity(g, p):
     """
@@ -26,30 +27,6 @@ def geographicalDiversity(g, p):
         return m
     else:
         raise Exception('There is no path between any node members of vector p and the shortest path')
-
-def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
-    """
-    g: Graph
-    s: Source vertex
-    d: Destination vertex
-    visited: List of booleans each represent if the vertex is visited, type: numpy array
-    partial: Partial path
-    result: actual result
-    return: A list of all the simple paths between vertex s and d
-    """
-    partial.append(s)
-    visited[s] = True
-    if(s == d):
-        result.append(partial)
-        return result
-    neighbors = g.neighbors(s)
-    for n in neighbors:
-        partial_aux = partial.copy()
-        visited_aux = visited.copy()
-        if (not visited[n]):
-            result = getAllSimplePaths(g, n, d, visited_aux, partial_aux, result)
-            visited[n] = True
-    return result
 
 def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     """
@@ -133,21 +110,6 @@ def globalFunctionalityLoss(g, attack):
     for i in range(v):
         if i not in attack:
             sum += functionalityLoss(g, i, attack)
-        
-def shortestTemporalDistance(g, s, d, t2):
-    """
-    g: Graph
-    s: Source vertex
-    d: Destination vertex
-    t2: Limit of the time window
-    return: the smallest length among all the temporal paths between nodes s and d in time window [0, t2]
-    """
-    if(g.vertex_disjoint_paths(s, d, neighbors = "ignore") != 0): #If there is a way between vertex s and d
-        path_len = g.shortest_paths_dijkstra(s, d)[0]
-        if(path_len > t2):
-            return float('inf')
-        else:
-            return path_len
 
 def temporalEfficiency(g, t2=1):
     """
@@ -177,19 +139,6 @@ def deltaEfficiency(g, i=0):
             if(g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
                     sum += (1 / shortestTemporalDistance(g, i, j, float('inf')))
     return (1 / (v - 1)) * sum
-
-def get_edges(g, k):
-    """
-    g: Graph
-    v: Vertex
-    return: A list of all links id connected to vertex k
-    """
-    neighbors = g.neighbors(k)
-    result = []
-    for n in neighbors:
-        edge_id = g.get_eid(k, n)
-        result.append(edge_id)
-    return result
 
 def fragility(g, t2=1):
     """

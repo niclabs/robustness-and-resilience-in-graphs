@@ -2,24 +2,7 @@ import numpy as np
 import math
 from scipy import heaviside
 from igraph import *
-
-def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, abs= True):
-    """
-    Auxiliary function
-    eigenvalues: Array of eigenvalues
-    eigenvectors: Array of eigenvector
-    asc: Sort reverse
-    abs: Take tha absolute value to compare
-    return: Sorted eigen values and eigen vectors, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
-    """
-    pairs = zip(eigenvalues, eigenvectors)
-    if abs:
-        values, vectors = zip(*(sorted(pairs, key = lambda t: abs(t[0]), reverse= asc)))
-    else:
-        values, vectors = zip(*(sorted(pairs, key = lambda t: t[0], reverse= asc)))
-    eigenvalues = np.array(values)
-    eigenvectors = np.array(vectors)
-    return eigenvalues, eigenvectors
+from auxiliaryFunctions import *
 
 def reconstructabilityCoefficient(g):
     """
@@ -94,18 +77,6 @@ def redundancyOfAlternativePaths(g):
     return:
     """
     return closedWalkNumber(g)
-
-def naturalConAux(m):
-    """
-    Auxiliary function for natural connectivity, used to calculate the natural connectivity of the components of a graph
-    m: Adjacency matrix of a component
-    """
-    eigenvalues = np.linalg.eig(m)[0]
-    n = len(eigenvalues)
-    exp = np.exp(eigenvalues)
-    sum = np.sum(exp)
-    return np.log(sum / n)
-    
 
 def naturalConnectivity(g):
     """

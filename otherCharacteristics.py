@@ -1,5 +1,6 @@
 from igraph import *
 import numpy as np
+from auxiliaryFunctions import *
 
 
 def effectiveGraphResistance(g, weight='weight'):
@@ -31,28 +32,3 @@ def viralConductance(g):
         sum += y(g, i) 
     mean = sum / (max + 1)  
     return max * mean
-
-def probis(g, i= 0, s= 0):
-    """
-    g: Graph
-    i: Vertex, default = 0
-    s: State, default = 0
-    return: probability that node i is infected at steady state s.
-    """
-    neighbors = g.neighbors(i)
-    sum = 0
-    for j in neighbors:
-        sum += probis(g, j, s)
-    return sum / (s + sum)
-
-def y(g, s=0):
-    """
-    g: Graph
-    s: State, default = 0
-    return: Fraction of infected nodes at state s
-    """
-    sum = 0
-    v = g.vcount()
-    for i in range(v):
-        sum += probis(g,i, s)
-    return 1 / (v * sum)

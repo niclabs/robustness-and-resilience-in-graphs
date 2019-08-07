@@ -1,6 +1,7 @@
 import itertools
 import random
 from igraph import *
+from auxiliaryFunctions import *
 
 def pairwiseDisconnectivityIndex(g, v=0):
     """
@@ -88,21 +89,6 @@ def kVertexFailureResilience(g, l, k= 1):
                 return False
     return True
 
-
-def resilience(g, l, function):
-    """
-    g: Graph
-    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    function: kVertexFailureResilience or kEdgeFailureResilience
-    return: The largest k for which g is function resilient
-    """
-    k_i = 1
-    while(True):
-        if(function(g, l, k= k_i)):
-            k_i += 1
-        else:
-            return k_i - 1
-
 def vertexResilience(g, l):
     """
     g: Graph
@@ -141,41 +127,6 @@ def edgeResilience(g, l):
     return: The largest k for which g is k edge-failure resilient
     """
     return resilience(g, l, kEdgeFailureResilience)
-
-def getSimplePath(g, s, d, seed):
-    """
-    Auxiliary function
-    g: Graph
-    s: Source vertex
-    d: Destination vertex
-    seed: Seed for randomize, if seed = 0, this parameter is not used
-    return: [[List of nodes of the path], [List of edges of the path]]
-    """
-    if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
-        raise Exception('There is no path between s and d')
-    nodes = [s]
-    edges = []
-    actual = s
-    if(seed):
-        random.seed(seed)
-    while(actual != d):
-        neighbors = g.neighbors(actual, mode= "out")
-        if (len(neighbors) == 0):
-            nodes = [s]
-            edges = []
-            actual = s
-        else:
-            new = random.choice(neighbors)
-            if not new in nodes:
-                edgeId = g.get_eid(actual, new)
-                nodes.append(new)
-                edges.append(edgeId)
-                actual = new
-            else:
-                nodes = [s]
-                edges = []
-                actual = s
-    return [nodes, edges]
 
 def pathDiversity(g, d, s=0,  seed=0):
     """

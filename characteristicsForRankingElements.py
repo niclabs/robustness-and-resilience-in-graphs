@@ -5,6 +5,7 @@ import math
 from scipy import linalg
 import sys
 import sympy as sym
+from auxiliaryFunctions import *
 
 def vertexLoad(g, v=0, n=1):
     """
@@ -18,42 +19,6 @@ def vertexLoad(g, v=0, n=1):
     nDegree = g.degree(neighbors)
     s = sum(nDegree)
     return (s * g.degree(v)) ** n
-
-def randomWalk(g, i=0, t=1, s= 0):
-   """
-   g: Graph
-   i: Source vertex, default=0
-   t: Target, default=1
-   s: Seed for randomize, default = 0
-   return: Random walk between s and t, list where each element is a vertex
-   """
-   if (g.vertex_disjoint_paths(i, t, neighbors = "ignore") == 0): #If there is no path between s and t
-       return []
-   if(s):
-       random.seed(s)
-   l = [i]
-   actual = i
-   while(actual != t):
-       neighbors = g.neighbors(actual, mode='OUT')
-       if len(neighbors) == 0:
-           actual = i
-           l = [i]
-       else:
-           n = random.choice(neighbors)
-           l.append(n)
-           actual = n
-   return l
-
-def vertexWalkToEdgesWalk(g, l):
-    """
-    g: Graph
-    l: List, random walk
-    return: Converts a list of vertices into a list of edges
-    """
-    new_l = []
-    for i in range(len(l) - 1):
-        new_l.append(g.get_eid(l[i], l[i+1]))
-    return new_l
 
 def randomWalkBetweenness(g, edge = False, seed = 0):
     """
@@ -96,24 +61,6 @@ def criticality(g, v=0, w='weight', edge = False, s = 0):
     if weight == 0:
         return 0
     return betweenness[v] / weight
-
-def entropyRankFromMatrix(m, i):
-    """
-    m: Adjancecy matrix
-    i: vertex
-    return: the entropy rank of vertex i
-    """
-    w, u, v = linalg.eig(m, left = True)
-    w_index = np.argmax(w)
-    u_vector = u[w_index]
-    v_vector = v[w_index]
-    #Normalize u_vector, sum(u_vector_i) = 1
-    sum_u = np.sum(u_vector)
-    u_vector = u_vector / sum_u
-    #Normalize v_vector, sum(u_vector_i * v_vector_i) = 1
-    v_vector = v_vector / np.dot(u_vector, v_vector)
-
-    return u_vector[i] * v_vector[i]
 
 def entropyRank(g , i=0):
     """
@@ -177,53 +124,6 @@ def coveringDegree(g, v=0):
             result += 1
     return result
 
-
-def mcv(m,result, partial,  directed):
-    """
-    m: Adjacency matrix of a graph
-    return: The set of minimal vertex covers of m
-    """
-    if (len(m) == 0):
-        return []
-    if (np.count_nonzero(m) == 0):
-        partial.sort()    
-        if not partial in result:
-            result.append(partial)
-        return result
-    else:
-        s = np.sum(m, axis = 0)
-        max = np.where(s > 0)[0] #Array that contains all vertex with incident edges
-        for u in max:
-            mc = np.copy(m)
-            partialCopy = list(partial)
-            if not directed:
-                #For each neighbor of u, delete incident edges
-                nu = np.where(mc[u] == 1)[0]
-                for i in nu:
-                    mc[:,i] = 0
-            mc[:,u] = 0
-            partialCopy.append(u)
-            result = mcv(mc, result, partialCopy, directed)
-        return result
-
-def MCV(g):
-    """
-    g: Graph
-    return: The set of minimum vertex covers of G
-    """
-    m = g.get_adjacency().data
-    covers = mcv(m, [], [], g.is_directed())
-    result = []
-    min = len(covers[0])
-    for cover in covers:
-        l = len(cover)
-        if l < min:
-            min = l
-    for cover in covers:
-        if(len(cover) == min):
-            result.append(cover)
-    return result
-
 def coveringIndex(g, v=0):
     """
     g: Graph
@@ -264,19 +164,3 @@ def sensitivity(g, f, t, k, w='weight'):
             dAdt[i][j] = value
     dfdA = sym.diff(f, M)
     return dfdA * dAdt
-
-def weightedMatrix(g, w):
-    """
-    g: Graph
-    w: Strings that represent the name of the edge weight attribute in the graph
-    return: The weighted adjacency matrix of graph g
-    """
-    m = g.get_adjacency().data
-    n = len(m)
-    for i in range(n):
-        for  j in range(n):
-            if(m[i][j] != 0):
-                e_id = g.get_eid(i,j)
-                e_weight = g.es[e_id].attributes()[w]
-                m[i][j] = e_weight
-    return m
