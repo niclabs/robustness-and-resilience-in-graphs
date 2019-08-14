@@ -5,7 +5,7 @@ import itertools
 import math
 from auxiliaryFunctions import *
 
-def splittingNumber(g, k, numOfLoops=1, seed=0, dev= 1):
+def splittingNumber(g, k=2, numOfLoops=1, seed=1, dev= 1):
     """
     g: Graph
     k: Number of components   
@@ -16,13 +16,13 @@ def splittingNumber(g, k, numOfLoops=1, seed=0, dev= 1):
     """
     givenComponents = k
     i = 0
-    cond = True
+    cond = givenComponents >= len(g.components())
 
     l = g.ecount()
     s = 0
     for j in range(1, l + 1):
         s += math.factorial(l) / (math.factorial(i) * math.factorial(l - i))
-    numOfLinks = np.zeros(s)
+    numOfLinks = np.zeros(int(s) + 1)
 
     if(seed):
         random.seed(seed)
@@ -40,7 +40,7 @@ def splittingNumber(g, k, numOfLoops=1, seed=0, dev= 1):
             auxGraph.delete_edges([linkId]) #interrup the link
             numOfComponents = len(auxGraph.components())#compute numOfComponents
 
-            if(i > 1 and i > numOfLoops):
+            if(i >= 1 and i >= numOfLoops):
                 mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
                 mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
                 if(abs(mean1 - mean2) < dev):
@@ -166,7 +166,7 @@ def resilienceFactor(g):
         result[i-2] = kResilienceFactor(auxGraph, k=i)
     return np.mean(result)
 
-def perturbationScore(g, p):
+def perturbationScore(g, p=perturbationFunction):
     """
     g: Graph
     p: Perturbation function, returns a graph

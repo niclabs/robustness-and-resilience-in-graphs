@@ -142,6 +142,22 @@ def perturbationScoreTwo(g1, g2):
     after = sizeMaxComponent(g2)
     return (before - after)/ before
 
+def perturbationFunction(g, seed=1):
+    """
+    This function perturbates a graph by deleting some vertices
+    g: Graph
+    return: A perturbated graph
+    """
+    aux = g.copy()
+    v = aux.vcount()
+    if(seed):
+        random.seed(seed)
+    c = random.randint(0,v)
+    for i in range(c):
+        v_id = random.randint(0, aux.vcount() - 1)
+        aux.delete_vertices(v_id)
+    return aux
+
 def getSimplePath(g, s, d, seed):
     """
     Auxiliary function
@@ -323,6 +339,18 @@ def criticalityOfVertex(g, v= 0, w= 'weight'):
         link_id = g.get_eid(n, v)
         sum += g.es[link_id].attributes()[w]
     return g.betweenness(v, directed=g.is_directed(), weights=w) / sum
+
+def weightFunction(u):
+    """
+    Auxiliary function for relative area index
+    """
+    return u ** 2
+
+def maxFlow(v, u):
+    """
+    Auxiliary function for relative area index
+    """
+    return v *2 +  u*2
 
 def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, abs= True):
     """

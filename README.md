@@ -43,6 +43,7 @@ Auxiliary features
 Auxiliary features:
 - [x] sizeMaxComponent
 - [x] perturbationScoreTwo
+- [x] PerturbationFunction
 
 5.2 Path-based characteristic
 - [x] Pairwise disconnectivity index + test
@@ -109,6 +110,10 @@ Auxiliary features
 
 - [x] Electrical nodal robustness
 - [x] Relative area index
+
+Auxiliary features:
+- [x] WeightFunction
+- [x] MaxFLow
 
 5.8 Spectral characteristics
 

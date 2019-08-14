@@ -4,7 +4,7 @@ import numpy as np
 from igraph import *
 from auxiliaryFunctions import *
 
-def geographicalDiversity(g, p):
+def geographicalDiversity(g, p=[0,1]):
     """
     g: Graph
     p: Vertex path between two nodes
@@ -17,8 +17,8 @@ def geographicalDiversity(g, p):
     cond = False
     for node in p:
         for node_s in shortestPath:
-            if(g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
-                distance = g.shortest_paths_dijkstra(node, node_s)[0]
+            if(node != node_s and g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
+                distance = g.shortest_paths_dijkstra(node, node_s)[0][0]
                 if(distance < m):
                     m = distance
                     cond = True
@@ -65,14 +65,16 @@ def compensatedTotalGeographicalGraphDiversity(g, l=1):
     e = g.ecount()
     return totalGraphGeographicalDiversity(g, l) * e
 
-def functionality(g, attack, v = 0, i = 0):
+def functionality(g, attack=[0], v = 0, i = 0):
     """
     g: Graph
-    attack: Sequence of vertices that represents the attack
+    attack: Sequence of vertices that represents the attack, this list must contain at least one vertex
     v: Vertex, default = 0
     i: Attack number i that eliminates vertex v_i, default = 0
     return: Functionality of vertex v after the attack number i that eliminates vertex vi 
     """
+    if(len(attack) == 0):
+        return -1
     result = np.zeros(i + 1)
     result[0] = 1
     k = 1
@@ -86,10 +88,10 @@ def functionality(g, attack, v = 0, i = 0):
         aux.delete_edges([attack[k]])
     return result[i]
 
-def functionalityLoss(g, attack, v=0):
+def functionalityLoss(g, attack=[0], v=0):
     """
     g: Graph
-    attack: Attack sequence
+    attack: Attack sequence, this list must contain at least one vertex
     v: Vertex, dafault = 0
     return: The sum of the differences of vertex functionality before and after the attack over the sequence of k attacks
     """
@@ -99,17 +101,18 @@ def functionalityLoss(g, attack, v=0):
         sum += functionality(g, i -1, v, attack) - functionality(g, i , v, attack)
     return sum
 
-def globalFunctionalityLoss(g, attack):
+def globalFunctionalityLoss(g, attack=[0]):
     """
     g: Graph
-    attack: Attack sequence
+    attack: Attack sequence, this list must contain at least one vertex
     return: The sum of functionality loss over all vertices in the graph that aren't removed in the attack
     """
     sum = 0
     v = g.vcount()
     for i in range(v):
         if i not in attack:
-            sum += functionalityLoss(g, i, attack)
+            sum += functionalityLoss(g, attack, i)
+    return sum
 
 def temporalEfficiency(g, t2=1):
     """

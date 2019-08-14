@@ -29,7 +29,7 @@ def pairwiseDisconnectivityIndex(g, v=0):
 
     return (N0 - Nv)/ N0
 
-def fragmentation(g, strategy, args):
+def fragmentation(g, strategy=perturbationFunction, args=1):
     """
     g: Graph
     strategy: Function that makes the removal, returns a graph. strategy(g, args)
@@ -128,7 +128,7 @@ def edgeResilience(g, l):
     """
     return resilience(g, l, kEdgeFailureResilience)
 
-def pathDiversity(g, d, s=0,  seed=0):
+def pathDiversity(g, d= 1, s=0,  seed=1):
     """
     g: Graph  
     d: Destination vertex
@@ -144,7 +144,7 @@ def pathDiversity(g, d, s=0,  seed=0):
     N = list(set(N0) & set(Nk)) #Intersection
     return 1 - (len(L) + len(N))/(len(L0) + len(N0))
 
-def percolatedPath(g, d, s=0, state='state'):
+def percolatedPath(g, d=1, s=0, state='state'):
     """
     g: Graph
     d: Destination vertex
