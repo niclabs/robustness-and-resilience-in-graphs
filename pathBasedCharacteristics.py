@@ -45,11 +45,13 @@ def fragmentation(g, strategy=perturbationFunction, args=1):
         sum+= len(comp)
     return sum / (N * (N - 1))
 
-def selfSufficiency(g, l):
+def selfSufficiency(g, l=0):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     """
+    if l == 0:
+        l = makeEmptyServices(g)
     comp = g.components()
     for c in comp:
         for vertex in c:
@@ -65,12 +67,14 @@ def selfSufficiency(g, l):
                     return False
     return True
 
-def kVertexFailureResilience(g, l, k= 1):
+def kVertexFailureResilience(g, l=0, k= 1):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]] 
     k: Number of vertices that fail, default = 1
     """
+    if l == 0:
+        l = makeEmptyServices(g)
     if k == 0:
         return selfSufficiency(g, l)
     v = g.vcount()
@@ -89,20 +93,24 @@ def kVertexFailureResilience(g, l, k= 1):
                 return False
     return True
 
-def vertexResilience(g, l):
+def vertexResilience(g, l=0):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     return: The largest k for which g is k vertex-failure resilient
     """
+    if l == 0:
+        l = makeEmptyServices(g)
     return resilience(g, l, kVertexFailureResilience)
 
-def kEdgeFailureResilience(g, l, k=1):
+def kEdgeFailureResilience(g, l=0, k=1):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     k: Number of edges that fail, default = 1
     """
+    if l == 0:
+        l = makeEmptyServices(g)
     if k == 0:
         return selfSufficiency(g, l)
     e = g.ecount()
@@ -120,12 +128,14 @@ def kEdgeFailureResilience(g, l, k=1):
                 return False
     return True
 
-def edgeResilience(g, l):
+def edgeResilience(g, l=0):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     return: The largest k for which g is k edge-failure resilient
     """
+    if l == 0:
+        l = makeEmptyServices(g)
     return resilience(g, l, kEdgeFailureResilience)
 
 def pathDiversity(g, d= 1, s=0,  seed=1):

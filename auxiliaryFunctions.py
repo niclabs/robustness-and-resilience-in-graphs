@@ -406,3 +406,14 @@ def y(g, s=0):
         sum += probis(g,i, s)
     return 1 / (v * sum)
 
+def makeEmptyServices(g):
+    """
+    g: Graph
+    return: A list of services per node in a graph [[[], []], ... , [[], []]]
+    """
+    l = []
+    v = g.vcount()
+    for i in range(v):
+        l.append([[], []])
+    return l
+
