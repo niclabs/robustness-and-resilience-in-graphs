@@ -417,3 +417,13 @@ def makeEmptyServices(g):
         l.append([[], []])
     return l
 
+def centralityFunction(M):
+    """
+    Example of centrality function
+    M: Adjacency matrix
+    """
+    n = len(M)
+    res = np.zeros(n)
+    for i in range(n):
+        res[i] = M[i][i] ** 2
+    return res

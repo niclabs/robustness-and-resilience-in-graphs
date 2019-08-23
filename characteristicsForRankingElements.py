@@ -139,28 +139,26 @@ def coveringIndex(g, v=0):
     b = coveringDegree(g, v)
     return a + b/c
 
-def sensitivity(g, f, t, k, w='weight'):
+def sensitivity(g, s=0, d=0, f=centralityFunction, w='weight'):
     """
-    g:Graph
-    f: Centrality function: f(M), where M is the adjacency matrix
-    t: Number of the argument in the adjacency matrix function, ex: A(t_0, ..., t_n)
-    k: Variation matrix is with respect to node k
+    g: Graph
+    f: Centrality function: f(M), where M is the adjacency matrix, returns an array of size n, with n number of vertices
     w: Name of the weight attribute in the graph g, default='weight'
-    return: The sensitivity matrix
+    return: Sensitivity of node s with respect to node d
     """
+    M = weightedMatrix(g, w)
+    f_M = f(M)
+    n = len(M)
+    dfdA = np.gradient(f_M)
+    dAdt = np.zeros([n,n])
     h = sym.Symbol('h')
-    M = sym.Symbol('M')
-    A = weightedMatrix(g, w)
-    n = len(A)
-    dAdt = np.zeros([n, n])
-    deg = g.degree(t)
     for i in range(n):
         for j in range(n):
-            Aij = A[i][j]
-            if( i == k or j == k):               
-                value = sym.limit((Aij * (1 + (h / deg)) - Aij) / h, h, 0)
+            Mij = M[i][j]
+            if( i == d or j == d):
+                deg = g.degree(d)
+                value = sym.limit((Mij * (1 + (h / deg)) - Mij) / h, h, 0)
             else:
-                value = sym.limit((Aij- Aij) / h, h, 0)
-            dAdt[i][j] = value
-    dfdA = sym.diff(f, M)
-    return dfdA * dAdt
+                value = sym.limit((Mij- Mij) / h, h, 0)
+            dAdt[i][j] = value  
+    return np.matmul(dfdA, dAdt)[s]
