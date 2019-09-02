@@ -85,11 +85,11 @@ def naturalConnectivity(g):
     m = g.get_adjacency().data
     eigenvalues = np.linalg.eig(m)[0]
     n = len(eigenvalues)
-    comp = g.components()
+    comp = g.components(mode='WEAK')
     sum = 0
     for c in comp:
         aux_m = m.copy()
-        aux_m[np.ix_(c,c)]
+        aux_m = changeMatrix(m, c)
         l_i = naturalConAux(aux_m)
         n_i = len(c)
         sum += n_i * np.exp(l_i)

@@ -12,11 +12,11 @@ def effectiveGraphResistance(g, weight='weight'):
     q = g.laplacian(weights = weight)
     q_plus = np.linalg.pinv(q)
     v = g.vcount()
-    sum = 0
+    acc = 0
     for i in range(v):
         for j in range(v):
-            sum += q_plus[i][i] - 2 * q_plus[i][j] + q_plus[j][j]
-    return sum
+            acc += q_plus[i][i] - 2 * q_plus[i][j] + q_plus[j][j]
+    return acc
 
 def viralConductance(g):
     """
@@ -25,10 +25,11 @@ def viralConductance(g):
     """
     m = g.get_adjacency().data
     eigenvalues = np.linalg.eig(m)[0]
-    max = np.amax(eigenvalues)
-    sum = 0
+    max_e = np.amax(eigenvalues)
+    max_e = int(np.real(max_e))
+    acc = 0
 
-    for i in range(max + 1):
-        sum += y(g, i) 
-    mean = sum / (max + 1)  
-    return max * mean
+    for s in range(max_e + 1):
+        acc += y(g, s) 
+    mean = acc / (max_e + 1)  
+    return max_e * mean

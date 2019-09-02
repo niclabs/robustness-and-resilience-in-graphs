@@ -47,4 +47,6 @@ def relativeAreaIndex(g, w=weightFunction, f=maxFlow, v=0, u0= 0, ut= 1):
     for x in range(u0, ut + 1):
         num += derivative(funnum, x)
         den += derivative(funden, x)
+    if den == 0:
+        return None
     return num / den

@@ -271,7 +271,7 @@ def shortestTemporalDistance(g, s, d, t2):
     return: the smallest length among all the temporal paths between nodes s and d in time window [0, t2]
     """
     if(g.vertex_disjoint_paths(s, d, neighbors = "ignore") != 0): #If there is a way between vertex s and d
-        path_len = g.shortest_paths_dijkstra(s, d)[0]
+        path_len = g.shortest_paths_dijkstra(s, d)[0][0]
         if(path_len > t2):
             return float('inf')
         else:
@@ -381,6 +381,14 @@ def naturalConAux(m):
     sum = np.sum(exp)
     return np.log(sum / n)
 
+def changeMatrix(m, r):
+    np.sort(r)
+    for i in reversed(r):
+        np.delete(m, i, 0)
+        np.delete(m, i, 1)
+    return m
+    
+
 def probis(g, i= 0, s= 0):
     """
     g: Graph
@@ -388,11 +396,11 @@ def probis(g, i= 0, s= 0):
     s: State, default = 0
     return: probability that node i is infected at steady state s.
     """
-    neighbors = g.neighbors(i)
-    sum = 0
+    neighbors = g.neighbors(i, mode='OUT')
+    acc = 0
     for j in neighbors:
-        sum += probis(g, j, s)
-    return sum / (s + sum)
+        acc += probis(g, j, s)
+    return acc / (s + acc)
 
 def y(g, s=0):
     """
@@ -400,11 +408,13 @@ def y(g, s=0):
     s: State, default = 0
     return: Fraction of infected nodes at state s
     """
-    sum = 0
+    acc = 0
     v = g.vcount()
+    if v == 0:
+        return None
     for i in range(v):
-        sum += probis(g,i, s)
-    return 1 / (v * sum)
+        acc += probis(g,i, s)
+    return acc / v
 
 def makeEmptyServices(g):
     """
