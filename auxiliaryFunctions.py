@@ -389,31 +389,25 @@ def changeMatrix(m, r):
     return m
     
 
-def probis(g, i= 0, s= 0):
+def probis(g, i= 0, s= 0, m=[]):
     """
     g: Graph
     i: Vertex, default = 0
     s: State, default = 0
+    m: Marked vertices
     return: probability that node i is infected at steady state s.
     """
     neighbors = g.neighbors(i)
+    m.append(i)
     acc = 0
     for j in neighbors:
-        if onlyNeighbor(g, i, j):
+        if j in m:
             acc += getState(g, j, s)
         else:
             acc += probis(g, j, s)
+    if(s + acc == 0):
+        return 1
     return acc / (s + acc)
-
-def onlyNeighbor(g, i, n):
-    """
-    g: Graph
-    i:
-    n: Neighbor
-    return: True if i is the only neighbor of n
-    """
-    n_neighbors = g.neighbors(n)
-    return len(n_neighbors) == 1 and n_neighbors[0] == i
 
 def getState(g, v, s):
     """
