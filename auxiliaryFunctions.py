@@ -396,11 +396,35 @@ def probis(g, i= 0, s= 0):
     s: State, default = 0
     return: probability that node i is infected at steady state s.
     """
-    neighbors = g.neighbors(i, mode='OUT')
+    neighbors = g.neighbors(i)
     acc = 0
     for j in neighbors:
-        acc += probis(g, j, s)
+        if onlyNeighbor(g, i, j):
+            acc += getState(g, j, s)
+        else:
+            acc += probis(g, j, s)
     return acc / (s + acc)
+
+def onlyNeighbor(g, i, n):
+    """
+    g: Graph
+    i:
+    n: Neighbor
+    return: True if i is the only neighbor of n
+    """
+    n_neighbors = g.neighbors(n)
+    return len(n_neighbors) == 1 and n_neighbors[0] == i
+
+def getState(g, v, s):
+    """
+    g: Graph
+    v: Vertex
+    s: State
+    return: 1 if vertex v is infected at state s, 0 otherwise
+    """
+    n = g.vcount()
+    g_state = ''.join(reversed([str((s >> i) & 1) for i in range(n)]))
+    return int(g_state[n - 1 - v])
 
 def y(g, s=0):
     """
