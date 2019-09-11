@@ -85,6 +85,35 @@ def mcv(m,result, partial,  directed):
             result = mcv(mc, result, partialCopy, directed)
         return result
 
+def mcv2(g, res=[], partial=[], partv=[]):
+    """
+    Get all the vertex covers of g
+    """
+    if(g.ecount() == 0):
+        if res == []:
+            return None
+        return partial
+    if (g.ecount() == 1): #TODO
+        return partial
+
+    for i in range(g.vcount()): #For each vertex
+        if i in partv:
+            pass
+        else:
+            p_v = partv.copy()
+            p_v.append(i)
+            p_a = partial.copy()
+            p_a.append(i)
+            neighbors = g.neighbors(i)
+            aux = g.copy()
+            for n in neighbors:
+                p_v.append(n) #Visist neighbor
+                aux.delete_edges([(i,n)]) #Delete edge
+            res.append(mcv2(aux, res, p_a, p_v))
+    return res
+            
+            
+
 def MCV(g):
     """
     g: Graph
