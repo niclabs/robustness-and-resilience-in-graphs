@@ -1,5 +1,8 @@
 from igraph import *
 from characteristicsForRankingElements import *
-g = Graph([(0,2), (2,4), (1,4), (3,4)])
-#g = Graph([(0,1)])
-print(mcv2(g))
+g = Graph.Erdos_Renyi(n=20, m=30)
+
+#g = Graph([(0,1), (1,2), (2,3), (3,0)])
+print(mcv(g))
+
+

@@ -114,10 +114,7 @@ def coveringDegree(g, v=0):
     v: Vertex, defualt = 0
     return: The number of minimal vertex cover that contains v
     """
-    m = np.array(g.get_adjacency().data)
-    if(np.sum(m, axis=0)[v] == 0): #v has no incident edges
-        return 0
-    covers = mcv(m, [], [], g.is_directed())
+    covers = mcv(g)
     result = 0
     for cover in covers:
         if v in cover:
@@ -129,8 +126,7 @@ def coveringIndex(g, v=0):
     g: Graph
     v: Vertex, default=0
     """
-    m = g.get_adjacency().data
-    c = len(mcv(m, [], [], g.is_directed()))
+    c = len(mcv(g))
     mVertCov = MCV(g)
     a = 0
     for cover in mVertCov:

@@ -57,79 +57,89 @@ def entropyRankFromMatrix(m, i):
 
     return u_vector[i] * v_vector[i]
 
-def mcv(m,result, partial,  directed):
+def allCovers(g):
+    r = []
+    p = []
+    covers(g, p, r, g.is_directed())
+    return r
+
+def covers(g, p=[], r=[], directed=False):
     """
-    m: Adjacency matrix of a graph
-    return: The set of minimal vertex covers of m
+    Get all vertex covers of graph g, the covers are stored in r
+    g: Graph
+    p : Partial cover
+    r: Variable where the covers are stored
+    directed: Boolean that indicates if the graph is directed
     """
-    if (len(m) == 0):
-        return []
-    if (np.count_nonzero(m) == 0):
-        partial.sort()    
-        if not partial in result:
-            result.append(partial)
-        return result
+    e = g.ecount()
+    if (e == 0):
+        p.sort()
+        if(p not in r):
+            r.append(p)
     else:
-        s = np.sum(m, axis = 0)
-        max = np.where(s > 0)[0] #Array that contains all vertex with incident edges
-        for u in max:
-            mc = np.copy(m)
-            partialCopy = list(partial)
+        for edge in g.es:
+            u = edge.tuple[0]
+            v = edge.tuple[1]
+            g_aux = g.copy()
+            g_aux.delete_edges([(u,v)])
             if not directed:
-                #For each neighbor of u, delete incident edges
-                nu = np.where(mc[u] == 1)[0]
-                for i in nu:
-                    mc[:,i] = 0
-            mc[:,u] = 0
-            partialCopy.append(u)
-            result = mcv(mc, result, partialCopy, directed)
-        return result
+                if (u not in p):
+                    n_u = g_aux.neighbors(u)
+                    g_u = g_aux.copy()
+                    for n in n_u:
+                        g_u.delete_edges([(u, n)])
+                    p_u = p.copy()
+                    p_u.append(u)
+                    covers(g_u, p_u, r, directed)
+            if (v not in p):
+                n_v = g_aux.neighbors(v, mode="IN")
+                g_v = g_aux.copy()
+                for n in n_v:
+                    g_v.delete_edges([(n, v)])
+                p_v = p.copy()
+                p_v.append(v)
+                covers(g_v, p_v, r, directed)
 
-def mcv2(g, res=[], partial=[], partv=[]):
+def mcv(g):
     """
-    Get all the vertex covers of g
+    g: Graph
+    return: The set of minimal vertex covers of G
     """
-    if(g.ecount() == 0):
-        if res == []:
-            return None
-        return partial
-    if (g.ecount() == 1): #TODO
-        return partial
-
-    for i in range(g.vcount()): #For each vertex
-        if i in partv:
-            pass
-        else:
-            p_v = partv.copy()
-            p_v.append(i)
-            p_a = partial.copy()
-            p_a.append(i)
-            neighbors = g.neighbors(i)
-            aux = g.copy()
-            for n in neighbors:
-                p_v.append(n) #Visist neighbor
-                aux.delete_edges([(i,n)]) #Delete edge
-            res.append(mcv2(aux, res, p_a, p_v))
-    return res
-            
-            
+    covers = allCovers(g)
+    print(covers)
+    r = []
+    for c_cover in covers:
+        covers_aux = covers.copy()
+        #Delete current cover from cover auxiliary list
+        covers_aux.remove(c_cover)
+        cond = False #Does c_cover contain a cover
+        for cover in covers_aux:
+            cov_cond = all(elem in c_cover for elem in cover) #Is the cover contain in c_cover
+            if cov_cond:
+                cond = True
+        if(not cond):
+            r.append(c_cover)
+    if not r:
+        return None
+    return r
 
 def MCV(g):
     """
     g: Graph
     return: The set of minimum vertex covers of G
     """
-    m = g.get_adjacency().data
-    covers = mcv(m, [], [], g.is_directed())
+    mcv_covers = mcv(g)
     result = []
-    min = len(covers[0])
-    for cover in covers:
+    min = len(mcv_covers[0])
+    for cover in mcv_covers:
         l = len(cover)
         if l < min:
             min = l
-    for cover in covers:
+    for cover in mcv_covers:
         if(len(cover) == min):
             result.append(cover)
+    if not result:
+        return None
     return result
 
 def weightedMatrix(g, w):
