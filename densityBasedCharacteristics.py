@@ -33,6 +33,6 @@ def definition523(g, k= 1, degreeProduct= True):
         max_len = 0
         for c in comp:
             if len(c) > max_len:
-                max_len = c
+                max_len = len(c)
         sum += max_len
     return sum / k

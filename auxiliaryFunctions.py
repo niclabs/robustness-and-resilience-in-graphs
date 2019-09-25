@@ -291,7 +291,8 @@ def maxDegreeProduct(g):
         d = g.get_edgelist()[i: i+1][0][1] #Destination vertex of the edge
         degree[i] = g.degree(s) * g.degree(d)
 
-    return degree.index(max(degree))
+    return np.argmax(degree)
+    
 
 def maxEdgeBetweenness(g):
     """
