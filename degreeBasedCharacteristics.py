@@ -10,7 +10,8 @@ def degreeEntropy(g):
     sum = 0
     for i in range(1, g.vcount()):
         p_i = getProbabilityDegree(g, i)
-        sum += p_i * math.log(p_i)
+        if(p_i != 0):
+            sum += p_i * math.log(p_i)
     return -sum
 
 def relativeEntropy(g):

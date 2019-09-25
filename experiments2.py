@@ -1,6 +1,9 @@
 from igraph import *
-from densityBasedCharacteristics import *
-g = Graph.Erdos_Renyi(n=20, m=30)
+from degreeBasedCharacteristics import *
+#g = Graph.Erdos_Renyi(n=200, m=210)
 
+g = Graph.Barabasi(15,3)
+
+print(relativeEntropy(g))
 
 
