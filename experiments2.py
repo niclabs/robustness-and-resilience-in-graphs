@@ -4,6 +4,6 @@ from degreeBasedCharacteristics import *
 
 g = Graph.Barabasi(15,3)
 
-print(relativeEntropy(g))
+print(degreeEntropy(g))
 
 

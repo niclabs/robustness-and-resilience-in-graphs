@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from igraph import *
+import sys
 from auxiliaryFunctions import *
 
 def degreeEntropy(g):
@@ -21,6 +22,9 @@ def relativeEntropy(g):
     n = g.vcount()
     pk = getDegreeDistribution(g)
     sum = 0
-    for i in range(n):
-        sum += pk[i] * math.log(n * pk[i])
+    for i in pk:
+        if (n * i == 0):
+            sum += i * math.log(sys.float_info.min)
+        else:
+            sum += i * math.log(n * i)
     return sum
