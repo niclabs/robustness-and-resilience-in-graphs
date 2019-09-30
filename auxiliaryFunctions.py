@@ -241,9 +241,12 @@ def resilience(g, l, function):
     """
     k_i = 1
     while(True):
+        print("sigo aqui")
         if(function(g, l, k= k_i)):
+            print("if")
             k_i += 1
         else:
+            print("else")
             return k_i - 1
 
 def getProbabilityDegree(g, k, myMode='ALL'):

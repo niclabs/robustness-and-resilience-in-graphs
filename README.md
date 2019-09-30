@@ -12,13 +12,13 @@ Requirements:
 - [x] Vertex load + test
 - [x] Betweenness (Already in igraph)
 - [x] Random-walk betweenness + test
-- [x] Criticality + test
+- [x] Criticality + test, graph needs a 'weight' attribute on nodes or edges as appropriate
 - [x] Entropy rank + test
 - [x] Free energy rank + test
-- [x] Bridgeness + test
+- [x] Bridgeness + test, nodes i, j must be connected, otherwise throws an exception
 - [x] Covering degree + test
 - [x] Covering index + test
-- [x] Sensitivity
+- [x] Sensitivity, graph needs a 'weight' attribute on edges
 
 Auxiliary features
 - [x] Random walk + test
@@ -54,8 +54,8 @@ Auxiliary features:
 - [x] k edge-failure resilience + test
 - [x] Egde resilience + test
 - [x] Path diversity + test
-- [x] Percolated path
-- [x] Percolation centrality
+- [x] Percolated path, graph needs attribute 'state' on nodes
+- [x] Percolation centrality, graph needs attribute 'state' on nodes
 
 Auxiliary features
 - [x] getSimplePath(G, s, d) + test
@@ -100,7 +100,7 @@ Auxiliary features
 
 5.6 Random-walk based characteristics
 
-- [x] Network criticality
+- [x] Network criticality, graph needs attribute 'weight' on edges
 
 Auxiliary features
 - [x] Criticality of vertex
@@ -108,8 +108,8 @@ Auxiliary features
 
 5.7 Flow-based characteristics
 
-- [x] Electrical nodal robustness
-- [x] Relative area index
+- [x] Electrical nodal robustness, graphs needs a 'flow' attribute on edges
+- [x] Relative area index, return None when a value is not valid
 
 Auxiliary features:
 - [x] WeightFunction
@@ -133,7 +133,7 @@ Auxiliary features
 
 5.9 Other characteristics
 
-- [x] Effective graph resistence
+- [x] Effective graph resistence, graph needs 'weight' attribute on edges
 - [x] Viral conductance
 
 Auxiliary features
