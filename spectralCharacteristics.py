@@ -45,11 +45,31 @@ def generalizedRobustnessIndex(g, k=1):
     """
     A = np.array(g.get_adjacency().data)
     eigenvalues, eigenvectors = np.linalg.eig(A)
-    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
+    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, absValue=True)
     sum = 0
     v = g.vcount()
     for i in range(v):
-        sum += (math.log(eigenvectors[1][i]) - (math.log( math.sinh(eigenvalues[1]) ** -0.5) + math.log(normalizedSubgraphCentrality(g, i, k)) / 2 ))  ** 2
+        eig_log = 0
+        sinh_log = 0
+        normCent = normalizedSubgraphCentrality(g, i, k)
+        norm_log = 0
+
+        if (eigenvectors[1][i] == 0):
+            eig_log = math.log(sys.float_info.min)
+        else:
+            eig_log = math.log(abs(eigenvectors[1][i])) 
+
+        if math.sinh(eigenvalues[1]) ** -0.5 == 0:
+            sinh_log = math.log(sys.float_info.min)
+        else:
+            sinh_log = math.log(abs(math.sinh(eigenvalues[1]) ** -0.5))
+        
+        if (normCent == 0):
+            norm_log = math.log(sys.float_info.min)
+        else:
+            norm_log = math.log(abs(normCent))
+
+        sum += (eig_log - (sinh_log + norm_log / 2 ))  ** 2
     return math.sqrt (sum / v)
 
 def localNaturalConnectivity(g):

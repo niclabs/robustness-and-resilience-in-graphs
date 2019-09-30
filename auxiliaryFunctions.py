@@ -392,7 +392,7 @@ def maxFlow(v, u):
     """
     return v *2 +  u*2
 
-def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, abs= True):
+def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False,absValue= True):
     """
     Auxiliary function
     eigenvalues: Array of eigenvalues
@@ -401,14 +401,14 @@ def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, abs= True):
     abs: Take tha absolute value to compare
     return: Sorted eigen values and eigen vectors, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     """
-    if abs:
+    if absValue:
         eigenvalues = np.abs(eigenvalues)
     
     eigenvalues = list(eigenvalues)
     eigenvectors = list(eigenvectors)
 
     pairs = list(zip(eigenvalues, eigenvectors))
-    pairs = sorted(pairs, reverse=asc)
+    pairs = sorted(pairs, reverse=asc, key=lambda x: x[0])
     unzip = list(zip(*pairs))
     eigenvalues = np.array(unzip[0])
     eigenvectors = np.array(unzip[1])
