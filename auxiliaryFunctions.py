@@ -2,6 +2,7 @@ import random
 import numpy as np
 from scipy import linalg
 from igraph import *
+from itertools import combinations
 
 def randomWalk(g, i=0, t=1, s= 0):
     """
@@ -106,7 +107,6 @@ def mcv(g):
     return: The set of minimal vertex covers of G
     """
     covers = allCovers(g)
-    print(covers)
     r = []
     for c_cover in covers:
         covers_aux = covers.copy()
@@ -241,13 +241,86 @@ def resilience(g, l, function):
     """
     k_i = 1
     while(True):
-        print("sigo aqui")
+        print(k_i)
         if(function(g, l, k= k_i)):
-            print("if")
             k_i += 1
         else:
-            print("else")
             return k_i - 1
+
+def getServices(l):
+    """
+    List of services of each vertex
+    return: List of all services
+    """
+    s = set([])
+    for n in l:
+        for a in n[0]:
+            s.add(a)
+        for na in n[1]:
+            s.add(na)
+    return list(s)
+
+def computedj(l, j):
+    """
+    l: List of services of each vertex
+    j: Service
+    return: List of nodes that need service j
+    """
+    dj = []
+    for i in range(len(l)):
+        if j in l[i][1]:
+            dj.append(i)
+    return dj 
+
+def auxGraphj(g, l, j, node_w = False):
+    """
+    g: Grpah
+    l: List of services
+    j : Service
+    return: Auxiliary graph_j
+    """
+    v = g.vcount()
+    new_g = Graph()
+    s = 0
+    #Compute pj
+    pj = []
+    for n in range(len(l)):
+        if(j in l[n][0]):
+            pj.append(n)
+            
+
+    #Compute Vj
+    if (v == 0):
+        new_g.add_vertices(1)
+    else:
+        new_g.add_vertices(v)
+        s = v
+    #Compute Ej1
+    ej1 = g.get_edgelist()
+    x_j = list(combinations(pj,2))
+    #Delete x_j from edge_list
+    for p in x_j:
+        ej1.remove(p)
+    weights = []
+    if not node_w:
+        weights = np.ones(len(ej1))
+    #Compute Ej2
+    ej2 = []
+    for n in pj:
+        ej2.append((s, n))
+        if not node_w:
+            weights.append(sys.maxsize)
+    new_g.add_edges(ej1)
+    new_g.add_edges(ej2)
+    if not node_w:
+        new_g.es['weight'] = weights
+    else:
+        weights = np.ones(v)
+        weights.append(sys.maxsize)
+        new_g.vs['weight'] = weights
+
+    return new_g
+    
 
 def getProbabilityDegree(g, k, myMode='ALL'):
     """

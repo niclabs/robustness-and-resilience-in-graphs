@@ -37,9 +37,7 @@ def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     """
     k = 0
     visited = [False] * g.vcount()
-    print(f"Calculando {s}, {d}")
     simplePaths = getAllSimplePaths(g, s, d, visited)
-    print("Listo")
     for path in simplePaths:
         k += geographicalDiversity(g, path)
     

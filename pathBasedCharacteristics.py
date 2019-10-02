@@ -101,7 +101,18 @@ def vertexResilience(g, l=0):
     """
     if l == 0:
         l = makeEmptyServices(g)
-    return resilience(g, l, kVertexFailureResilience)
+    s = getServices(l)
+    T = []
+    for sj in s:
+        aux_g = auxGraphj(g, l, sj , True)
+        dj = computedj(l,sj)
+        Tj = []
+        for v in dj:
+            gamma_vj = 0 #TODO: Compute
+            Tj.append(gamma_vj)
+        T.append(np.min(Tj))
+    return np.min(T) - 1 #TODO: check when len(T) == 0
+
 
 def kEdgeFailureResilience(g, l=0, k=1):
     """
@@ -136,7 +147,19 @@ def edgeResilience(g, l=0):
     """
     if l == 0:
         l = makeEmptyServices(g)
-    return resilience(g, l, kEdgeFailureResilience)
+    
+    s = getServices(l)
+    O = []
+    for sj in s:
+        aux_g = auxGraphj(g, l, sj)
+        dj = computedj(l, sj)
+        Oj = []
+        for v in dj:
+            alpha_vj = 0 #TODO:Compute
+            Oj.append(alpha_vj)
+        O.append(np.min(Oj))
+    return np.min(O) - 1 #TODO: check when len(O) == 0
+
 
 def pathDiversity(g, d= 1, s=0,  seed=1):
     """
