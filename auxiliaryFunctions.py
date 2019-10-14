@@ -360,25 +360,33 @@ def onlyReachableNodes(g, v, l):
             result.append(n)
     return result
 
-def getAlphaj(v, sj, g, result, partial = 0):
+def getCutset(v, sj, g, result, partial = 0, edge=True):
     """
     v: Vertex
-    sj: List of services that provides service j
-    g: Graph
+    sj: List of nodes that provides service j
+    g: weighted graph in edges or nodes
     result: List where the results will be saved
     partial: Partial result for an iteration
-    returns: The weights of each s-v edge cutset
+    edge: True if edge cutset, false node cutset
+    returns: The weights of each s-v edge/node cutset
     """
-    edges = g.ecount()
-    for e in range(edges):
+    if edge:
+        elem = g.ecount()
+    else:
+        elem = g.vcount()
+    for e in range(elem):
         aux_graph = g.copy()
-        w = 0 #TODO: Guardar peso
-        #TODO: Eliminar arco
+        if edge:
+            w = g.es[e].attributes()['weight']
+            aux_graph.delete_edges([e]) #TODO: Check command
+        else:
+            w = g.vs[e].attributes()['weight']
+            aux_graph.delete_vertices(e)
         partial += w
         if(noPath(aux_graph, v, sj)):           
             result.append(partial)
         else:
-            getAlphaj(v, sj, aux_graph, result, partial)
+            getCutset(v, sj, aux_graph, result, partial, edge)
 
 def getProbabilityDegree(g, k, myMode='ALL'):
     """

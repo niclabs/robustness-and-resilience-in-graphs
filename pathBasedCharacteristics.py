@@ -111,7 +111,9 @@ def vertexResilience(g, l=0):
             gamma_vj = 0 #TODO: Compute
             Tj.append(gamma_vj)
         T.append(np.min(Tj))
-    return np.min(T) - 1 #TODO: check when len(T) == 0
+    if len(T) == 0:
+        return None
+    return np.min(T) - 1
 
 
 def kEdgeFailureResilience(g, l=0, k=1):
@@ -158,7 +160,7 @@ def edgeResilience(g, l=0):
             n_j = providesSj(l, v) #List of nodes that provides service dj
             n_j = onlyReachableNodes(aux_g, v, n_j)
             result = []
-            getAlphaj(v, n_j, aux_g, result, partial = 0) #TODO: Not ready yet
+            getCutset(v, n_j, aux_g, result, partial = 0, edge=True) #TODO: Not ready yet
             alpha_vj = np.min(result)
             Oj.append(alpha_vj)
         O.append(np.min(Oj))
