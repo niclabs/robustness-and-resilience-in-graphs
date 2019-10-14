@@ -277,6 +277,7 @@ def auxGraphj(g, l, j, node_w = False):
     g: Grpah
     l: List of services
     j : Service
+    node_w : Weights at nodes, if False, returns a edge weighted graph
     return: Auxiliary graph_j
     """
     v = g.vcount()
@@ -320,7 +321,64 @@ def auxGraphj(g, l, j, node_w = False):
         new_g.vs['weight'] = weights
 
     return new_g
-    
+
+def providesSj(l, j):
+    """
+    l: List of services of each vertex
+    j: Service sj
+    return: List of vertices that provides service sj
+    """
+    result = []
+    for v in range(len(l)):
+        if j in l[v][0]:
+            result.append(v)
+    return result
+
+def noPath(g, v, l):
+    """
+    g: Graph
+    v: Vertex
+    l: List of nodes
+    return: True if there is no path between v and all of the nodes in l
+    """
+    result = True
+    for node in l:
+        if(g.vertex_disjoint_paths(v, node, neighbors = "ignore") == 0):
+            result = False
+    return result
+
+def onlyReachableNodes(g, v, l):
+    """
+    g: Graph
+    v: Vertex
+    l: List of nodes
+    return: List of nodes in l that are reachable for v
+    """
+    result = []
+    for n in l:
+        if(g.vertex_disjoint_paths(v, n, neighbors = "ignore") != 0):
+            result.append(n)
+    return result
+
+def getAlphaj(v, sj, g, result, partial = 0):
+    """
+    v: Vertex
+    sj: List of services that provides service j
+    g: Graph
+    result: List where the results will be saved
+    partial: Partial result for an iteration
+    returns: The weights of each s-v edge cutset
+    """
+    edges = g.ecount()
+    for e in range(edges):
+        aux_graph = g.copy()
+        w = 0 #TODO: Guardar peso
+        #TODO: Eliminar arco
+        partial += w
+        if(noPath(aux_graph, v, sj)):           
+            result.append(partial)
+        else:
+            getAlphaj(v, sj, aux_graph, result, partial)
 
 def getProbabilityDegree(g, k, myMode='ALL'):
     """

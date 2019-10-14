@@ -152,13 +152,19 @@ def edgeResilience(g, l=0):
     O = []
     for sj in s:
         aux_g = auxGraphj(g, l, sj)
-        dj = computedj(l, sj)
+        dj = computedj(l, sj) #List of nodes that needs servide sj
         Oj = []
         for v in dj:
-            alpha_vj = 0 #TODO:Compute
+            n_j = providesSj(l, v) #List of nodes that provides service dj
+            n_j = onlyReachableNodes(aux_g, v, n_j)
+            result = []
+            getAlphaj(v, n_j, aux_g, result, partial = 0) #TODO: Not ready yet
+            alpha_vj = np.min(result)
             Oj.append(alpha_vj)
         O.append(np.min(Oj))
-    return np.min(O) - 1 #TODO: check when len(O) == 0
+    if len(O) == 0:
+        return None
+    return np.min(O) - 1
 
 
 def pathDiversity(g, d= 1, s=0,  seed=1):
