@@ -4,6 +4,7 @@ import random
 import itertools
 import math
 from auxiliaryFunctions import *
+import warnings
 
 def splittingNumber(g, k=2, numOfLoops=1, seed=1, dev= 1):
     """
@@ -41,10 +42,12 @@ def splittingNumber(g, k=2, numOfLoops=1, seed=1, dev= 1):
             numOfComponents = len(auxGraph.components())#compute numOfComponents
 
             if(i >= 1 and i >= numOfLoops):
-                mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
-                mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
-                if(abs(mean1 - mean2) < dev):
-                    return (mean1 + mean2)/2
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", category=RuntimeWarning)
+                    mean1 = np.mean(numOfLinks[1:i+1]) #mean value of numOfLinnks[1:i]
+                    mean2 = np.mean(numOfLinks[1:i]) #mean value of numOfLinnks[1:i - 1]
+                    if(abs(mean1 - mean2) < dev):
+                        return (mean1 + mean2)/2
         i += 1
     return -1
 
