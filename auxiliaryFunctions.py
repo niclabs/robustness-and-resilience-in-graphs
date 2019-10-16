@@ -232,21 +232,6 @@ def getSimplePath(g, s, d, seed):
                 actual = s
     return [nodes, edges]
 
-def resilience(g, l, function):
-    """
-    g: Graph
-    l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    function: kVertexFailureResilience or kEdgeFailureResilience
-    return: The largest k for which g is function resilient
-    """
-    k_i = 1
-    while(True):
-        print(k_i)
-        if(function(g, l, k= k_i)):
-            k_i += 1
-        else:
-            return k_i - 1
-
 def getServices(l):
     """
     List of services of each vertex
@@ -284,17 +269,12 @@ def auxGraphj(g, l, j, node_w = False):
     new_g = Graph()
     s = 0
     #Compute pj
-    pj = []
-    for n in range(len(l)):
-        if(j in l[n][0]):
-            pj.append(n)
-            
-
+    pj = providesSj(l, j)         
     #Compute Vj
     if (v == 0):
         new_g.add_vertices(1)
     else:
-        new_g.add_vertices(v)
+        new_g.add_vertices(v +1)
         s = v
     #Compute Ej1
     ej1 = g.get_edgelist()
@@ -302,7 +282,7 @@ def auxGraphj(g, l, j, node_w = False):
     #Delete x_j from edge_list
     for p in x_j:
         ej1.remove(p)
-    weights = []
+    weights = np.array([])
     if not node_w:
         weights = np.ones(len(ej1))
     #Compute Ej2
@@ -310,14 +290,14 @@ def auxGraphj(g, l, j, node_w = False):
     for n in pj:
         ej2.append((s, n))
         if not node_w:
-            weights.append(sys.maxsize)
+            weights = np.append(weights, sys.maxsize)
+
     new_g.add_edges(ej1)
-    new_g.add_edges(ej2)
+    new_g.add_edges(ej2) 
     if not node_w:
         new_g.es['weight'] = weights
     else:
-        weights = np.ones(v)
-        weights.append(sys.maxsize)
+        weights = np.ones(v + 1)
         new_g.vs['weight'] = weights
 
     return new_g
@@ -360,33 +340,45 @@ def onlyReachableNodes(g, v, l):
             result.append(n)
     return result
 
-def getCutset(v, sj, g, result, partial = 0, edge=True):
+def getEdgeCutset(v, sj, g, result, partial = 0):
     """
     v: Vertex
     sj: List of nodes that provides service j
     g: weighted graph in edges or nodes
     result: List where the results will be saved
     partial: Partial result for an iteration
-    edge: True if edge cutset, false node cutset
     returns: The weights of each s-v edge/node cutset
     """
-    if edge:
-        elem = g.ecount()
-    else:
-        elem = g.vcount()
+    elem = g.ecount()
     for e in range(elem):
         aux_graph = g.copy()
-        if edge:
-            w = g.es[e].attributes()['weight']
-            aux_graph.delete_edges([e]) #TODO: Check command
-        else:
-            w = g.vs[e].attributes()['weight']
-            aux_graph.delete_vertices(e)
+
+        w = g.es[e].attributes()['weight']
+        aux_graph.delete_edges([e])
+
         partial += w
         if(noPath(aux_graph, v, sj)):           
             result.append(partial)
         else:
-            getCutset(v, sj, aux_graph, result, partial, edge)
+            getEdgeCutset(v, sj, aux_graph, result, partial)
+
+def getNodeCutset(v, sj, g, result, partial = 0):
+    e = g.ecount()
+    if e != 0:
+        for v_i in range(g.vcount()):           
+            n_v = g.neighbors(v_i) #Neighbors of v
+            if(len(n_v) != 0):
+                aux_graph = g.copy()
+                #Delete all edges of v
+                for n in n_v:
+                    aux_graph.delete_edges([(v_i, n)])
+                w = aux_graph.vs[v_i].attributes()['weight']
+                partial += w
+                if(noPath(aux_graph, v, sj)):
+                    result.append(partial)
+                else:
+                    getNodeCutset(v, sj, aux_graph, result, partial)
+
 
 def getProbabilityDegree(g, k, myMode='ALL'):
     """
