@@ -10,7 +10,7 @@ def effectiveGraphResistance(g, weight=False):
     return: The sum of all effective resistances between all pairs in a network
     """
     if not weight:
-        g = generateEdgeWeight(g)
+        g = generateWeight(g) #Edge weight
         q = g.laplacian(weights = 'weight')
     else:
         q = g.laplacian(weights = weight)

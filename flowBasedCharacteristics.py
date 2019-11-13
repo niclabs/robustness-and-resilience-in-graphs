@@ -4,13 +4,18 @@ from igraph import *
 from scipy.misc import derivative
 from auxiliaryFunctions import *
 
-def electricalNodalRobustness(g, i=0, attribute='flow'):
+def electricalNodalRobustness(g, i=False, attribute=False):
     """
     g: Graph
-    i: vertex, default = 0
+    i: vertex, default = False, if false takes a random vertex
     attribute: Name of the edge attribute that contains the flow, default= 'flow'
     return: The electrical nodal robustness of a vertex i
     """
+    if not attribute:
+        attribute = 'flow'
+        g = generateWeight(g, edge=True, vertex=False, name=attribute)
+    if not i:
+        i = np.random.randint(g.vcount())
     edges = g.adjacent(i) #id's of the edges vertex i is incident on
     L = len(edges)
     f = np.zeros(L)
@@ -21,8 +26,8 @@ def electricalNodalRobustness(g, i=0, attribute='flow'):
     
     sumf = np.sum(f)
     k = 0
-    for e in edges:
-        edge = g.get_edgelist[e:e+1][0]
+    for e in edges:   
+        edge = g.get_edgelist()[e:e+1][0]
         incidentVertex = edge[1]
         Li = g.degree(incidentVertex, mode="OUT")
         pi = (f[k] / sumf)

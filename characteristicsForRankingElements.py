@@ -44,15 +44,20 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
                             sum[v] += walk.count(v)
     return sum
 
-def criticality(g, v=0, w='weight', edge = False, s = 0):
+def criticality(g, v=False, w=False, edge = False, s = 0):
     """
     g: Graph
-    v: Vertex or edge for criticality, default=0
+    v: Vertex or edge for criticality, default=False, if false takes a random vertex
     w: String that represent the weight attributte in the graph, default='weight'
     edge: Condition that indicates if v is an edge
     s: Seed for randomize
     return: The random-walk betweenness of an element normalized by the weight of the element
     """
+    if not w:
+        w = 'weight'
+        g = generateWeight(g, edge=True, vertex=True, name=w)
+    if not v:
+        v = np.random.randint(g.vcount())
     betweenness = randomWalkBetweenness(g, edge, seed=s) #Array
     if edge:
         weight = g.es[v].attributes()[w]
@@ -93,7 +98,7 @@ def bridgeness(g, i=False, j=False):
         #Choose a random edge
         e = g.ecount()
         e_id = np.random.randint(e)
-        #TODO: Sacar i y j
+        #Get i and j
         edge = g.es[e_id]
         i = edge.source
         j = edge.target
@@ -145,13 +150,16 @@ def coveringIndex(g, v=0):
     b = coveringDegree(g, v)
     return a + b/c
 
-def sensitivity(g, s=0, d=0, f=centralityFunction, w='weight'):
+def sensitivity(g, s=0, d=0, f=centralityFunction, w=False):
     """
     g: Graph
     f: Centrality function: f(M), where M is the adjacency matrix, returns an array of size n, with n number of vertices
-    w: Name of the weight attribute in the graph g, default='weight'
+    w: Name of the weight edge attribute in the graph g, default=False, if false, random weights are set
     return: Sensitivity of node s with respect to node d
     """
+    if not w:
+        g = generateWeight(g, edge=True)
+        w= 'weight'
     M = weightedMatrix(g, w)
     f_M = f(M)
     n = len(M)

@@ -192,8 +192,8 @@ def pathDiversity(g, d= 1, s=0,  seed=1):
 def percolatedPath(g, s=False, d=False, state=False):
     """
     g: Graph
-    s: Source vertex, default = False
-    d: Destination vertex, default = False
+    s: Source vertex, default = False, if false takes a random vertex
+    d: Destination vertex, default = False, if false takes a random vertex
     state: Name of the parameter that indicates the percolation state, default='state'
     return: The shortest path from s to d such that s is infected
     """
@@ -205,19 +205,22 @@ def percolatedPath(g, s=False, d=False, state=False):
         #Choose random s and d
         v = g.vcount()
         s = random.randrange(v)
-        d = random.randrange(v)
-        #TODO: Set s to percolated
+        vertices = list(range(v))
+        vertices.remove(s)
+        d = random.choice(vertices)
+        #Set s to percolated
+        g.vs[s][state] = 1
 
     if(g.vs[s].attributes()[state] == 0):
         raise Exception('Vertex s is not percolated')
     if(g.vertex_disjoint_paths(s, d, neighbors = "ignore") == 0):
         raise Exception('There is no path between s and d')
-    return g.get_shortest_paths(s, d)[0]
+    return len(g.get_shortest_paths(s, d)[0])
 
 def percolationCentrality(g, v=False, state=False):
     """
     g: Graph
-    v: Vertex, default=False
+    v: Vertex, default=False, if false takes a random vertex
     state: Name of the parameter that indicates the percolation state, default=False
     """
     if not state:
@@ -227,7 +230,7 @@ def percolationCentrality(g, v=False, state=False):
     if not v:
         v = random.randrange(n)
         #TODO: set v to percolated
-    
+        g.vs[v][state] = 1
     if (n == 2):
         raise Exception('Number of vertices can not be 2')
     xv = g.vs[v].attributes()[state]
