@@ -3,13 +3,17 @@ import numpy as np
 from auxiliaryFunctions import *
 
 
-def effectiveGraphResistance(g, weight='weight'):
+def effectiveGraphResistance(g, weight=False):
     """
     g: Graph
     w: Name of the attribute that contains the weight of each edge, default = 'weight'
     return: The sum of all effective resistances between all pairs in a network
     """
-    q = g.laplacian(weights = weight)
+    if not weight:
+        g = generateEdgeWeight(g)
+        q = g.laplacian(weights = 'weight')
+    else:
+        q = g.laplacian(weights = weight)
     q_plus = np.linalg.pinv(q)
     v = g.vcount()
     acc = 0

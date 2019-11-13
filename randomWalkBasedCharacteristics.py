@@ -6,7 +6,7 @@ def networkCriticality(g, w='weight', vertices=True, edges=False):
     g: Graph
     w: String, name of the atribute for link weight, default = 'weight'
     vertices: Sum criticality of vertices
-    edges: Sum criticality of edgfes
+    edges: Sum criticality of edges
     return: The sum of criticalities over all elements of G (vertices, edges or both)
     """
     sum = 0

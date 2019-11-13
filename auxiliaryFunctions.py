@@ -633,3 +633,22 @@ def centralityFunction(M):
     for i in range(n):
         res[i] = M[i][i] ** 2
     return res
+
+def generateEdgeWeight(g, seed=False):
+    """
+    g: Graph
+    returns: Graph with random weights in its edges
+    """
+    w = np.random.rand(g.ecount())
+    g.es['weight'] = w
+    return g
+
+def setStates(g):
+    """
+    g: Graph
+    returns: Graph with random states between [0, 1] for each vertex in attribute 'state'
+    """
+    s = np.random.uniform(0,1, g.vcount())
+    s[s > 0.999] = 1
+    g.vs['state'] = s
+    return g

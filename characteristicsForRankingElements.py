@@ -82,12 +82,22 @@ def freeEnergyRank(g, i=0, e=0.01):
     m[m == 0] = e
     return entropyRankFromMatrix(m, i)
 
-def bridgeness(g, i=0, j=1):
+def bridgeness(g, i=False, j=False):
     """
-    g: Graph, assumes exists edge (0,1) by default
-    i: First component of the edge, default=0
-    j: Second component of the edge default=1
+    g: Graph
+    i: First component of the edge, default=False
+    j: Second component of the edge default=False
+    Note: When i or j is None, takes a random i and j
     """
+    if not i or not j:
+        #Choose a random edge
+        e = g.ecount()
+        e_id = np.random.randint(e)
+        #TODO: Sacar i y j
+        edge = g.es[e_id]
+        i = edge.source
+        j = edge.target
+
     if(not g.are_connected(i,j)):
         raise Exception("Edge doesn't exist")
     cliques = g.cliques() #List of tuples, each one is a clique
