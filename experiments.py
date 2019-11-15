@@ -62,11 +62,16 @@ def create(m, n, pr, k = None, h = None):
         elif pr == -1: # regular
             G =  m(h, n)                
     except Exception as e:
-        print('ERROR', m.__name__, 'failed to create a graph:', e)        
+        print('# ERROR', m.__name__, 'failed to create a graph:', e)        
         pass
     if G is None:
-        print('SKIPPING', m.__name__, 'produced a None output with', n, pr, k, h)
-    return G
+        print('# OMITTING', m.__name__, 'as it produced a None output with', n, pr, k, h)
+    CC = sorted(nx.connected_components(G), key=len, reverse=True)
+    if len(G) > len(CC[0]):
+        print('# WARNING', m.__name__, 'resulted in a disconnected graph with', n, pr, k, h)        
+        return G.subgraph(CC[0])
+    else:
+        return G
 
 # <import.lst>
 from characteristicsForRankingElements import vertexLoad
@@ -194,13 +199,13 @@ def measure(c, descr, g, g2 = None):
         try:
             before, value, after = time(), c(g), time()
         except Exception as e:
-            print('ERROR measuring', descr, e)
+            print('# ERROR measuring', descr, e)
             return
     else:
         try:
             before, value, after = time(), c(g, g2), time()
         except:
-            print('ERROR measuring', descr, e)
+            print('# ERROR measuring', descr, e)
             return            
     if value is not None:
         if hasattr(value, "__iter__"):
