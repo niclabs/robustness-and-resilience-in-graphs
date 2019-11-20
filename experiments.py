@@ -45,27 +45,27 @@ models = [(nx.generators.random_graphs.barabasi_albert_graph, -2),
 
 from math import floor, ceil, sqrt, log
 
-def create(m, n, p, k = None, h = None):
+def create(m, n, pr, k = None, h = None):
     G = None
     try:
-        if p == 1:
+        if pr == 1:
             G =  m(n)
-        elif p == 2:
+        elif pr == 2:
             if k * k % 2 == 0:
                 G = m(k, k)
             else:
                 G = m(k, k + 1)                    
-        elif p == 3: # only the WS
+        elif pr == 3: # only the WS
             G =  m(n, k // 2, log(1 + (11- power) / 50))
-        elif p == -2: # BA
+        elif pr == -2: # BA
             G = m(n, h)
-        elif p == -1: # regular
+        elif pr == -1: # regular
             G =  m(h, n)                
     except Exception as e:
         print('ERROR', m.__name__, 'failed to create a graph:', e)        
         pass
     if G is None:
-        print('ERROR', m.__name__, 'produced a None output with', n, p, k, h)
+        print('SKIPPING', m.__name__, 'produced a None output with', n, pr, k, h)
     return G
 
 # <import.lst>
@@ -223,12 +223,12 @@ for power in range(5, 10):
                 g = ig.read('G.graphml', format="graphml")
                 d = '{:s} {:d} '.format(m.__name__, n)                
                 for c in characteristics:
-                    p = Process(target=measure, args=(c, d + c.__name__, g))
-                    p.start()
-                    p.join(permitted)
-                    if p.is_alive():
-                        p.terminate()
-                        p.join()
+                    proc = Process(target=measure, args=(c, d + c.__name__, g))
+                    proc.start()
+                    proc.join(permitted)
+                    if proc.is_alive():
+                        proc.terminate()
+                        proc.join()
 
 # <import2.lst>
 from componentBasedCharacteristics import preferentialPerturbation
