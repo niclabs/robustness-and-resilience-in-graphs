@@ -1,6 +1,7 @@
 import numpy as np
 import math
-from scipy import heaviside
+#from scipy import heaviside, sparse
+import scipy.sparse.linalg as sp
 from igraph import *
 from auxiliaryFunctions import *
 
@@ -37,40 +38,32 @@ def normalizedSubgraphCentrality(g, v= 0, k=1):
         sum += (eigenvectors[i][v] ** 2) + math.sinh(eigenvalues[i])
     return sum
 
-def generalizedRobustnessIndex(g, k=1):
+
+def generalizedRobustnessIndex2(g, k= 1):
     """
     g: Graph
     k: Number of eigenvalues to include into the approximation, default = 1
     return:
     """
     A = np.array(g.get_adjacency().data)
-    eigenvalues, eigenvectors = np.linalg.eig(A)
-    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False, absValue=True)
-    sum = 0
-    v = g.vcount()
-    for i in range(v):
-        eig_log = 0
-        sinh_log = 0
-        normCent = normalizedSubgraphCentrality(g, i, k)
-        norm_log = 0
+    A = A.astype('float64')
+    w, v = sp.eigsh(A, k, which='LM' )
+    SC = np.matmul(v**2, np.sinh(w))
+    v[v <= 0] = None
+    SC[SC <= 0] = None
 
-        if (eigenvectors[1][i] == 0):
-            eig_log = math.log(sys.float_info.min)
-        else:
-            eig_log = math.log(abs(eigenvectors[1][i])) 
+    log_v = np.log10(v[:, 0])
+    log_v = np.nan_to_num(log_v)
+    log_SC = 0.5 * np.log10(SC)
+    log_SC = np.nan_to_num(log_SC)
+    sinh_w = np.sinh(w[0])
+    log_w = 0
+    if(sinh_w > 0):
+        log_w = 0.5 * np.log10(np.sinh(w[0]))
 
-        if math.sinh(eigenvalues[1]) ** -0.5 == 0:
-            sinh_log = math.log(sys.float_info.min)
-        else:
-            sinh_log = math.log(abs(math.sinh(eigenvalues[1]) ** -0.5))
-        
-        if (normCent == 0):
-            norm_log = math.log(sys.float_info.min)
-        else:
-            norm_log = math.log(abs(normCent))
-
-        sum += (eig_log - (sinh_log + norm_log / 2 ))  ** 2
-    return math.sqrt (sum / v)
+    d = log_v - log_SC + log_w
+    r_k = (np.sum(d ** 2) / len(A)) ** 0.5
+    return r_k
 
 def localNaturalConnectivity(g):
     """
