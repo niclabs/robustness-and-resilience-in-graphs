@@ -9,75 +9,50 @@ Requirements:
 
 4.1 Characteristics for ranking elements
 
-- [x] Vertex load + test
+- [x] Vertex load
 - [x] Betweenness (Already in igraph)
-- [x] Random-walk betweenness + test
-- [x] Criticality + test, graph needs a 'weight' attribute on nodes or edges as appropriate
-- [x] Entropy rank + test
-- [x] Free energy rank + test
-- [x] Bridgeness + test, nodes i, j must be connected, otherwise throws an exception
-- [x] Covering degree + test
-- [x] Covering index + test
+- [x] Random-walk betweenness
+- [x] Criticality, graph needs a 'weight' attribute on nodes or edges as appropriate
+- [x] Entropy rank
+- [x] Free energy rank
+- [x] Bridgeness
+- [x] Covering degree
+- [x] Covering index
 - [x] Sensitivity, graph needs a 'weight' attribute on edges
-
-Auxiliary features
-- [x] Random walk + test
-- [x] Vertex walk to edges walk + test
-- [x] Entropy rank from matrix + test
-- [x] mcv(G): The set of minimal vertex covers of G + test
-- [x] MCV(G): The set of minimun vertex covers of G + test
-- [x] weightedMatrix(g, w): Weighted matrix of graph g, where w represents the weight attribute name in the graph + test
 
 5.1 Component-based characteristics
 
 - [x] Splitting number
 - [x] Random-robustness index
-- [x] Robustness measure + test
-- [x] Connectivity robustness function + test
-- [x] k-resilence factor + test
-- [x] Resilence factor + test
+- [x] Robustness measure
+- [x] Connectivity robustness function
+- [x] k-resilence factor
+- [x] Resilence factor
 - [x] Perturbation score
 - [x] Preferential perturbation
 - [x] Maximun perturbation score
 
-Auxiliary features:
-- [x] sizeMaxComponent
-- [x] perturbationScoreTwo
-- [x] PerturbationFunction
-
 5.2 Path-based characteristic
-- [x] Pairwise disconnectivity index + test
+- [x] Pairwise disconnectivity index
 - [x] Fragmentation
-- [x] Self-sufficiency + test
-- [x] k vertex-failure resilience + test
-- [x] Vertex resilience + test
-- [x] k edge-failure resilience + test
-- [x] Egde resilience + test
-- [x] Path diversity + test
+- [x] Self-sufficiency
+- [x] k vertex-failure resilience
+- [x] Vertex resilience
+- [x] k edge-failure resilience
+- [x] Egde resilience
+- [x] Path diversity
 - [x] Percolated path, graph needs attribute 'state' on nodes
 - [x] Percolation centrality, graph needs attribute 'state' on nodes
-
-Auxiliary features
-- [x] getSimplePath(G, s, d) + test
-- [x] resilience
 
 5.3 Degree-based characteristics
 
 - [x] Degree entropy
 - [x] Relative entropy
 
-Auxiliary features
-- [x] getProbabilityDegree : The probability p(k) of the degree distribution
-- [x] getDegreeDistribution
-
 5.4 Density-based characteristics
 
 - [x] Hub density
 - [x] No name, definition523
-
-Auxiliary features
-- [x] Max degree product
-- [x] Max edge betweenness
 
 5.5 Distance-based characteristics
 
@@ -93,27 +68,14 @@ Auxiliary features
 - [x] Fragility
 - [x] Dynamic robustness
 
-Auxiliary features
-- [x] Shortest temporal distance
-- [x] Get all simple paths between two vertices
-- [x] Get list of edges connected to vertex k
-
 5.6 Random-walk based characteristics
 
 - [x] Network criticality, graph needs attribute 'weight' on edges
-
-Auxiliary features
-- [x] Criticality of vertex
-- [x] Criticality of edge
 
 5.7 Flow-based characteristics
 
 - [x] Electrical nodal robustness, graphs needs a 'flow' attribute on edges
 - [x] Relative area index, return None when a value is not valid
-
-Auxiliary features:
-- [x] WeightFunction
-- [x] MaxFLow
 
 5.8 Spectral characteristics
 
@@ -127,15 +89,7 @@ Auxiliary features:
 - [x] Subgraph centrality
 - [x] Normalized local natural connectivity
 
-Auxiliary features
-- [x] sortEigenValuesVectors
-- [x] naturalConAux : Natural connectivity auxiliary function
-
 5.9 Other characteristics
 
 - [x] Effective graph resistence, graph needs 'weight' attribute on edges
 - [x] Viral conductance
-
-Auxiliary features
-- [x] probis(g, i, s): probability that node i is infected at steady state s
-- [x] y(g, s): Fraction of infected nodes

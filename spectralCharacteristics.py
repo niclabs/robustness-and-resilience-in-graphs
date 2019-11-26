@@ -1,6 +1,6 @@
 import numpy as np
 import math
-#from scipy import heaviside, sparse
+#from scipy import heaviside
 import scipy.sparse.linalg as sp
 from igraph import *
 from auxiliaryFunctions import *
@@ -10,14 +10,16 @@ def reconstructabilityCoefficient(g):
     g: Graph
     """
     A = np.array(g.get_adjacency().data)
-    eigenvalues, eigenvectors = np.linalg.eig(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
+    eigenvalues, eigenvectors = np.linalg.eigh(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
+    eigenvectors = normalize(eigenvectors)
     result = 0
 
-    for j in range(1, len(eigenvalues)):
+    for j in range(len(eigenvalues)):
         eigenvalues[j] = 0
         new_a = eigenvectors * np.diag(eigenvalues) * np.transpose(eigenvectors)
-        new_a = heaviside(new_a, 0.5)
+        new_a -= 0.5
+        new_a = np.heaviside(new_a, 0.5)
         if(not np.array_equal(new_a, A)): #Compare
             return result
         result += 1
@@ -39,7 +41,7 @@ def normalizedSubgraphCentrality(g, v= 0, k=1):
     return sum
 
 
-def generalizedRobustnessIndex2(g, k= 1):
+def generalizedRobustnessIndex(g, k= 1):
     """
     g: Graph
     k: Number of eigenvalues to include into the approximation, default = 1

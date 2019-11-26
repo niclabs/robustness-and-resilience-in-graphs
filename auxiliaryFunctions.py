@@ -526,7 +526,7 @@ def maxFlow(v, u):
     """
     return v *2 +  u*2
 
-def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False,absValue= True):
+def sortEigenValuesVectors(eigenvalues, eigenvectors, desc=False,absValue= True):
     """
     Auxiliary function
     eigenvalues: Array of eigenvalues
@@ -542,7 +542,7 @@ def sortEigenValuesVectors(eigenvalues, eigenvectors, asc=False,absValue= True):
     eigenvectors = list(eigenvectors)
 
     pairs = list(zip(eigenvalues, eigenvectors))
-    pairs = sorted(pairs, reverse=asc, key=lambda x: x[0])
+    pairs = sorted(pairs, reverse=desc, key=lambda x: x[0])
     unzip = list(zip(*pairs))
     eigenvalues = np.array(unzip[0])
     eigenvectors = np.array(unzip[1])
@@ -657,3 +657,11 @@ def setStates(g):
     s[s > 0.999] = 1
     g.vs['state'] = s
     return g
+
+def normalize(v):
+    """
+    v: List of eigenvectors
+    return: Normalized eigenvectors
+    """
+    n = np.linalg.norm(v, axis=1)
+    return v/n
