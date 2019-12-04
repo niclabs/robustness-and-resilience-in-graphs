@@ -428,54 +428,6 @@ def shortestTemporalDistance(g, s, d, t2):
         else:
             return path_len
 
-def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
-    """
-    g: Graph
-    s: Source vertex
-    d: Destination vertex
-    visited: List of booleans each represent if the vertex is visited, type: numpy array
-    partial: Partial path
-    result: actual result
-    return: A list of all the simple paths between vertex s and d
-    """
-    partial.append(s)
-    visited[s] = True
-    if(s == d):
-        result.append(partial)
-        return result
-    neighbors = g.neighbors(s)
-    for n in neighbors:
-        partial_aux = partial.copy()
-        visited_aux = visited.copy()
-        if (not visited[n]):
-            result = getAllSimplePaths(g, n, d, visited_aux, partial_aux, result)
-            visited[n] = True
-    return result
-
-def all_simple_paths(adjlist, start, end, path=()):
-    """
-    agjlist: List of neighborhood for each vertex
-    start: Source vertex
-    end: Destination vertex
-    path: Partial path
-    return: A list of all the simple paths between vertex start and end
-    """
-    path = path + (start,)
-
-    if start == end:
-        return [path]
-
-    paths = []
-
-    for child in adjlist[start]:
-
-        if child not in path:
-
-            child_paths = all_simple_paths(tuple(adjlist), child, end, path)
-            paths.extend(child_paths)
-
-    return paths
-
 def get_edges(g, k):
     """
     g: Graph

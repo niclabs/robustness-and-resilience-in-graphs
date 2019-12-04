@@ -2,17 +2,26 @@ import math
 import itertools
 import numpy as np
 from igraph import *
+import networkx as nx
 from auxiliaryFunctions import *
 
-def geographicalDiversity(g, p=[0,1]):
+def geographicalDiversity(g, p=[0,1],distance=False):
     """
     g: Graph
     p: Vertex path between two nodes
+    distance: Name of the edge attribute that indicates distance
     return: The minimun distance between any node members of vector p and the shortest path, return inf when if there is not a path
     """
+    if not distance:
+        distance="distance"
+        g = generateWeight(g,name=distance)
+
     s = p[0]
     d = p[-1]
-    shortestPath = g.get_shortest_paths(s, d)[0]
+
+    #Get shortest path
+    shortestPath = g.get_shortest_paths(s, d, weights=distance)[0]
+    
     m = float('inf')
     for node in p:
         for node_s in shortestPath:
@@ -32,13 +41,12 @@ def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     l: Constant to weight the utility of alternatie paths, default = 1
     """
     k = 0
-    visited = [False] * g.vcount()
-    simplePaths = getAllSimplePaths(g, s, d, visited)
 
-    adj_list = g.neighborhood(mode='OUT')
-    for i in range(g.vcount()):
-        adj_list[i].remove(i)
-    simplePaths = all_simple_paths(adj_list, s, d)
+    #Get all simple paths
+    edge_list = g.get_edgelist()
+    n_g = nx.Graph(edge_list)
+    simplePaths = list(nx.all_simple_paths(n_g, s,d))
+
     for path in simplePaths:
         k += geographicalDiversity(g, list(path))
     
