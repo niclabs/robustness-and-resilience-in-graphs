@@ -58,49 +58,6 @@ def entropyRankFromMatrix(m, i):
 
     return u_vector[i] * v_vector[i]
 
-def allCovers(g):
-    r = []
-    p = []
-    covers(g, p, r, g.is_directed())
-    return r
-
-def covers(g, p=[], r=[], directed=False):
-    """
-    Get all vertex covers of graph g, the covers are stored in r
-    g: Graph
-    p : Partial cover
-    r: Variable where the covers are stored
-    directed: Boolean that indicates if the graph is directed
-    """
-    e = g.ecount()
-    if (e == 0):
-        p.sort()
-        if(p not in r):
-            r.append(p)
-    else:
-        for edge in g.es:
-            u = edge.tuple[0]
-            v = edge.tuple[1]
-            g_aux = g.copy()
-            g_aux.delete_edges([(u,v)])
-            if not directed:
-                if (u not in p):
-                    n_u = g_aux.neighbors(u)
-                    g_u = g_aux.copy()
-                    for n in n_u:
-                        g_u.delete_edges([(u, n)])
-                    p_u = p.copy()
-                    p_u.append(u)
-                    covers(g_u, p_u, r, directed)
-            if (v not in p):
-                n_v = g_aux.neighbors(v, mode="IN")
-                g_v = g_aux.copy()
-                for n in n_v:
-                    g_v.delete_edges([(n, v)])
-                p_v = p.copy()
-                p_v.append(v)
-                covers(g_v, p_v, r, directed)
-
 def mcv(g):
     """
     g: Graph
@@ -123,12 +80,32 @@ def mcv(g):
         return None
     return r
 
-def MCV(g):
+def allCovers(g):
+    #Complement graph
+    complement = Graph.Full(g.vcount())
+    edge_list = g.get_edgelist()
+    complement.delete_edges(edge_list)
+
+    #Get cliques
+    cliques = complement.cliques()
+
+    #Complement of cliques are covers
+    covers=[]
+    for c in cliques:
+        vertex_list = list(range(g.vcount()))
+        c = list(c)
+        for v in c:
+            vertex_list.remove(v)
+        covers.append(vertex_list)
+
+    return covers
+
+def MCV(g, mcv_covers):
     """
     g: Graph
     return: The set of minimum vertex covers of G
     """
-    mcv_covers = mcv(g)
+
     result = []
     min = len(mcv_covers[0])
     for cover in mcv_covers:
@@ -474,6 +451,30 @@ def getAllSimplePaths(g, s, d, visited, partial = [], result= []):
             result = getAllSimplePaths(g, n, d, visited_aux, partial_aux, result)
             visited[n] = True
     return result
+
+def all_simple_paths(adjlist, start, end, path=()):
+    """
+    agjlist: List of neighborhood for each vertex
+    start: Source vertex
+    end: Destination vertex
+    path: Partial path
+    return: A list of all the simple paths between vertex start and end
+    """
+    path = path + (start,)
+
+    if start == end:
+        return [path]
+
+    paths = []
+
+    for child in adjlist[start]:
+
+        if child not in path:
+
+            child_paths = all_simple_paths(tuple(adjlist), child, end, path)
+            paths.extend(child_paths)
+
+    return paths
 
 def get_edges(g, k):
     """

@@ -8,25 +8,21 @@ def geographicalDiversity(g, p=[0,1]):
     """
     g: Graph
     p: Vertex path between two nodes
-    return: The minimun distance between any node members of vector p and the shortest path
+    return: The minimun distance between any node members of vector p and the shortest path, return inf when if there is not a path
     """
     s = p[0]
-    d = p[len(p) -1]
+    d = p[-1]
     shortestPath = g.get_shortest_paths(s, d)[0]
     m = float('inf')
-    cond = False
     for node in p:
         for node_s in shortestPath:
             if(node != node_s and g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
                 distance = g.shortest_paths_dijkstra(node, node_s)[0][0]
                 if(distance < m):
                     m = distance
-                    cond = True
-    
-    if(cond):
-        return m
-    else:
-        raise Exception('There is no path between any node members of vector p and the shortest path')
+    if(m == float('inf')):
+        return 0
+    return m
 
 def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     """
@@ -38,8 +34,13 @@ def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     k = 0
     visited = [False] * g.vcount()
     simplePaths = getAllSimplePaths(g, s, d, visited)
+
+    adj_list = g.neighborhood(mode='OUT')
+    for i in range(g.vcount()):
+        adj_list[i].remove(i)
+    simplePaths = all_simple_paths(adj_list, s, d)
     for path in simplePaths:
-        k += geographicalDiversity(g, path)
+        k += geographicalDiversity(g, list(path))
     
     return 1 - math.exp(- l * k)
 
