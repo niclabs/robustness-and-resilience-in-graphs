@@ -141,8 +141,9 @@ def coveringIndex(g, v=0):
     g: Graph
     v: Vertex, default=0
     """
-    c = len(mcv(g))
-    mVertCov = MCV(g)
+    mcv_list = mcv(g)
+    c = len(mcv_list)
+    mVertCov = MCV(g, mcv_list)
     a = 0
     for cover in mVertCov:
         if v in cover:

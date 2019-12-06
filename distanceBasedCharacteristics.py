@@ -2,31 +2,36 @@ import math
 import itertools
 import numpy as np
 from igraph import *
+import networkx as nx
 from auxiliaryFunctions import *
 
-def geographicalDiversity(g, p=[0,1]):
+def geographicalDiversity(g, p=[0,1],distance=False):
     """
     g: Graph
     p: Vertex path between two nodes
-    return: The minimun distance between any node members of vector p and the shortest path
+    distance: Name of the edge attribute that indicates distance
+    return: The minimun distance between any node members of vector p and the shortest path, return inf when if there is not a path
     """
+    if not distance:
+        distance="distance"
+        g = generateWeight(g,name=distance)
+
     s = p[0]
-    d = p[len(p) -1]
-    shortestPath = g.get_shortest_paths(s, d)[0]
+    d = p[-1]
+
+    #Get shortest path
+    shortestPath = g.get_shortest_paths(s, d, weights=distance)[0]
+    
     m = float('inf')
-    cond = False
     for node in p:
         for node_s in shortestPath:
             if(node != node_s and g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
                 distance = g.shortest_paths_dijkstra(node, node_s)[0][0]
                 if(distance < m):
                     m = distance
-                    cond = True
-    
-    if(cond):
-        return m
-    else:
-        raise Exception('There is no path between any node members of vector p and the shortest path')
+    if(m == float('inf')):
+        return 0
+    return m
 
 def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     """
@@ -36,10 +41,14 @@ def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
     l: Constant to weight the utility of alternatie paths, default = 1
     """
     k = 0
-    visited = [False] * g.vcount()
-    simplePaths = getAllSimplePaths(g, s, d, visited)
+
+    #Get all simple paths
+    edge_list = g.get_edgelist()
+    n_g = nx.Graph(edge_list)
+    simplePaths = list(nx.all_simple_paths(n_g, s,d))
+
     for path in simplePaths:
-        k += geographicalDiversity(g, path)
+        k += geographicalDiversity(g, list(path))
     
     return 1 - math.exp(- l * k)
 
