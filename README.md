@@ -7,6 +7,8 @@ Requirements:
 - scipy
 - sympy
 
+Executing the experiments additionally requires networkx, and the generation of the example figures employs matplotlib.
+
 4.1 Characteristics for ranking elements
 
 - [x] Vertex load
