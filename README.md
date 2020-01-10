@@ -1,8 +1,8 @@
 # robustness-and-resilience-in-graphs
 
 Requirements:
-- python 3.6
-- igraph 0.7.1
+- python3
+- jgraph 
 - numpy
 - scipy
 - sympy
