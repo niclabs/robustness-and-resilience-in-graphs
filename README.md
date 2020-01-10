@@ -2,7 +2,7 @@
 
 Requirements:
 - python3
-- jgraph 
+- igraph https://igraph.org/c/doc/igraph-Flows.html
 - numpy
 - scipy
 - sympy
