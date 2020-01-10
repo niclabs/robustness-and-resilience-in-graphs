@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib as mpl
-import matplotlib.pylab as plt    
+mpl.use('Agg') # disable pylab's attempt to open a window
+from matplotlib.pylab import figure, savefig
 
 examples = [(nx.generators.random_graphs.barabasi_albert_graph(15, 3), 'nxba'),
             (nx.generators.classic.barbell_graph(6, 2), 'nxbarbell'),
@@ -18,13 +19,12 @@ examples = [(nx.generators.random_graphs.barabasi_albert_graph(15, 3), 'nxba'),
             (nx.generators.random_graphs.powerlaw_cluster_graph(20, 4, 0.15), 'nxtree'),
             (nx.generators.classic.wheel_graph(12), 'nxwheel')]
 
-redraw_examples = True
+redraw_examples = False
 if redraw_examples:
     for (G, label) in examples:
-        fig = plt.figure()
+        fig = figure()
         nx.draw(G)
-        plt.savefig(label + '.png', width = 1000)
-
+        savefig(label + '.png', width = 1000)
 
 models = [(nx.generators.random_graphs.barabasi_albert_graph, -2),
             (nx.generators.classic.barbell_graph, 2),
@@ -41,7 +41,6 @@ models = [(nx.generators.random_graphs.barabasi_albert_graph, -2),
             (nx.generators.random_graphs.connected_watts_strogatz_graph, 3),
             (nx.generators.random_graphs.powerlaw_cluster_graph, 3),
             (nx.generators.classic.wheel_graph, 1)]
-
 
 from math import floor, ceil, sqrt, log
 
@@ -65,7 +64,8 @@ def create(m, n, pr, k = None, h = None):
         print('# ERROR', m.__name__, 'failed to create a graph:', e)        
         pass
     if G is None:
-        print('# OMITTING', m.__name__, 'as it produced a None output with', n, pr, k, h)
+        print('# OMITTING', m.__name__, 'as it produced a nil output with', n, pr, k, h)
+        return None
     CC = sorted(nx.connected_components(G), key=len, reverse=True)
     if len(G) > len(CC[0]):
         print('# WARNING', m.__name__, 'resulted in a disconnected graph with', n, pr, k, h)        
@@ -187,8 +187,8 @@ naturalConnectivity,
 subgraphCentrality,
 normalizedLocalNaturalConnectivity]
     
-permitted = 1
-import igraph as ig
+permitted = 2 # seconds until the execution of an individual measurement is terminated
+import igraph as ig 
 from time import time
 from multiprocessing import Process
 from math import floor, ceil, sqrt, log
@@ -222,8 +222,8 @@ for power in range(5, 10):
             if G is not None:
                 G = nx.convert_node_labels_to_integers(G)
                 for vertex in G:
-                    if 'pos' in G.node[vertex]:
-                        del G.node[vertex]['pos']
+                    if 'pos' in G.nodes[vertex]:
+                        del G.nodes[vertex]['pos']
                 nx.write_graphml(G, 'G.graphml')
                 g = ig.read('G.graphml', format="graphml")
                 d = '{:s} {:d} '.format(m.__name__, n)                
@@ -240,8 +240,7 @@ from componentBasedCharacteristics import preferentialPerturbation
 from componentBasedCharacteristics import maximumPerturbationScore
 # </import2.lst>
 
-comparative = [preferentialPerturbation,
-maximumPerturbationScore]
+comparative = [preferentialPerturbation, maximumPerturbationScore]
 
 for power in range(4, 9, 2):
     n = 2**power
@@ -253,8 +252,8 @@ for power in range(4, 9, 2):
             if G1 is not None:
                 G1 = nx.convert_node_labels_to_integers(G1)
                 for vertex in G1:
-                    if 'pos' in G1.node[vertex]:
-                        del G1.node[vertex]['pos']
+                    if 'pos' in G1.nodes[vertex]:
+                        del G1.nodes[vertex]['pos']
                 nx.write_graphml(G1, 'G1.graphml')
                 g1 = ig.read('G1.graphml', format="graphml")
                 for (m2, p2) in models:
@@ -262,8 +261,8 @@ for power in range(4, 9, 2):
                     if G2 is not None:
                         G2 = nx.convert_node_labels_to_integers(G2)
                         for vertex in G2:
-                            if 'pos' in G2.node[vertex]:
-                                del G2.node[vertex]['pos']
+                            if 'pos' in G2.nodes[vertex]:
+                                del G2.nodes[vertex]['pos']
                         nx.write_graphml(G2, 'G2.graphml')
                         g2 = ig.read('G2.graphml', format="graphml")
                         d = '{:s} {:s} {:d} '.format(m1.__name__ , m2.__name__, n)
