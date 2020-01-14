@@ -3,6 +3,7 @@ import numpy as np
 from scipy import linalg
 from igraph import *
 from itertools import combinations
+import networkx as nx
 
 def randomWalk(g, i=0, t=1, s= 0):
     """
@@ -618,3 +619,84 @@ def normalize(v):
     """
     n = np.linalg.norm(v, axis=1)
     return v/n
+
+def getDAG(g, reverse = False):
+    """
+    g: Graph
+    Return directed acyclic graph
+    """
+    n_graph = nx.DiGraph()
+    n_graph.add_nodes_from(list(range(g.vcount())))
+    for edge in g.es:
+        if reverse:
+            target = edge.source
+            source = edge.target
+        else:
+            source = edge.source
+            target = edge.target
+        n_graph.add_edge(source, target)
+        try:
+            nx.find_cycle(n_graph)
+            #There is a cycle
+            n_graph.remove_edge(source, target)
+        except:
+            pass
+    graph = Graph(directed=True)
+    graph.add_vertices(g.vcount())
+    edges = list(n_graph.edges)
+    graph.add_edges(edges)
+
+    return graph
+
+def getPaths(g, M, u):
+    """
+    g: Graph
+    M: List of vertex
+    u: List of vertex
+    return: List of all paths where source vertex belongs to M and target vertex belongs to u
+    """
+    paths = []
+    n_graph = nx.DiGraph()
+    n_graph.add_nodes_from(list(range(g.vcount())))
+    n_graph.add_edges_from(g.get_edgelist())
+
+    for i in M:
+        for j in u:
+            paths_ij = list(nx.all_simple_paths(n_graph,source=i,target=j))
+            for path in paths_ij:
+                paths.append(path)
+
+    return paths
+
+def h_vi(v, paths):
+    """
+    v: Vertex
+    paths: List of paths
+    """
+    k= 0
+    M = len(paths)
+    for p in paths:
+        if p[0] == v:
+            k+= 1
+    return k * math.log(1/M) / M
+
+def H_f(g):
+    """
+    g: Graph
+    return: Measure for treeness
+    """
+    k_i = np.array(g.indegree())
+    k_out = np.array(g.outdegree())
+    M = np.where(k_i == 0)[0]
+    u = np.where(k_out == 0)[0]
+    acc = 0
+    paths = getPaths(g, M, u)
+
+    for vi in M:
+        acc += h_vi(vi, paths)
+
+    return acc / len(M)
+
+
+
+
