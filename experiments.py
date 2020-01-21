@@ -187,12 +187,19 @@ naturalConnectivity,
 subgraphCentrality,
 normalizedLocalNaturalConnectivity]
     
-permitted = 2 # seconds until the execution of an individual measurement is terminated
-import igraph as ig 
+permitted = None 
+import igraph as ig
 from time import time
+from sys import argv, stderr
 from multiprocessing import Process
 from math import floor, ceil, sqrt, log
 
+try: # check for how many seconds until the execution of an individual measurement is terminated
+    permitted = int(argv[1])
+except:
+    permitted = 1 # default
+    stderr.write('using the default one-second timeout')
+    
 def measure(replica, c, descr, g, g2 = None):
     before, after, value = None, None, None
     if g2 == None:
