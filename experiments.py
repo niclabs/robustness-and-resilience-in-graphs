@@ -193,24 +193,24 @@ from time import time
 from multiprocessing import Process
 from math import floor, ceil, sqrt, log
 
-def measure(c, descr, g, g2 = None):
+def measure(replica, c, descr, g, g2 = None):
     before, after, value = None, None, None
     if g2 == None:
         try:
             before, value, after = time(), c(g), time()
         except Exception as e:
-            print('# ERROR measuring', descr, e)
+            print('# ERROR measuring', descr, e, replica)
             return
     else:
         try:
             before, value, after = time(), c(g, g2), time()
-        except:
-            print('# ERROR measuring', descr, e)
+        except Exception as e:
+            print('# ERROR measuring', descr, e, replica)
             return            
     if value is not None:
         if hasattr(value, "__iter__"):
             value = '{:f} (avg)'.format(sum(value) / len(value))
-        print('{:s} {:s} {:f}'.format(descr, str(value), after - before))
+        print('{:s} {:s} {:f}'.format(descr, str(value), after - before), replica)
 
 for power in range(5, 10):
     n = 2**power
@@ -228,7 +228,7 @@ for power in range(5, 10):
                 g = ig.read('G.graphml', format="graphml")
                 d = '{:s} {:d} '.format(m.__name__, n)                
                 for c in characteristics:
-                    proc = Process(target=measure, args=(c, d + c.__name__, g))
+                    proc = Process(target=measure, args=(r, c, d + c.__name__, g))
                     proc.start()
                     proc.join(permitted)
                     if proc.is_alive():
@@ -267,7 +267,7 @@ for power in range(4, 9, 2):
                         g2 = ig.read('G2.graphml', format="graphml")
                         d = '{:s} {:s} {:d} '.format(m1.__name__ , m2.__name__, n)
                         for c in comparative:
-                            p = Process(target=measure, args=(c, d + c.__name__, g1, g2))
+                            p = Process(target=measure, args=(r, c, d + c.__name__, g1, g2))
                             p.start()
                             p.join(permitted)
                             if p.is_alive():
