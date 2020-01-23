@@ -697,6 +697,24 @@ def H_f(g):
 
     return acc / len(M)
 
+def criticality(graph, n):
+    """
+    n: Iteration number
+    return: Criticality of all vertices at iteration n
+    """
+    h_n_1 = np.ones(graph.vcount())
+    h_n = np.zeros(graph.vcount())
+    for it in range(n-1):
+        for v in range(g.vcount()):
+            acc = 0
+            v_neighbors = graph.neighbors(v)
+            k_j = len(v_neighbors)
+            for neighbor in v_neighbors:
+                acc += h_n_1[neighbor] / k_j
+            h_n[v] = acc
+        h_n_1 = h_n
+        h_n = np.zeros(graph.vcount())
+    return h_n_1
 
 
 

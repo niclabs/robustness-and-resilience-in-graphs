@@ -95,3 +95,10 @@ Executing the experiments additionally requires networkx, and the generation of 
 
 - [x] Effective graph resistence, graph needs 'weight' attribute on edges
 - [x] Viral conductance
+
+New Metrics:
+
+- [ ] Percentage of noncritical nodes
+- [x] Robustness value
+- [x] Treeness
+- [x] Entropy
