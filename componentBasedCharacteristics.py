@@ -57,22 +57,25 @@ def randomRobustnessIndex(g, m=1):
     m: number of rounds of attacks, default=1
     """
     v = g.vcount()
-    sum = 0
+    acc = 0
     for i in range(m): #Each random attacks
         for j in range(1, v+1): #Remove j random vertices
             aux = g.copy()
-            for k in range(j): #Choose a random vertex j times
-                numberV = aux.vcount()
-                vertex = random.randint(0, numberV - 1) #Choose a random vertex
-                aux.delete_vertices([vertex])
+            vertices = list(range(aux.vcount()))
+            vertices_to_delete = random.sample(vertices, j)
+            aux.delete_vertices(vertices_to_delete)
             clusters = aux.components()
             maxCluster = 0
             for c in clusters:
                 l = len(c)
                 if l > maxCluster:
                     maxCluster = l
-            sum += maxCluster / v
-    return (1/m) * (1/v) * sum
+            acc += maxCluster / v
+    try:
+        result =  (1/m) * (1/v) * acc
+    except ZeroDivisionError:
+        result = None
+    return result
 
 def robustnessMeasure53(g):
     """
