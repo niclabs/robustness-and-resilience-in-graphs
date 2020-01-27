@@ -140,3 +140,19 @@ def robustnessMeasureR(graph, ranking_function=None):
     except ZeroDivisionError:
         result = None
     return result
+
+def globalConnectivity(graph):
+    n = graph.vcount()
+    try:
+        result = sizeMaxComponent(graph) / n
+    except ZeroDivisionError:
+        result = None
+    return result
+
+def localConnectivity(graph):
+    giant_component = getGiantComponent(graph)
+    try:
+        result = localConnectivityAux(graph) / localConnectivityAux(giant_component)
+    except ZeroDivisionError:
+        result = None
+    return result

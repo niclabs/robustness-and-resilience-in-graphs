@@ -716,5 +716,68 @@ def criticality(graph, n):
         h_n = np.zeros(graph.vcount())
     return h_n_1
 
+def rth_nearest_neighbors(graph, r):
+    """
+    return: the number of rth nearest neighbors of all nodes in graph
+    """
+    n = graph.vcount()
+    reachable = graph.neighborhood(order=r)
+    result = np.zeros(n)
+    for vertex in range(n):
+        for neighbor in reachable[vertex]:
+            if graph.shortest_paths_dijkstra(vertex, neighbor)[0][0] == r:
+                result[vertex] += 1
+    return result
+
+def average_rth_nearest_neighbors(graph, r):
+    """
+    return: average number of rth-nearest neighbors of all nodes in the graph
+    """
+    return np.sum(rth_nearest_neighbors(graph, r)) / graph.vcount()
+            
+def getGiantComponent(graph):
+    """
+    return: igraph object of the giant component of graph
+    """
+    components = graph.components()
+    giant_component_list = []
+    size = 0
+    for component in components:
+        if len(component) > size:
+            size = len(component)
+            giant_component_list = component
+    
+    #Add edges to giant component
+    giant_component = Graph()
+    giant_component.add_vertices(len(giant_component_list))
+    for i in range(len(giant_component_list)): #i new vertex id
+        neighbors = graph.neighbors(giant_component_list[i])
+        for neighbor in neighbors:
+            if neighbor in giant_component_list:
+                new_index = giant_component_list.index(neighbor) #new index of target
+                if giant_component.get_eid(i, new_index, directed=False, error=False) == -1:
+                    giant_component.add_edge(i, new_index)
+    return giant_component
+
+def localConnectivityAux(graph):
+    rm = 0
+    n = graph.vcount()
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                shortest_path_length = graph.shortest_paths_dijkstra(i, j)[0][0]
+                if shortest_path_length > rm and not np.isinf(shortest_path_length):
+                    rm = shortest_path_length
+    
+    acc = 0
+    for i in range(1, rm + 1):
+        acc += average_rth_nearest_neighbors(graph, i) / i
+    return acc
+
+
+
+
+
+
 
 

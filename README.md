@@ -103,4 +103,6 @@ New Metrics:
 - [x] Treeness
 - [x] Entropy
 - [ ] Global resilience analysis
-- [ ] Robustness measure R 
+- [x] Robustness measure R 
+- [x] Global connectivity
+- [x] Local connectivity
