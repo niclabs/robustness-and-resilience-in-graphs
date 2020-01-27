@@ -98,7 +98,11 @@ def robustnessMeasure53(g):
             if(compOrder > Ci):
                 Ci = compOrder 
         Ct += Ci
-    return Ct / n
+    try: 
+        result = Ct / n
+    except ZeroDivisionError:
+        result = None
+    return result
 
 def connectivityRobustnessFunction(g, k=1):
     """
