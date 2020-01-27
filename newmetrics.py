@@ -116,3 +116,27 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
     S = CS / np.sum(CS)
     result = - np.sum( S * np.log(S))
     return result, x_pos, y_pos
+
+def globalResilienceAnalysis():
+    pass
+
+def robustnessMeasureR(graph, ranking_function=None):
+    """
+    ranking_function: Function that returns a list of ranked nodes in graph, use: ranking_function(graph), if ranking_function is None, then the nodes are ranked by degree
+    """
+    if ranking_function is None:
+        degrees = graph.degree()
+        ranking = np.flip(np.argsort(degrees))
+    else:
+        ranking = ranking_function(graph)
+    acc = 0
+    n = graph.vcount()
+    for vertex in ranking:
+        graph.delete_vertices(vertex)
+        s = sizeMaxComponent(graph)
+        acc += s
+    try:
+        result = acc / n
+    except ZeroDivisionError:
+        result = None
+    return result

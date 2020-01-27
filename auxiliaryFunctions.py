@@ -705,7 +705,7 @@ def criticality(graph, n):
     h_n_1 = np.ones(graph.vcount())
     h_n = np.zeros(graph.vcount())
     for it in range(n-1):
-        for v in range(g.vcount()):
+        for v in range(graph.vcount()):
             acc = 0
             v_neighbors = graph.neighbors(v)
             k_j = len(v_neighbors)

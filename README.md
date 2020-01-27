@@ -102,3 +102,5 @@ New Metrics:
 - [x] Robustness value
 - [x] Treeness
 - [x] Entropy
+- [ ] Global resilience analysis
+- [ ] Robustness measure R 
