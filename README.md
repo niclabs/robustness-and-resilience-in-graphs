@@ -106,3 +106,4 @@ New Metrics:
 - [x] Robustness measure R 
 - [x] Global connectivity
 - [x] Local connectivity
+- [x] Vulnerability

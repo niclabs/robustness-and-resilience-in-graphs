@@ -774,6 +774,38 @@ def localConnectivityAux(graph):
         acc += average_rth_nearest_neighbors(graph, i) / i
     return acc
 
+def performance(graph):
+    """
+    Auxiliary function for vulnerability
+    returns the performance of a graph
+    """
+    acc = 0
+    n = graph.vcount()
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                shortest_path_length = graph.shortest_paths_dijkstra(i, j)[0][0]
+                if not np.isinf(shortest_path_length):
+                    acc += shortest_path_length
+    try:
+        return acc / (n * (n-1))
+    except ZeroDivisionError:
+        return None
+
+def attack_edges(graph, n= None):
+    """
+    returns a new graph with n random edges deleted, if n not specified, then n is chosen randomly
+    """
+    if n is None:
+        n_edges = graph.ecount()
+        n = random.randint(1, n_edges)
+    attacked_graph = graph.copy()
+    for i in range(n):
+        edges = list(range(attacked_graph.ecount()))
+        edge_to_delete = random.choice(edges)
+        attacked_graph.delete_edges(edge_to_delete)   
+    return attacked_graph
+
 
 
 
