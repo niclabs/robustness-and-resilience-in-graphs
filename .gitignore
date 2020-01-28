@@ -1,3 +1,16 @@
+# emacs backups
+*~ 
+
+# created graphics
+*.png
+
+# temporary graph storage
+*.graphlm
+
+# data and listings created by scripts
+*.dat
+*.lst
+
 # Created by https://www.gitignore.io/api/java,intellij
 
 ### Intellij ###
