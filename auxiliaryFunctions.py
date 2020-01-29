@@ -566,16 +566,22 @@ def y(g, s=0):
         acc += probis(g,i, s)
     return acc / v
 
-def makeEmptyServices(g):
+def makeRandomServices(graph):
     """
-    g: Graph
-    return: A list of services per node in a graph [[[], []], ... , [[], []]]
+    retrun: random set of services available locally and the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     """
-    l = []
-    v = g.vcount()
+    services = []
+    v = graph.vcount()
+    vertices = list(range(v))
     for i in range(v):
-        l.append([[], []])
-    return l
+        non_local = []
+        amount_local = random.randint(0, v-1)
+        local = random.sample(vertices, amount_local)
+        available_services = [service for service in vertices if service not in local]
+        amount_nonlocal = random.randint(1, v - amount_local)
+        non_local = random.sample(available_services, amount_nonlocal)
+        services.append([local, non_local])
+    return services
 
 def centralityFunction(M):
     """

@@ -134,42 +134,24 @@ def kResilienceFactor(g, k=2):
     """
     n = g.vcount()
     if(k - 1 > n):
-        return -1 #Error
-    aux = g.copy() #The function doesn't modify the original graph
-    originalComponents = g.components()
-    original = len(originalComponents) #Number of original connected components
-    num = np.arange(n) #New numbering after removing vertices
-    for i in range(k - 1): #Remove k - 1 vertices
-        numberV = aux.vcount()
-        v = random.randint(0, numberV -1)
-        aux.delete_vertices([v]) #Delete vertex
-        #Change vertices numbering
-        index = np.where(num == v)[0][0]
-        num[index] = -1
-        for j in range(index, len(num)):
-            if(num[j] != -1):
-                num[j] -= 1
-    
-    newComponents = aux.components()
-    nComponents = []
+        return None #Error
+       
+    vertices_list = np.arange(n) #List of vertices
+    combinations = list(itertools.combinations(vertices_list, k -1))
+    print(combinations)
+    connected = float(0)
 
-    #Change vertices numbering to original
-    for i in range(len(newComponents)):
-        l = []
-        for j in range(len(newComponents[i])):
-            index =  np.where(num == newComponents[i][j])[0][0]
-            l.append(index)
-        nComponents.append(l)
-    new = 0
-    for comp in nComponents:
-        if comp in originalComponents:
-            new += 1
-    return (new/original) * 100
+    for vertices in combinations: #Remove vertices
+        aux_graph = g.copy()
+        aux_graph.delete_vertices(vertices)
+        if len(aux_graph.components()) == 1:
+            connected += 1
+    return connected / len(combinations)
 
 def resilienceFactor(g):
     n = g.vcount()
     if( n < 3):
-        return -1 #Error
+        return None #Error
     result = np.zeros(n-2)
     for i in range(2, n):
         auxGraph = g.copy()

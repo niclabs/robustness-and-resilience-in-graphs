@@ -28,8 +28,8 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Random-robustness index
 - [x] Robustness measure
 - [x] Connectivity robustness function
-- [x] k-resilence factor
-- [x] Resilence factor
+- [x] k-resilience factor
+- [x] Resilience factor
 - [x] Perturbation score
 - [x] Preferential perturbation
 - [x] Maximun perturbation score

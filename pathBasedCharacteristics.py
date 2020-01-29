@@ -45,13 +45,14 @@ def fragmentation(g, strategy=perturbationFunction, args=1):
         sum+= len(comp)
     return sum / (N * (N - 1))
 
-def selfSufficiency(g, l=0):
+def selfSufficiency(g, l=None):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     """
-    if l == 0:
-        l = makeEmptyServices(g)
+    if l == None:
+        l = makeRandomServices(g)
+        print(l)
     comp = g.components()
     for c in comp:
         for vertex in c:
@@ -64,22 +65,24 @@ def selfSufficiency(g, l=0):
                             cond= True
                             break
                 if (not cond):
-                    return False
-    return True
+                    return False, l
+    return True, l
 
-def kVertexFailureResilience(g, l=0, k= 1):
+def kVertexFailureResilience(g, l=None, k= None):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]] 
-    k: Number of vertices that fail, default = 1
+    k: Number of vertices that fail, default = random
     """
-    if l == 0:
-        l = makeEmptyServices(g)
+    if l is None:
+        l = makeRandomServices(g)
+    if k is None:
+        k = random.randint(0, g.vcount())
     if k == 0:
         return selfSufficiency(g, l)
     v = g.vcount()
     if k > v:
-        raise Exception('Number of vertices to fail can not be greater than the total vertices')
+        return None, l
     nodes = list(range(v))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(nodes, i))
@@ -90,17 +93,17 @@ def kVertexFailureResilience(g, l=0, k= 1):
             for vertex in sorted(comb, reverse= True):
                 del auxList[vertex]
             if (not selfSufficiency(auxGraph, auxList)):
-                return False
-    return True
+                return False, l
+    return True, l
 
-def vertexResilience(g, l=0):
+def vertexResilience(g, l=None):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     return: The largest k for which g is k vertex-failure resilient
     """
-    if l == 0:
-        l = makeEmptyServices(g)
+    if l == None:
+        l = makeRandomServices(g)
     s = getServices(l)
     T = []
     for sj in s:
@@ -116,23 +119,25 @@ def vertexResilience(g, l=0):
             Tj.append(gamma_vj)
         T.append(np.min(Tj))
     if len(T) == 0:
-        return None
-    return np.min(T) - 1
+        return None, l
+    return np.min(T) - 1, l
 
 
-def kEdgeFailureResilience(g, l=0, k=1):
+def kEdgeFailureResilience(g, l=None, k=None):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
-    k: Number of edges that fail, default = 1
+    k: Number of edges that fail, default = random
     """
-    if l == 0:
-        l = makeEmptyServices(g)
+    if l == None:
+        l = makeRandomServices(g)
+    if k is None:
+        k = random.randint(0, g.ecount())
     if k == 0:
         return selfSufficiency(g, l)
     e = g.ecount()
     if k > e:
-        raise Exception('Number of edges to fail can not be greater than the total edges')
+        return None, l
     edges = list(range(e))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(edges, i))
@@ -142,17 +147,17 @@ def kEdgeFailureResilience(g, l=0, k=1):
             for edge in sorted(comb, reverse= True):
                 auxGraph.delete_edges(edge)
             if (not selfSufficiency(auxGraph, auxList)):
-                return False
-    return True
+                return False, l
+    return True, l
 
-def edgeResilience(g, l=0):
+def edgeResilience(g, l=None):
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]
     return: The largest k for which g is k edge-failure resilient
     """
-    if l == 0:
-        l = makeEmptyServices(g)
+    if l == None:
+        l = makeRandomServices(g)
     
     s = getServices(l)
     O = []
@@ -169,8 +174,8 @@ def edgeResilience(g, l=0):
             Oj.append(alpha_vj)
         O.append(np.min(Oj))
     if len(O) == 0:
-        return None
-    return np.min(O) - 1
+        return None, l
+    return np.min(O) - 1, l
 
 
 def pathDiversity(g, d= 1, s=0,  seed=1):
