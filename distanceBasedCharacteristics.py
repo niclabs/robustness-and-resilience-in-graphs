@@ -163,32 +163,22 @@ def deltaEfficiency(graph, k=None):
     except ZeroDivisionError:
         return None
 
-def fragility(g, t2=1):
+def fragility(g):
     """
     g: Graph
-    t2: Limit of temporal distance, default= 1
     return: The average delta efficiency over single-vertex removals
     """
-    sum = 0
-    v = g.vcount()
-    for k in range(v):
-        g_k = g.copy()
-        v_k = list(range(v))
-        v_k.remove(k)
-        #Remove all links connected to node k
-        edges = get_edges(g_k, k)
-        for edge in sorted(edges, reverse= True):
-                g_k.delete_edges(edge)
-        for i in v_k:
-            for j in v_k:
-                if(i != j and g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0 and g_k.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
-                    sum += (1 / shortestTemporalDistance(g, i, j, t2)) - (1 / shortestTemporalDistance(g_k, i, j, t2))
-    return (1 / (v * (v - 1) * (v - 2)) * sum) 
+    acc = float(0)
+    for k in range(g.vcount()):
+        acc += deltaEfficiency(g, k)
+    try:
+        return acc / g.vcount()
+    except ZeroDivisionError:
+        return None
 
-def dynamicFragility(g, t2=1):
+def dynamicFragility(g):
     """
     g: Graph
-    t2: Limit of temporal distance, default= 1
     return: The average delta efficiency over all vertices, weighted by the failure probability of each vertex
     """
-    return 1 - fragility(g, t2)
+    return 1 - fragility(g)
