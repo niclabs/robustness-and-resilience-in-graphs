@@ -429,6 +429,16 @@ def shortestTemporalDistance(g, s, d, t2):
         else:
             return path_len
 
+def removeLinks(graph, vertex):
+    """
+    return: A new graph where vertex is disconnected
+    """
+    new_graph = graph.copy()
+    neighbors = new_graph.neighbors(vertex)
+    for target in neighbors:
+        new_graph.delete_edges([(vertex, target)])
+    return new_graph
+
 def get_edges(g, k):
     """
     g: Graph

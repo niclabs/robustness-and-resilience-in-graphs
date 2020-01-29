@@ -138,19 +138,30 @@ def temporalEfficiency(g, t2=1):
                     sum += (1 / shortestTemporalDistance(g, i, j, t2))
     return (1 / (v * (v - 1))) * sum
 
-def deltaEfficiency(g, i=0):
+def deltaEfficiency(graph, k=None):
     """
-    g: Graph
-    i: Vertex, default = 0
-    return: Efficiency of vertex i
+    k: Vertex
+    return: Delta effiency of graph with respect to node k
     """
-    sum = 0
-    v = g.vcount()
-    for j in range(v):
-        if (j != i):
-            if(g.vertex_disjoint_paths(i, j, neighbors = "ignore") != 0):
-                    sum += (1 / shortestTemporalDistance(g, i, j, float('inf')))
-    return (1 / (v - 1)) * sum
+    n = graph.vcount()
+    if n == 0:
+        return None
+    if k is None:
+        k = random.randint(0, n - 1)
+    acc = 0
+    v_k = list(range(n))
+    v_k.remove(k)
+    graph_k = removeLinks(graph, k)
+    for i in v_k:
+        for j in v_k:
+            if i != j:
+                distance_g = float(graph.shortest_paths_dijkstra(i,j)[0][0])
+                distance_g_k = float(graph_k.shortest_paths_dijkstra(i, j)[0][0])
+                acc += (1/distance_g) - (1/distance_g_k)
+    try:
+        return acc / ((n-1) * (n-2))
+    except ZeroDivisionError:
+        return None
 
 def fragility(g, t2=1):
     """
