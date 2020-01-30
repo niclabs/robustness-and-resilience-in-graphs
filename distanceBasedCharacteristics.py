@@ -5,74 +5,104 @@ from igraph import *
 import networkx as nx
 from auxiliaryFunctions import *
 
-def geographicalDiversity(g, p=[0,1],distance=False):
+def geographicalDiversity(g, p=None, x_position=None, y_position=None):
     """
     g: Graph
     p: Vertex path between two nodes
-    distance: Name of the edge attribute that indicates distance
+    x_position: Name of the vertex attribute that indicates x position of vertex
+    y_position: Name of the vertex attribute that indicates y position of vertex
     return: The minimun distance between any node members of vector p and the shortest path, return inf when if there is not a path
     """
-    if not distance:
-        distance="distance"
-        g = generateWeight(g,name=distance)
-
+    n = g.vcount()
+    if n < 2:
+        return None
+    if x_position is None:
+        g = generatePositions(g, 'x', 'y')
+        x_position = 'x'
+        y_position = 'y'
+    distance = 'distance'
+    g = generateDistance(g, x_position, y_position, distance)  
+    if p is None:
+        vertices = list(range(n))
+        s = random.choice(vertices)
+        vertices.remove(s)
+        d = random.choice(vertices)
+        p = randomWalk(g, s, d)
     s = p[0]
     d = p[-1]
-
     #Get shortest path
-    shortestPath = g.get_shortest_paths(s, d, weights=distance)[0]
-    
+    shortestPath = g.get_shortest_paths(s, d, weights=distance)[0]  
     m = float('inf')
     for node in p:
         for node_s in shortestPath:
-            if(node != node_s and g.vertex_disjoint_paths(node, node_s, neighbors = "ignore") != 0): #If exist a path between node and node_s
-                distance = g.shortest_paths_dijkstra(node, node_s)[0][0]
-                if(distance < m):
-                    m = distance
+            if node != node_s and node not in shortestPath:
+                x1 = g.vs[x_position][node]
+                y1 = g.vs[y_position][node]
+                x2 = g.vs[x_position][node_s]
+                y2 = g.vs[y_position][node_s]
+                distance_i = math.sqrt(((x1- x2) ** 2) + (y1- y2) ** 2)
+                if(distance_i < m):
+                    m = distance_i
     if(m == float('inf')):
         return 0
     return m
 
-def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1):
+def effectiveGeographicalPathDiversity(g, s= 0, d=1, l= 1, x_position=None, y_position=None):
     """
     g: Graph
     s: Source node, default = 0
     d: Destination node, default = 1
     l: Constant to weight the utility of alternatie paths, default = 1
+    x_position: Name of the vertex attribute that indicates x position of vertex
+    y_position: Name of the vertex attribute that indicates y position of vertex
     """
+    if x_position is None:
+        g = generatePositions(g, 'x', 'y')
+        x_position = 'x'
+        y_position = 'y'
     k = 0
-
     #Get all simple paths
     edge_list = g.get_edgelist()
     n_g = nx.Graph(edge_list)
     simplePaths = list(nx.all_simple_paths(n_g, s,d))
 
     for path in simplePaths:
-        k += geographicalDiversity(g, list(path))
-    
+        k += geographicalDiversity(g, list(path), x_position, y_position)   
     return 1 - math.exp(- l * k)
 
-def totalGraphGeographicalDiversity(g, l=1):
+def totalGraphGeographicalDiversity(g, l=1, x_position=None, y_position=None):
     """
     g: Graph
     l : Constant for effective geographical path diversity, to weight the utility of alternatie paths, default = 1
+    x_position: Name of the vertex attribute that indicates x position of vertex
+    y_position: Name of the vertex attribute that indicates y position of vertex
     return: The average of effective geographical path diversity of all vertex pairs within g.
     """
+    if x_position is None:
+        g = generatePositions(g, 'x', 'y')
+        x_position = 'x'
+        y_position = 'y'
     nodes = list(range(g.vcount()))
     pairs = list(itertools.permutations(nodes, 2)) #This list does not contain pairs (v,v)
     sum = 0
     for p in pairs:
-        sum += effectiveGeographicalPathDiversity(g, p[0], p[1], l)
+        sum += effectiveGeographicalPathDiversity(g, p[0], p[1], l, x_position=x_position, y_position=y_position)
     return sum / len(pairs)
 
-def compensatedTotalGeographicalGraphDiversity(g, l=1):
+def compensatedTotalGeographicalGraphDiversity(g, l=1, x_position=None, y_position=None):
     """
     g: Graph
     l : Constant for total graph geographical path diversity, to weight the utility of alternatie paths, default = 1
+    x_position: Name of the vertex attribute that indicates x position of vertex
+    y_position: Name of the vertex attribute that indicates y position of vertex
     return: The total graph geographical diversity weighted by the total number of edges of g
     """
+    if x_position is None:
+        g = generatePositions(g, 'x', 'y')
+        x_position = 'x'
+        y_position = 'y'
     e = g.ecount()
-    return totalGraphGeographicalDiversity(g, l) * e
+    return totalGraphGeographicalDiversity(g, l, x_position=x_position, y_position=y_position) * e
 
 def functionality(g, attack=None, v = None, l = None):
     """

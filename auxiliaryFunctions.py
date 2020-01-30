@@ -617,6 +617,32 @@ def generateWeight(g, edge =True, vertex=False, name= 'weight', seed=False):
         g.vs[name] = w
     return g
 
+def generatePositions(g, x_position='x_position', y_position='y_position'):
+    """
+    returns graph with vertex attribute x_position and y_position
+    """
+    n = g.vcount()
+    x = np.random.rand(n)
+    y = np.random.rand(n)
+    g.vs[x_position] = x
+    g.vs[y_position] = y
+    return g
+
+def generateDistance(g, x_position, y_position, distance):
+    """
+    distance: Name of distance attribute
+    returns graph with edge attribute that indicates the distance of the nodes
+    """
+    distances = []
+    for edge in g.es:
+        x1 = g.vs[x_position][edge.source]
+        y1 = g.vs[y_position][edge.source]
+        x2 = g.vs[x_position][edge.target]
+        y2 = g.vs[y_position][edge.target]
+        d = math.sqrt(((x1 - x2)**2 + (y1 - y2)**2))
+        distances.append(d)
+    g.es[distance] = distances
+    return g
 
 def setStates(g):
     """
