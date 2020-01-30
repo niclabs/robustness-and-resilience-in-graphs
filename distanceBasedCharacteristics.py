@@ -74,54 +74,93 @@ def compensatedTotalGeographicalGraphDiversity(g, l=1):
     e = g.ecount()
     return totalGraphGeographicalDiversity(g, l) * e
 
-def functionality(g, attack=[0], v = 0, i = 0):
+def functionality(g, attack=None, v = None, l = None):
     """
     g: Graph
     attack: Sequence of vertices that represents the attack, this list must contain at least one vertex
-    v: Vertex, default = 0
-    i: Attack number i that eliminates vertex v_i, default = 0
+    v: Vertex, default = random
+    m: Attack number m that eliminates vertex v_i, default = random
     return: Functionality of vertex v after the attack number i that eliminates vertex vi 
     """
-    if(len(attack) == 0):
-        return -1
-    result = np.zeros(i + 1)
-    result[0] = 1
+    if g.vcount() < 2:
+        return None
+    vertices = list(range(g.vcount()))
+    #Set random default values
+    if v is None:
+        v = random.choice(vertices)
+    if attack is None:
+        total_attack_length = random.randint(1, g.vcount() - 1)
+        vertices.remove(v)
+        attack = random.sample(vertices, total_attack_length)
+    if l is None:
+        l = random.randint(0, len(attack))
+    #Compute measure
+    result = np.zeros(l + 1)
+    result[0] = float(1)
     k = 1
     aux = g.copy()
-    aux.delete_vertices([attack[0]])
-    while(k <= i):
-        distance = aux.shortest_paths_dijkstra(v, k)[0]
-        degree = aux.degree(k)
-        result[k] = result[k - 1] - (1 / ((distance ** 2) * degree)) * result[k - 1]
+    while(k <= l):
+        v_i = attack[k - 1]
+        distance = aux.shortest_paths_dijkstra(v_i, v)[0][0]
+        degree = aux.degree(v)
+        if degree == 0:
+            result[k] = 0
+        else:
+            result[k] = result[k - 1] - (result[k - 1] / ((distance ** 2) * degree)) 
+        aux = removeLinks(aux, v_i)
         k += 1
-        aux.delete_edges([attack[k]])
-    return result[i]
+    return result[l]
 
-def functionalityLoss(g, attack=[0], v=0):
+def functionalityLoss(g, attack=None, v=None, m=None):
     """
     g: Graph
     attack: Attack sequence, this list must contain at least one vertex
     v: Vertex, dafault = 0
+    m: Amount of attacks to consider, not required
     return: The sum of the differences of vertex functionality before and after the attack over the sequence of k attacks
     """
-    sum = 0
-    k = len(attack)
-    for i in range(1, k):
-        sum += functionality(g, i -1, v, attack) - functionality(g, i , v, attack)
-    return sum
+    if g.vcount() < 2:
+        return None
+    vertices = list(range(g.vcount()))
+    #Set random default values
+    if v is None:
+        v = random.choice(vertices)
+    if attack is None:
+        total_attack_length = random.randint(1, g.vcount() - 1)
+        vertices.remove(v)
+        attack = random.sample(vertices, total_attack_length)
+    if m is None:
+        m = len(attack)
+    f_0 = functionality(g, attack, v, 0)
+    f_m = functionality(g, attack, v, m)
+    return f_0 - f_m
 
-def globalFunctionalityLoss(g, attack=[0]):
+def globalFunctionalityLoss(g, attack=None):
     """
     g: Graph
     attack: Attack sequence, this list must contain at least one vertex
     return: The sum of functionality loss over all vertices in the graph that aren't removed in the attack
     """
-    sum = 0
-    v = g.vcount()
-    for i in range(v):
-        if i not in attack:
-            sum += functionalityLoss(g, attack, i)
-    return sum
+    n = g.vcount()
+    if n < 2:
+        return None
+    vertices = list(range(g.vcount()))
+    #Set random default values
+    if attack is None:
+        total_attack_length = random.randint(1, g.vcount())
+        attack = random.sample(vertices, total_attack_length)   
+    acc = 0
+    n = g.vcount()
+    for vertex in range(n):
+        if vertex not in attack:
+            m = len(attack)
+        else:
+            m = attack.index(vertex) - 1
+        if m < 0:
+            pass
+        else:
+            acc += functionalityLoss(g, attack, vertex, m)
+    return acc
 
 def temporalEfficiency(g, t2=1):
     """
