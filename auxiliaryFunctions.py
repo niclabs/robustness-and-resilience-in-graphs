@@ -499,9 +499,12 @@ def sortEigenValuesVectors(eigenvalues, eigenvectors, desc=False,absValue= True)
     abs: Take tha absolute value to compare
     return: Sorted eigen values and eigen vectors, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     """
+
+    map_values = {}
+    for value in eigenvalues:       
+        map_values[abs(value)] = value
     if absValue:
-        eigenvalues = np.abs(eigenvalues)
-    
+        eigenvalues = np.abs(eigenvalues)  
     eigenvalues = list(eigenvalues)
     eigenvectors = list(eigenvectors)
 
@@ -510,7 +513,10 @@ def sortEigenValuesVectors(eigenvalues, eigenvectors, desc=False,absValue= True)
     unzip = list(zip(*pairs))
     eigenvalues = np.array(unzip[0])
     eigenvectors = np.array(unzip[1])
-    return eigenvalues, eigenvectors
+    real_eigenvalues = []
+    for value in eigenvalues:
+        real_eigenvalues.append(map_values[value])
+    return real_eigenvalues, eigenvectors
 
 def naturalConAux(m):
     """

@@ -14,15 +14,16 @@ def reconstructabilityCoefficient(g):
     eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
     eigenvectors = normalize(eigenvectors)
     result = 0
+    print(eigenvalues)
 
     for j in range(len(eigenvalues)):
+        result += 1
         eigenvalues[j] = 0
         new_a = eigenvectors * np.diag(eigenvalues) * np.transpose(eigenvectors)
         new_a -= 0.5
         new_a = np.heaviside(new_a, 0.5)
-        if(not np.array_equal(new_a, A)): #Compare
-            return result
-        result += 1
+        if not np.array_equal(new_a, A): #Compare
+            return result      
     return result
 
 def normalizedSubgraphCentrality(g, v= 0, k=1):
@@ -35,6 +36,7 @@ def normalizedSubgraphCentrality(g, v= 0, k=1):
     A = np.array(g.get_adjacency().data)
     eigenvalues, eigenvectors = np.linalg.eig(A)
     eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
+    eigenvalues = np.abs(eigenvalues)
     sum = 0
     for i in range(k):
         sum += (eigenvectors[i][v] ** 2) + math.sinh(eigenvalues[i])
