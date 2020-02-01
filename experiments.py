@@ -131,75 +131,17 @@ from spectralCharacteristics import subgraphCentrality
 from spectralCharacteristics import normalizedLocalNaturalConnectivity
 # </import.lst>
 
-characteristics = [vertexLoad,
-randomWalkBetweenness,
-criticality,
-entropyRank,
-freeEnergyRank,
-bridgeness,
-coveringDegree,
-coveringIndex,
-sensitivity,
-splittingNumber,
-randomRobustnessIndex,
-robustnessMeasure53,
-connectivityRobustnessFunction,
-kResilienceFactor,
-resilienceFactor,
-perturbationScore,
-degreeEntropy,
-relativeEntropy,
-hubDensity,
-definition523,
-geographicalDiversity,
-effectiveGeographicalPathDiversity,
-totalGraphGeographicalDiversity,
-compensatedTotalGeographicalGraphDiversity,
-functionality,
-functionalityLoss,
-globalFunctionalityLoss,
-temporalEfficiency,
-deltaEfficiency,
-fragility,
-dynamicFragility,
-electricalNodalRobustness,
-relativeAreaIndex,
-effectiveGraphResistance,
-viralConductance,
-pairwiseDisconnectivityIndex,
-fragmentation,
-selfSufficiency,
-kVertexFailureResilience,
-vertexResilience,
-kEdgeFailureResilience,
-edgeResilience,
-pathDiversity,
-percolatedPath,
-percolationCentrality,
-networkCriticality,
-reconstructabilityCoefficient,
-normalizedSubgraphCentrality,
-generalizedRobustnessIndex,
-localNaturalConnectivity,
-closedWalkNumber,
-redundancyOfAlternativePaths,
-naturalConnectivity,
-subgraphCentrality,
-normalizedLocalNaturalConnectivity]
-    
-permitted = None 
+# <import2.lst>
+from componentBasedCharacteristics import preferentialPerturbation
+from componentBasedCharacteristics import maximumPerturbationScore
+# </import2.lst>
+
 import igraph as ig
 from time import time
 from sys import argv, stderr
-from multiprocessing import Process
+from multiprocessing import Process, freeze_support
 from math import floor, ceil, sqrt, log
 
-try: # check for how many seconds until the execution of an individual measurement is terminated
-    permitted = int(argv[1])
-except:
-    permitted = 1 # default
-    stderr.write('using the default one-second timeout')
-    
 def measure(replica, c, descr, g, g2 = None):
     before, after, value = None, None, None
     if g2 == None:
@@ -219,66 +161,123 @@ def measure(replica, c, descr, g, g2 = None):
             value = '{:f} (avg)'.format(sum(value) / len(value))
         print('{:s} {:s} {:f}'.format(descr, str(value), after - before), replica)
 
-for power in range(5, 10):
-    n = 2**power
-    k = int(floor(sqrt(n)))
-    h = int(ceil(sqrt(k)))
-    for (m, p) in models:
-        for r in range(10 - power // 2): # less replicas for larger graphs
-            G = create(m, n, p, k, h)
-            if G is not None:
-                G = nx.convert_node_labels_to_integers(G)
-                for vertex in G:
-                    if 'pos' in G.nodes[vertex]:
-                        del G.nodes[vertex]['pos']
-                nx.write_graphml(G, 'G.graphml')
-                g = ig.read('G.graphml', format="graphml")
-                d = '{:s} {:d} '.format(m.__name__, n)                
-                for c in characteristics:
-                    proc = Process(target=measure, args=(r, c, d + c.__name__, g))
-                    proc.start()
-                    proc.join(permitted)
-                    if proc.is_alive():
-                        proc.terminate()
-                        proc.join()
-
-# <import2.lst>
-from componentBasedCharacteristics import preferentialPerturbation
-from componentBasedCharacteristics import maximumPerturbationScore
-# </import2.lst>
-
-comparative = [preferentialPerturbation, maximumPerturbationScore]
-
-for power in range(4, 9, 2):
-    n = 2**power
-    k = int(floor(sqrt(n)))
-    h = int(ceil(sqrt(k)))
-    for (m1, p1) in models:
-        for r in range(10 - power // 2): # less replicas for larger graphs
-            G1 = create(m1, n, p1, k, h)
-            if G1 is not None:
-                G1 = nx.convert_node_labels_to_integers(G1)
-                for vertex in G1:
-                    if 'pos' in G1.nodes[vertex]:
-                        del G1.nodes[vertex]['pos']
-                nx.write_graphml(G1, 'G1.graphml')
-                g1 = ig.read('G1.graphml', format="graphml")
-                for (m2, p2) in models:
-                    G2 = create(m2, n, p2, k, h)
-                    if G2 is not None:
-                        G2 = nx.convert_node_labels_to_integers(G2)
-                        for vertex in G2:
-                            if 'pos' in G2.nodes[vertex]:
-                                del G2.nodes[vertex]['pos']
-                        nx.write_graphml(G2, 'G2.graphml')
-                        g2 = ig.read('G2.graphml', format="graphml")
-                        d = '{:s} {:s} {:d} '.format(m1.__name__ , m2.__name__, n)
-                        for c in comparative:
-                            p = Process(target=measure, args=(r, c, d + c.__name__, g1, g2))
-                            p.start()
-                            p.join(permitted)
-                            if p.is_alive():
-                                p.terminate()
-                                p.join()
-                                
+def run(permitted = 1):
+    freeze_support()                                
+    characteristics = [vertexLoad,
+                       randomWalkBetweenness,
+                       criticality,
+                       entropyRank,
+                       freeEnergyRank,
+                       bridgeness,
+                       coveringDegree,
+                       coveringIndex,
+                       sensitivity,
+                       splittingNumber,
+                       randomRobustnessIndex,
+                       robustnessMeasure53,
+                       connectivityRobustnessFunction,
+                       kResilienceFactor,
+                       resilienceFactor,
+                       perturbationScore,
+                       degreeEntropy,
+                       relativeEntropy,
+                       hubDensity,
+                       definition523,
+                       geographicalDiversity,
+                       effectiveGeographicalPathDiversity,
+                       totalGraphGeographicalDiversity,
+                       compensatedTotalGeographicalGraphDiversity,
+                       functionality,
+                       functionalityLoss,
+                       globalFunctionalityLoss,
+                       temporalEfficiency,
+                       deltaEfficiency,
+                       fragility,
+                       dynamicFragility,
+                       electricalNodalRobustness,
+                       relativeAreaIndex,
+                       effectiveGraphResistance,
+                       viralConductance,
+                       pairwiseDisconnectivityIndex,
+                       fragmentation,
+                       selfSufficiency,
+                       kVertexFailureResilience,
+                       vertexResilience,
+                       kEdgeFailureResilience,
+                       edgeResilience,
+                       pathDiversity,
+                       percolatedPath,
+                       percolationCentrality,
+                       networkCriticality,
+                       reconstructabilityCoefficient,
+                       normalizedSubgraphCentrality,
+                       generalizedRobustnessIndex,
+                       localNaturalConnectivity,
+                       closedWalkNumber,
+                       redundancyOfAlternativePaths,
+                       naturalConnectivity,
+                       subgraphCentrality,
+                       normalizedLocalNaturalConnectivity]
+    comparative = [preferentialPerturbation, maximumPerturbationScore]    
+    for power in range(5, 10):
+        n = 2**power
+        k = int(floor(sqrt(n)))
+        h = int(ceil(sqrt(k)))
+        for (m, p) in models:
+            for r in range(10 - power // 2): # less replicas for larger graphs
+                G = create(m, n, p, k, h)
+                if G is not None:
+                    G = nx.convert_node_labels_to_integers(G)
+                    for vertex in G:
+                        if 'pos' in G.nodes[vertex]:
+                            del G.nodes[vertex]['pos']
+                    nx.write_graphml(G, 'G.graphml')
+                    g = ig.read('G.graphml', format="graphml")
+                    d = '{:s} {:d} '.format(m.__name__, n)                
+                    for c in characteristics:
+                        proc = Process(target=measure, args=(r, c, d + c.__name__, g))
+                        proc.start()
+                        proc.join(permitted)
+                        if proc.is_alive():
+                            proc.terminate()
+                            proc.join()
+        for power in range(4, 9, 2):
+            n = 2**power
+            k = int(floor(sqrt(n)))
+            h = int(ceil(sqrt(k)))
+            for (m1, p1) in models:
+                for r in range(10 - power // 2): # less replicas for larger graphs
+                    G1 = create(m1, n, p1, k, h)
+                    if G1 is not None:
+                        G1 = nx.convert_node_labels_to_integers(G1)
+                        for vertex in G1:
+                            if 'pos' in G1.nodes[vertex]:
+                                del G1.nodes[vertex]['pos']
+                        nx.write_graphml(G1, 'G1.graphml')
+                        g1 = ig.read('G1.graphml', format="graphml")
+                        for (m2, p2) in models:
+                            G2 = create(m2, n, p2, k, h)
+                            if G2 is not None:
+                                G2 = nx.convert_node_labels_to_integers(G2)
+                            for vertex in G2:
+                                if 'pos' in G2.nodes[vertex]:
+                                    del G2.nodes[vertex]['pos']
+                                nx.write_graphml(G2, 'G2.graphml')
+                                g2 = ig.read('G2.graphml', format="graphml")
+                                d = '{:s} {:s} {:d} '.format(m1.__name__ , m2.__name__, n)
+                                for c in comparative:
+                                    p = Process(target=measure, args=(r, c, d + c.__name__, g1, g2))
+                                    p.start()
+                                    p.join(permitted)
+                                    if p.is_alive():
+                                        p.terminate()
+                                        p.join()
                             
+if __name__ == '__main__':    
+    permitted = None
+    try: # check for how many seconds until the execution of an individual measurement is terminated
+        permitted = int(argv[1])
+    except:
+        permitted = 1 # default
+    stderr.write('using the default one-second timeout')
+    run(permitted)
