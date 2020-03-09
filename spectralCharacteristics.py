@@ -14,7 +14,6 @@ def reconstructabilityCoefficient(g):
     eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
     eigenvectors = normalize(eigenvectors)
     result = 0
-    print(eigenvalues)
 
     for j in range(len(eigenvalues)):
         result += 1

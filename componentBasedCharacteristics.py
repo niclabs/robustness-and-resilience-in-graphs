@@ -138,7 +138,6 @@ def kResilienceFactor(g, k=2):
        
     vertices_list = np.arange(n) #List of vertices
     combinations = list(itertools.combinations(vertices_list, k -1))
-    print(combinations)
     connected = float(0)
 
     for vertices in combinations: #Remove vertices

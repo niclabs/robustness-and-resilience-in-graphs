@@ -52,7 +52,6 @@ def selfSufficiency(g, l=None):
     """
     if l == None:
         l = makeRandomServices(g)
-        print(l)
     comp = g.components()
     for c in comp:
         for vertex in c:
