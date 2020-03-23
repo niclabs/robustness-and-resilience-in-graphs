@@ -610,7 +610,7 @@ def centralityFunction(M):
         res[i] = M[i][i] ** 2
     return res
 
-def generateWeight(g, edge =True, vertex=False, name= 'weight', seed=False):
+def generateWeight(g, edge =True, vertex=False, name= 'weight'):
     """
     g: Graph
     returns: Graph with random weights in its edges, vertex or both
@@ -853,6 +853,24 @@ def attack_edges(graph, n= None):
         edge_to_delete = random.choice(edges)
         attacked_graph.delete_edges(edge_to_delete)   
     return attacked_graph
+
+def setRoadState(graph, p):
+    """
+    Set edge attribute edges with attribute 'state', state can be open or closed. States are chosen randomly
+    p: Probability of closed road
+    """
+    states = []
+    for i in range(graph.ecount()):
+        n = random.random()
+        if n <= p:
+            states.append('closed')
+        else:
+            states.append('open')
+    graph.es['state'] = states
+    return graph
+
+
+
 
 
 

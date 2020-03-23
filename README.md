@@ -99,7 +99,7 @@ Executing the experiments additionally requires networkx, and the generation of 
 New Metrics:
 
 - [ ] Percentage of noncritical nodes
-- [x] Robustness value
+- [x] Robustness index
 - [x] Treeness
 - [x] Entropy
 - [ ] Global resilience analysis
@@ -107,3 +107,5 @@ New Metrics:
 - [x] Global connectivity
 - [x] Local connectivity
 - [x] Vulnerability
+- [x] Normalized giant connected component
+- [ ] RCB
