@@ -610,16 +610,21 @@ def centralityFunction(M):
         res[i] = M[i][i] ** 2
     return res
 
-def generateWeight(g, edge =True, vertex=False, name= 'weight'):
+def generateWeight(g, edge =True, vertex=False, name= 'weight', negative = False):
     """
     g: Graph
-    returns: Graph with random weights in its edges, vertex or both
+    negative: Set negative values
+    returns: Graph with random weights on its edges, vertex or both
     """
     if edge:
         w = np.random.rand(g.ecount())
+        if negative:
+            w = -w
         g.es[name] = w
     if vertex: 
         w = np.random.rand(g.vcount())
+        if negative:
+            w = -w
         g.vs[name] = w
     return g
 
@@ -769,7 +774,7 @@ def rth_nearest_neighbors(graph, r):
     return: the number of rth nearest neighbors of all nodes in graph
     """
     n = graph.vcount()
-    reachable = graph.neighborhood(order=r)
+    reachable = graph.neighborhood(order=r) #array
     result = np.zeros(n)
     for vertex in range(n):
         for neighbor in reachable[vertex]:
@@ -869,13 +874,208 @@ def setRoadState(graph, p):
     graph.es['state'] = states
     return graph
 
+def generateVoltages(g, name, generation_nodes):
+    """
+    generation_nodes: List of generation nodes, the voltage of this nodes is positive
+    returns a graph with attribute name on nodes, where each value is the voltage of the node
+    """
+    n = g.vcount()
+    w = -np.random.rand(n)
+    for gen_node in generation_nodes:
+        w[gen_node]  = -w[gen_node]
+    g.vs[name] = w
+    return g
+
+def setId(g, name='id', vertex = True, edge=False):
+    if vertex:
+        node_id = list(range(g.vcount()))
+        g.vs[name] = node_id
+    if edge:
+        edge_id = list(range(g.ecount()))
+        g.es[name] = edge_id
+    return g
 
 
+def communicationNetworkLoad(g):
+    """
+    Returns an array with the load of each node in the communication network g
+    """
+    n = g.vcount()
+    load = np.zeros(n)    
+    for i in range(n):
+        sum_i = 0
+        for j in range(n):
+            for k in range(n):
+                if i != j and j != k and i != k:
+                    n_i_jk = 0
+                    all_shortest_paths = g.get_all_shortest_paths(j, k)
+                    n_jk = len(all_shortest_paths)
+                    for path in all_shortest_paths:
+                        if i in path:
+                            n_i_jk += 1
+                    sum_i += n_i_jk / n_jk
+        load[i] = sum_i
+    return load
 
+def powerGridNetworkLoad(g, voltage, admittance):
+    """
+    voltage: Node attribute for voltage
+    admittance: Edge attribute for admittance
+    Returns an array with the load of each node
+    """
+    n = g.vcount()
+    adjacency_matrix = -np.array(g.get_adjacency(attribute=admittance).data)
+    #Get voltages
+    voltages = np.array(g.vs[voltage])
+    #Change adjacency
+    for i in range(n):
+        if voltages[i] > 0:
+            row = np.zeros(n)
+            row[i] = 1
+            adjacency_matrix[i] = row
+        else:
+            adjacency_matrix[i][i] = -np.sum(adjacency_matrix[i])
+    current_in_nodes = np.matmul(adjacency_matrix, voltages)
+    nodes_power_load = voltages * current_in_nodes
+    return nodes_power_load
 
+def getGiantComponentList(graph):
+    """
+    return: List of nodes in the giant connected component
+    """
+    components = graph.components()
+    giant_component_list = []
+    size = 0
+    for component in components:
+        if len(component) > size:
+            size = len(component)
+            giant_component_list = component
+    return giant_component_list
 
+def cascadingFailures(CN, PG, max_loads_CN, max_loads_PG, voltage, admittance, CN_dict, PG_dict):
+    """
+    returns: The number of failed nodes
+    """
+    n = 0
+    big_loop = True
+    while(big_loop):
+        big_loop = False
+        sub_graph_detection = True
+        while(sub_graph_detection):
+            sub_graph_detection = False
+            #Check CN
+            CN_components = CN.components()
+            if len(CN_components) > 1:
+                sub_graph_detection = True
+                giant_component = getGiantComponentList(CN)
+                n_CN = CN.vcount()
+                #Delete nodes outside the giant component
+                for v in reversed(range(n_CN)):
+                    if not v in giant_component:
+                        n += 1
+                        original_id = CN.vs['id'][v]
+                        CN.delete_vertices(v)
+                        #Delete their counterpart nodes in the PG
+                        if original_id in CN_dict:
+                            n += 1
+                            PG_neighbor_id = CN_dict[original_id]
+                            PG_nodes_id = PG.vs['id']
+                            PG_neighbor = PG_nodes_id.index(PG_neighbor_id)
+                            #Delete from graph
+                            PG.delete_vertices(PG_neighbor)
+                            #Delete nodes from dictionaries
+                            del CN_dict[original_id]
+                            del PG_dict[PG_neighbor_id]
 
+            #Check PG
+            PG_components = PG.components()
+            components_to_delete = []
+            for component in PG_components:
+                delete_component = True
+                for v in component:
+                    delete_component = delete_component and PG.vs[v][voltage] < 0
+                if delete_component:
+                    components_to_delete += component
+            if len(components_to_delete) > 0:
+                sub_graph_detection = True
+                n += len(components_to_delete)
+                #Delete their counterpart in CN
+                for v in components_to_delete:
+                    original_id = PG.vs['id'][v]
+                    if original_id in PG_dict:
+                        n += 1
+                        CN_neighbor_id = PG_dict[original_id]
+                        CN_nodes_id = CN.vs['id']
+                        CN_neighbor = CN_nodes_id.index(CN_neighbor_id)
+                        CN.delete_vertices(CN_neighbor)
+                        del CN_dict[CN_neighbor_id]
+                        del PG_dict[original_id]
+                PG.delete_vertices(components_to_delete)               
 
+        #Load redistribution
+        #CN load
+        CN_load = communicationNetworkLoad(CN)
+        CN_nodes_to_delete = []
+        for i in range(len(CN_load)):
+            actual_load = CN_load[i]
+            original_id = CN.vs[i]['id']
+            if actual_load > max_loads_CN[original_id]:
+                CN_nodes_to_delete.append(i)
+        if len(CN_nodes_to_delete) > 0:
+            big_loop = True
+            n += len(CN_nodes_to_delete)
+            #Delete their counterpart in PG
+            for v in CN_nodes_to_delete:
+                original_id = CN.vs['id'][v]
+                if original_id in CN_dict:
+                    n += 1
+                    PG_neighbor_id = CN_dict[original_id]
+                    PG_nodes_id = PG.vs['id']
+                    PG_neighbor = PG_nodes_id.index(PG_neighbor_id)
+                    PG.delete_vertices(PG_neighbor)
+                    del PG_dict[PG_neighbor_id]
+                    del CN_dict[original_id]
+            CN.delete_vertices(CN_nodes_to_delete)           
 
+        #PG load
+        PG_load = powerGridNetworkLoad(PG, voltage, admittance)
+        PG_nodes_to_delete = []
+        for i in range(len(PG_load)):
+            actual_load = PG_load[i]
+            original_id = PG.vs[i]['id']
+            if actual_load > max_loads_PG[original_id]:
+                PG_nodes_to_delete.append(i)
+        if len(PG_nodes_to_delete) > 0:
+            big_loop = True
+            n += len(PG_nodes_to_delete)
+            #Delete their counterpart in CN
+            for v in PG_nodes_to_delete:
+                original_id = PG.vs['id'][v]
+                if original_id in PG_dict:
+                    n += 1
+                    CN_neighbor_id = PG_dict[original_id]
+                    CN_nodes_id = CN.vs['id']
+                    CN_neighbor = CN_nodes_id.index(CN_neighbor_id)
+                    CN.delete_vertices(CN_neighbor)
+                    del CN_dict[CN_neighbor_id]
+                    del PG_dict[original_id]
+            PG.delete_vertices(PG_nodes_to_delete)
+                
+    return n
 
-
+def toDict(interdependencies):
+    """
+    interdependencies: List of interdependencies, format: [(CN, PG)]
+    Important: Each node can have at most one interdependent link
+    return: two dictionaaries, one for each network, that indicates the neighbors in the other network
+    """
+    CN_dict = {}
+    PG_dict = {}
+    for edge in interdependencies:
+        CN_v = edge[0]
+        PG_v = edge[1]
+        #Add to CN_dict
+        CN_dict[CN_v] = PG_v
+        #Add to PG_dict
+        PG_dict[PG_v] = CN_v
+    return CN_dict, PG_dict

@@ -2,16 +2,103 @@ from igraph import *
 import numpy as np
 from auxiliaryFunctions import *
 
-def percentageOfNoncriticalNodes(t, g, g_nodes, c_nodes, a, b):
+def percentageOfNoncriticalNodes(CN, PG, interdep= None, p=0.85, admittance = None, voltage = None, tolerance = 0.5, a_t = 0.2, a_p = 0.2):
     """
-    t: Tolerance threshold
-    g: Power grid    
-    g_nodes: Generation nodes
-    c_nodes: Consumer nodes
-    a: Tolerance parameter of nodes
-    b: Tolerance parameter of links
+    Note: CN and PG must be the same number of nodes
+    CN: Communication network
+    PG: Power grid network
+    interdep: List of interdependencies, format [(CN, PG)], each node can have at most one interdependent link
+    p: Percentage of interdependent nodes, only used when interdep is None
+    admittance: Edge attribute for admittance
+    voltage: Vertex attribute for voltage
+    generation_nodes: List of generation nodes
+    tolerance: Tolerance threshold
+    a_t: Tolerance parameter of communication network 
+    a_p: Tolerance parameter of nodes in power grid network
+
     """
-    pass
+    #Check graphs
+    if CN.vcount() != PG.vcount():
+        return None
+
+    # Set all variables for PG
+    if admittance is None:
+        admittance = 'admittance'
+        PG = generateWeight(PG, edge = True, vertex = False, name = admittance)   
+    
+    if voltage is None:
+        numberOfGenerationNodes = int(PG.vcount() / 10) #10% of the nodes
+        nodes = list(range(PG.vcount()))
+        generation_nodes = random.sample(nodes, numberOfGenerationNodes)
+        # Set positive voltage for generation nodes
+        voltage = 'voltage'
+        PG = generateVoltages(PG, voltage, generation_nodes)
+
+    # Set id for each node in both networks
+    PG = setId(PG, name='id')
+    CN = setId(CN, name='id')
+
+    if interdep is None:
+        CN_dict = {}
+        PG_dict = {}
+        # Set interdependencies
+        n_interped = int(p * CN.vcount()) # Number of interdependent nodes
+        CN_nodes = list(range(CN.vcount()))
+        PG_nodes = list(range(PG.vcount()))
+
+        CN_interp_nodes = random.sample(CN_nodes, n_interped)
+        PG_interp_nodes = random.sample(PG_nodes, n_interped)
+        for CN_node in CN_interp_nodes:
+            PG_node = random.choice(PG_interp_nodes)
+            PG_interp_nodes.remove(PG_node)
+            CN_dict[CN_node] = PG_node
+            PG_dict[PG_node] = CN_node
+    else:
+        CN_dict, PG_dict = toDict(interdep)
+
+    # Maximum capacities of each network
+    CN_initial_load = communicationNetworkLoad(CN)
+    CN_max_capacity = (1 + a_t) * CN_initial_load
+    
+    PG_initial_load = powerGridNetworkLoad(PG, voltage, admittance)
+    PG_max_capacity = (1 + a_p) * PG_initial_load
+
+    CN_n = CN.vcount()
+    PG_n = PG.vcount()
+    n = PG_n + CN_n
+
+    acc = 0
+    for v in range(CN_n):
+        # Delete node and counterpart in PG
+        PG_aux = PG.copy()
+        CN_aux = CN.copy()
+        n_v = 0
+        if v in CN_dict:
+            n_v = 1
+            PG_neighbor = CN_dict[v]
+            PG_aux.delete_vertices(PG_neighbor)
+        CN_aux.delete_vertices(v)
+
+        n_v += cascadingFailures(CN_aux, PG_aux, CN_max_capacity, PG_max_capacity, voltage, admittance, CN_dict, PG_dict)
+        if n_v / n < tolerance:
+            acc += 1
+    
+    for v in range(PG_n):
+        # Delete node and counterpart in CN
+        PG_aux = PG.copy()
+        CN_aux = CN.copy()
+        n_v = 0
+        if v in PG_dict:
+            n_v = 1
+            CN_neighbor = PG_dict[v]
+            CN_aux.delete_vertices(CN_neighbor)
+        PG_aux.delete_vertices(v)
+
+        n_v += cascadingFailures(CN_aux, PG_aux, CN_max_capacity, PG_max_capacity, voltage, admittance, CN_dict, PG_dict)
+        if n_v / n < tolerance:
+            acc += 1
+    res = acc / n
+    return res
 
 def robustnessIndex(g, rank=None):
     """
@@ -27,15 +114,14 @@ def robustnessIndex(g, rank=None):
         rank_list = rank(g)
     
     g_aux = g.copy()
-    #Remove nodes and calculate the size of giant connected component
+    # Remove nodes and calculate the size of giant connected component
     for i in range(n - 1):
         vertex = rank_list[i]
         neighbors = g_aux.neighbors(vertex, mode='OUT')
-        #Delete edges from vertex
+        # Delete edges from vertex
         for target in neighbors:
             g_aux.delete_edges([(vertex, target)])
-
-        #Get size of giant component
+        # Get size of giant component
         comp = g_aux.components()
         rank_list[i] = max(comp.sizes())
     rank_list[n-1] = 0
@@ -65,11 +151,11 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
     else:
         x_pos = graph.vs[x_pos]
         y_pos = graph.vs[y_pos]
-    #Calculate node criticality
+    # Calculate node criticality
     CV = criticality(graph, graph.vcount())
    
     edge_correlation_factor = np.zeros((graph.vcount(), graph.vcount()))
-    #Calculate edge correlation factor matrix
+    # Calculate edge correlation factor matrix
     for i in range(graph.vcount()):
         for j in range(graph.vcount()):
             if i == j:
@@ -78,14 +164,14 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
                 edge_correlation_factor[i][j] = max(CV[i], CV[j]) / (CV[i] + CV[j])
     
     adjacency = graph.get_adjacency().data
-    #Change adjacency matrix
+    # Change adjacency matrix
     for i in range(graph.vcount()):
-        for j in range(g.vcount()):
+        for j in range(graph.vcount()):
             if i == j:
                 adjacency[i][j] = 1
     
     average_transmission_efficiency = np.zeros(graph.vcount())
-    #Calculate average transmission efficiency vector
+    # Calculate average transmission efficiency vector
     for i in range(graph.vcount()):
         acc = 0
         for j in range(graph.vcount()):
@@ -94,16 +180,16 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
                 acc += 1 / distance
         average_transmission_efficiency[i] = (2 * acc) / (graph.vcount() * (graph.vcount() - 1))
     
-    #Average transmission efficiency matrix
+    # Average transmission efficiency matrix
     I = np.zeros((graph.vcount(), graph.vcount()))
     for i in range(graph.vcount()):
         for j in range(graph.vcount()):
             I[i][j] = average_transmission_efficiency[i]
     
-    #Calculate edge criticality matrix
+    # Calculate edge criticality matrix
     CE = I * adjacency * edge_correlation_factor
 
-    #Calculate comprehensive critical degree of nodes
+    # Calculate comprehensive critical degree of nodes
     CS = np.zeros(graph.vcount())
     for i in range(graph.vcount()):
         acc = 0
@@ -112,7 +198,7 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
             acc += CE[i][j]
         CS[i] = (gamma * CV[i]) + (1 - gamma) * acc / len(i_neighbors)
 
-    #Calculate critical coefficient of nodes
+    # Calculate critical coefficient of nodes
     S = CS / np.sum(CS)
     result = - np.sum( S * np.log(S))
     return result, x_pos, y_pos
@@ -132,9 +218,9 @@ def robustnessMeasureR(graph, ranking_function=None):
     acc = 0
     n = graph.vcount()
     for vertex in ranking:
-        #Delete vertex
+        # Delete vertex
         graph.delete_vertices(vertex)
-        #Calculate the size of giant connected component
+        # Calculate the size of giant connected component
         comp = graph.components()
         acc += max(comp.sizes())
     try:
@@ -181,18 +267,18 @@ def normalizedGiantConnectedComponent(graph, t=0, state=None, distance=None, res
     resourceCenter: Node id that indicates the resource center node
     p: Probability that a road is closed, used when states are not asigned
     """
-    #Check n >0 and m >0
+    # Check n >0 and m >0
     if graph.vcount() == 0 or graph.ecount() == 0:
         return None
     comp = graph.components()
     gcc_baseline = max(comp.sizes())
 
-    #Set state
+    # Set state
     if state is None:
         state = 'state'
         graph = setRoadState(graph, p)
     
-    #Set distance
+    # Set distance
     if distance is None:
         distance = 'distance'
         graph = generateWeight(graph, edge=True, vertex=False, name=distance)
@@ -202,12 +288,12 @@ def normalizedGiantConnectedComponent(graph, t=0, state=None, distance=None, res
         if e[state] != 'open':
             edge = (e.source, e.target)
             edges_to_add.append(edge)
-    #There is no edge to delete
+    # There is no edge to delete
     if t >= len(edges_to_add):
         return 1.0
     
     else:
-        #Rank closed/disrupted edges
+        # Rank closed/disrupted edges
         rank_graph = graph.copy()
         rank_graph.delete_edges(edges_to_add)
         shortestDistanceToEdge = []
@@ -222,7 +308,7 @@ def normalizedGiantConnectedComponent(graph, t=0, state=None, distance=None, res
         for i in argsorted_distances:
             sorted_edges_to_add.append(edges_to_add[i])
 
-        #delete closed/disrupted edges
+        # delete closed/disrupted edges
         edges_to_delete = sorted_edges_to_add[t:]
         aux_graph = graph.copy()
         aux_graph.delete_edges(edges_to_delete)
