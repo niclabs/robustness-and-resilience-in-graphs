@@ -1,7 +1,12 @@
-library(corrplot)
-
+DEBUG = FALSE
+if (!DEBUG) {
+    options(warn=-1)
+}
+suppressMessages(suppressWarnings(library(corrplot)))
 d = read.csv('cor.dat', sep=' ', header=TRUE, row.names = 1)
-sapply(d, typeof)
+if (DEBUG) {
+    sapply(d, typeof)
+}
 omit = c()
 for (i in names(d)) {
     columnData = as.numeric(unlist(d[i])) # yeah, R is "fun"
@@ -10,19 +15,36 @@ for (i in names(d)) {
         omit = c(omit, i)
     }
 }
+cat('omitted', length(omit), '\n')
 variable = d[, -which(names(d) %in% omit)]
+cat('kept', dim(variable)[1], '\n')
 cm = cor(variable, method = 'pearson', use = 'pairwise.complete.obs')
-png('corr_single_scalar.png', width = 1000, height = 1000)
-corrplot(cm, type = 'upper', order = 'hclust', sig.level = 0.01, tl.cex = 0.9, tl.col = "black")
-dev.off()
+groups = hclust(dist(abs(cm))) # groups from corr_single_scalar.png
 
-require(ggplot2)
-require(scales)
-require(varhandle)
-library(tidyverse) # incl. dplyr
-require(ggrepel)
-require(gridExtra)
-require(cowplot)
+suppressMessages(suppressWarnings(library(dendextend)))
+d = as.dendrogram(groups)
+db = color_branches(d, k = 4)
+dl = color_labels(db, k = 4)
+# bottom left top right
+png('clust_single_scalar.png', width = 800, height = 1000)
+par(mar = c(0,18,0,0))
+plot_horiz.dendrogram(dl, side = TRUE, sub="", main="", axes=F)
+# plot(groups, xlab="", sub="", main="", axes=F, ylab="")
+invisible(dev.off())
+png('corr_single_scalar.png', width = 1000, height = 1000)
+par(mar = c(0,0,0,0))
+co = rev(groups$order)
+ocm = cm[co, co]
+corrplot(ocm, type = 'upper', sig.level = 0.01, tl.cex = 0.9, tl.col = "black")
+invisible(dev.off())
+
+suppressMessages(suppressWarnings(require(ggplot2)))
+suppressMessages(suppressWarnings(require(scales)))
+suppressMessages(suppressWarnings(require(varhandle)))
+suppressMessages(suppressWarnings(library(tidyverse))) # incl. dplyr
+suppressMessages(suppressWarnings(require(ggrepel)))
+suppressMessages(suppressWarnings(require(gridExtra)))
+suppressMessages(suppressWarnings(require(cowplot)))
 
 args = commandArgs(trailingOnly=TRUE)
 dur = as.numeric(args[1])
@@ -35,21 +57,26 @@ ss$n = as.factor(ss$order)
 ss$t = ss$runtime * 1000
 ss$value = as.numeric(ss$value)
 
-group1 = c('vertexLoad', 'closedWalkNumber', 'reduncancyOfAlternativePaths',
-           'viralConductance', 'subgraphCentrality', 'localNaturalConnectivity',
-           'normalizedLocalNaturalConnectivity', 'naturalConnectivity',
-           'splittingNumber', 'normalizedSubgraphCentrality', 'temporalEfficiency')
+clusters = cutree(groups, k = 4)
+A = clusters["vertexLoad"]
+B = clusters["fragility"]
+group1 = which(clusters == A)
+group2 = which(clusters == B)
 
-group2 = c('coveringDegree', 'coveringIndex', 'robustnessMeasure53', 'percolatedPath',
-           'effectiveGraphResistance', 'networkCriticality', 'generalizedRobustnessIndex',
-           'relativeEntropy', 'compensatedTotalGeographicalGraphDiversity',
-           'hubDensity', 'definition523')
+cat('Median runtime', median(ss$t), '\n')
+rf = ss[ss$measure == 'resilienceFactor',]
+mrg = median(rf$t)
+summary(rf$t)
+suppressMessages(suppressWarnings(require(FSA)))
+cat(perc(ss$t, mrg, 'lt'), 'are less\n')
 
-g1 = ss[ss$measure %in% group1,]
-dim(g1)
+g1 = ss[ss$measure %in% names(group1),]
+la = length(levels(droplevels(g1)$measure))
+cat('A',  la, dim(g1)[1], '\n')
 
-g2 = ss[ss$measure %in% group2,]
-dim(g2)
+g2 = ss[ss$measure %in% names(group2),]
+lb = length(levels(droplevels(g2)$measure))
+cat('B', lb, dim(g2)[1], '\n')
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -61,11 +88,14 @@ p = ggplot(g1, aes(x = measure, y = t, fill = measure)) +
                        limits = yrange, breaks = ybreaks,
                        labels = ylabels, name = 'Runtime') +
     theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) +
+          axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
+          legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g1.png', unit='cm', width=18, height=8)
+                                        #    guides(fill = guide_legend(ncol = 2))
+                                        #           axis.ticks.x=element_blank(),
+                                        #           axis.text.x=element_blank(),
 
+ggsave('poscor_g1.png', unit='cm', width=la, height=16)
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -77,10 +107,10 @@ p = ggplot(g2, aes(x = measure, y = t, fill = measure)) +
                        limits = yrange, breaks = ybreaks,
                        labels = ylabels, name = 'Runtime') +
     theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) +
+          axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
+          legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g2.png', unit='cm', width=20, height=8)
+ggsave('poscor_g2.png', unit='cm', width=lb, height=14)
 
 palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
 fontsize = 17
@@ -107,7 +137,7 @@ for (row in 1:nrow(counts)) {
     p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
-ggsave(paste('single_scalar_', dur, 'sec.png', sep=""))
+ggsave(paste('single_scalar_', dur, 'sec.png', sep=""), width = 7, height = 7)
 
 sa = read.csv(paste('single_avg_', dur, 'sec.dat', sep=""), sep=' ', header=FALSE)
 names(sa) = c('generator', 'order', 'measure', 'value', 'runtime')
@@ -132,7 +162,7 @@ for (row in 1:nrow(counts)) {
     p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
-ggsave(paste('single_avg_', dur, 'sec.png', sep=""))
+ggsave(paste('single_avg_', dur, 'sec.png', sep=""), width = 7, height = 7)
 
 ds = read.csv(paste('double_scalar_', dur, 'sec.dat', sep=""), sep=' ', header=FALSE)
 names(ds) = c('first', 'second', 'order', 'measure', 'value', 'runtime')
@@ -157,7 +187,7 @@ for (row in 1:nrow(counts)) {
     p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
-ggsave(paste('double_scalar_',  dur, 'sec.png', sep=""))
+ggsave(paste('double_scalar_',  dur, 'sec.png', sep=""), width = 7, height = 7)
 
 da = read.csv(paste('double_avg_', dur, 'sec.dat', sep=""), sep=' ', header=FALSE)
 names(da) = c('first', 'second', 'order', 'measure', 'value', 'runtime')
@@ -182,6 +212,6 @@ for (row in 1:nrow(counts)) {
     p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
-ggsave(paste('double_avg_', dur, 'sec.png', sep = ''))
+ggsave(paste('double_avg_', dur, 'sec.png', sep = ''), width = 7, height = 7)
 
 
