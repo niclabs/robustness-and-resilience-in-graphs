@@ -1079,3 +1079,44 @@ def toDict(interdependencies):
         #Add to PG_dict
         PG_dict[PG_v] = CN_v
     return CN_dict, PG_dict
+
+def spanningTrees(g):
+    """
+    return: List of all spanning trees of graph g, each list represent edges id
+    """
+    m = g.ecount()
+    n = g.vcount()
+    edges = list(range(m))
+    comb = combinations(edges, n -1)
+    spanning_trees = []
+    for group in comb:
+        group = list(group)
+        # Make graph
+        edge_list = []
+        for edge in group:
+            source = g.es[edge].source
+            target = g.es[edge].target
+            edge_list.append((source, target))
+        aux_g = nx.from_edgelist(edge_list)
+        # Check cycle
+        try:
+            nx.find_cycle(aux_g)
+        except:
+            spanning_trees.append(group)
+    return spanning_trees
+
+def cospanningTrees(g):
+    """
+    return: List of all cospanning trees of graph g, each list represent edges id
+    """
+    spanning_trees = spanningTrees(g)
+    cospanning_trees = []
+    m = g.ecount()
+    for st in spanning_trees:
+        ct = []
+        for e in range(m):
+            if e not in st:
+                ct.append(e)
+        cospanning_trees.append(ct)
+    return cospanning_trees
+

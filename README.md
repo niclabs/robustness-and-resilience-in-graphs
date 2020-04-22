@@ -6,6 +6,7 @@ Requirements:
 - numpy
 - scipy
 - sympy
+- networkx
 
 Executing the experiments additionally requires networkx, and the generation of the example figures employs matplotlib.
 
@@ -98,7 +99,7 @@ Executing the experiments additionally requires networkx, and the generation of 
 
 New Metrics:
 
-- [ ] Percentage of noncritical nodes
+- [x] Percentage of noncritical nodes
 - [x] Robustness index
 - [x] Treeness
 - [x] Entropy
@@ -108,4 +109,4 @@ New Metrics:
 - [x] Local connectivity
 - [x] Vulnerability
 - [x] Normalized giant connected component
-- [ ] RCB
+- [x] RCB

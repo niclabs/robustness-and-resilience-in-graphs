@@ -1,5 +1,6 @@
 from igraph import *
 import numpy as np
+import math
 from auxiliaryFunctions import *
 
 def percentageOfNoncriticalNodes(CN, PG, interdep= None, p=0.85, admittance = None, voltage = None, tolerance = 0.5, a_t = 0.2, a_p = 0.2):
@@ -315,3 +316,25 @@ def normalizedGiantConnectedComponent(graph, t=0, state=None, distance=None, res
         comp_aux = aux_graph.components()
         gcc_t = max(comp_aux.sizes())
         return gcc_t / gcc_baseline
+
+def RCB(g):
+    """
+    """
+    # Check connected graph
+    comp = g.components()
+    if len(comp) > 1:
+        return None
+    m = g.ecount()
+    n = g.vcount()
+    cospanning_trees = cospanningTrees(g)
+    n_t = len(cospanning_trees)
+    acc = 0
+    for i in range(m):
+        n_t_e = 0
+        for cosp_tree in cospanning_trees:
+            if i in cosp_tree:
+                n_t_e += 1
+        CB_e_i = n_t_e / ((n - 1) * n_t)
+        if CB_e_i != 0:
+            acc += CB_e_i * math.log2(CB_e_i)
+    return -acc / math.log2(m)
