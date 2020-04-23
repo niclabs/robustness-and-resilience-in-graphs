@@ -24,7 +24,7 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Sensitivity, graph needs a 'weight' attribute on edges
 
 5.1 Component-based characteristics
-
+- [x] Normalized GCC
 - [x] Splitting number
 - [x] Random-robustness index
 - [x] Robustness measure
@@ -36,6 +36,8 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Maximun perturbation score
 
 5.2 Path-based characteristic
+- [x] Local connectivity
+- [x] Global connectivity
 - [x] Pairwise disconnectivity index
 - [x] Fragmentation
 - [x] Self-sufficiency
@@ -46,6 +48,8 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Path diversity
 - [x] Percolated path, graph needs attribute 'state' on nodes
 - [x] Percolation centrality, graph needs attribute 'state' on nodes
+- [x] Percentage of noncritical nodes
+- [x] Treeness
 
 5.3 Degree-based characteristics
 
@@ -70,6 +74,7 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Delta efficiency
 - [x] Fragility
 - [x] Dynamic robustness
+- [x] Vulnerability
 
 5.6 Random-walk based characteristics
 
@@ -93,20 +98,11 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Normalized local natural connectivity
 
 5.9 Other characteristics
-
+- [x] Entropy
 - [x] Effective graph resistence, graph needs 'weight' attribute on edges
 - [x] Viral conductance
 
 New Metrics:
-
-- [x] Percentage of noncritical nodes
 - [x] Robustness index
-- [x] Treeness
-- [x] Entropy
-- [ ] Global resilience analysis
 - [x] Robustness measure R 
-- [x] Global connectivity
-- [x] Local connectivity
-- [x] Vulnerability
-- [x] Normalized giant connected component
 - [x] RCB

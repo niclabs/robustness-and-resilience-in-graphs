@@ -251,3 +251,16 @@ def dynamicFragility(g):
     return: The average delta efficiency over all vertices, weighted by the failure probability of each vertex
     """
     return 1 - fragility(g)
+
+def vulnerability(graph, attack_function=attack_edges):
+    """
+    attack_function: Function that damages graph by deleting vertices, edges or both, returns a graph, use: attack_function(graph)
+    """
+    performance_normal = performance(graph)
+    attacked_graph = attack_function(graph)
+    performance_damage = performance(attacked_graph)
+    try:
+        result = (performance_normal - performance_damage) / performance_damage
+    except ZeroDivisionError:
+        result = None
+    return result

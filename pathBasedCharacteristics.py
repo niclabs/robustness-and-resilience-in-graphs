@@ -3,6 +3,23 @@ import random
 from igraph import *
 from auxiliaryFunctions import *
 
+def localConnectivity(graph):
+    giant_component = getGiantComponent(graph)
+    try:
+        result = localConnectivityAux(graph) / localConnectivityAux(giant_component)
+    except ZeroDivisionError:
+        result = None
+    return result
+
+def globalConnectivity(graph):
+    n = graph.vcount()
+    try:
+        comp = graph.components()
+        result = max(comp.sizes()) / n
+    except ZeroDivisionError:
+        result = None
+    return result
+
 def pairwiseDisconnectivityIndex(g, v=0):
     """
     g: Graph
@@ -256,3 +273,111 @@ def percolationCentrality(g, v=False, state=False):
                 sum += (omegasr_v / len(paths)) * (g.vs[s].attributes()[state] / (sumxi - xv))
 
     return (1 / (n - 2)) * sum
+
+def percentageOfNoncriticalNodes(CN, PG, interdep= None, p=0.85, admittance = None, voltage = None, tolerance = 0.5, a_t = 0.2, a_p = 0.2):
+    """
+    Note: CN and PG must be the same number of nodes
+    CN: Communication network
+    PG: Power grid network
+    interdep: List of interdependencies, format [(CN, PG)], each node can have at most one interdependent link
+    p: Percentage of interdependent nodes, only used when interdep is None
+    admittance: Edge attribute for admittance
+    voltage: Vertex attribute for voltage
+    generation_nodes: List of generation nodes
+    tolerance: Tolerance threshold
+    a_t: Tolerance parameter of communication network 
+    a_p: Tolerance parameter of nodes in power grid network
+
+    """
+    #Check graphs
+    if CN.vcount() != PG.vcount():
+        return None
+
+    # Set all variables for PG
+    if admittance is None:
+        admittance = 'admittance'
+        PG = generateWeight(PG, edge = True, vertex = False, name = admittance)   
+    
+    if voltage is None:
+        numberOfGenerationNodes = int(PG.vcount() / 10) #10% of the nodes
+        nodes = list(range(PG.vcount()))
+        generation_nodes = random.sample(nodes, numberOfGenerationNodes)
+        # Set positive voltage for generation nodes
+        voltage = 'voltage'
+        PG = generateVoltages(PG, voltage, generation_nodes)
+
+    # Set id for each node in both networks
+    PG = setId(PG, name='id')
+    CN = setId(CN, name='id')
+
+    if interdep is None:
+        CN_dict = {}
+        PG_dict = {}
+        # Set interdependencies
+        n_interped = int(p * CN.vcount()) # Number of interdependent nodes
+        CN_nodes = list(range(CN.vcount()))
+        PG_nodes = list(range(PG.vcount()))
+
+        CN_interp_nodes = random.sample(CN_nodes, n_interped)
+        PG_interp_nodes = random.sample(PG_nodes, n_interped)
+        for CN_node in CN_interp_nodes:
+            PG_node = random.choice(PG_interp_nodes)
+            PG_interp_nodes.remove(PG_node)
+            CN_dict[CN_node] = PG_node
+            PG_dict[PG_node] = CN_node
+    else:
+        CN_dict, PG_dict = toDict(interdep)
+
+    # Maximum capacities of each network
+    CN_initial_load = communicationNetworkLoad(CN)
+    CN_max_capacity = (1 + a_t) * CN_initial_load
+    
+    PG_initial_load = powerGridNetworkLoad(PG, voltage, admittance)
+    PG_max_capacity = (1 + a_p) * PG_initial_load
+
+    CN_n = CN.vcount()
+    PG_n = PG.vcount()
+    n = PG_n + CN_n
+
+    acc = 0
+    for v in range(CN_n):
+        # Delete node and counterpart in PG
+        PG_aux = PG.copy()
+        CN_aux = CN.copy()
+        n_v = 0
+        if v in CN_dict:
+            n_v = 1
+            PG_neighbor = CN_dict[v]
+            PG_aux.delete_vertices(PG_neighbor)
+        CN_aux.delete_vertices(v)
+
+        n_v += cascadingFailures(CN_aux, PG_aux, CN_max_capacity, PG_max_capacity, voltage, admittance, CN_dict, PG_dict)
+        if n_v / n < tolerance:
+            acc += 1
+    
+    for v in range(PG_n):
+        # Delete node and counterpart in CN
+        PG_aux = PG.copy()
+        CN_aux = CN.copy()
+        n_v = 0
+        if v in PG_dict:
+            n_v = 1
+            CN_neighbor = PG_dict[v]
+            CN_aux.delete_vertices(CN_neighbor)
+        PG_aux.delete_vertices(v)
+
+        n_v += cascadingFailures(CN_aux, PG_aux, CN_max_capacity, PG_max_capacity, voltage, admittance, CN_dict, PG_dict)
+        if n_v / n < tolerance:
+            acc += 1
+    res = acc / n
+    return res
+
+def treeness(g):
+    """
+    g: Graph
+    """
+    Gc = getDAG(g)
+    Gc_r = getDAG(g, reverse=True)
+    hf = H_f(Gc)
+    hb = H_f(Gc_r)
+    return hf- hb / max(hf, hb)

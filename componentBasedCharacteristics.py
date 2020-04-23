@@ -6,6 +6,63 @@ import math
 from auxiliaryFunctions import *
 import warnings
 
+def normalizedGCC(graph, t=0, state=None, distance=None, resourceCenter=0, p=0.3):
+    """
+    t: Time, starts at 0 where all closed/disrupted edges are removed
+    state: Edge attribute that indicates if an edge is open or closed   
+    distance: Edge attribute that indicates the distance of each road
+    resourceCenter: Node id that indicates the resource center node
+    p: Probability that a road is closed, used when states are not asigned
+    """
+    # Check n >0 and m >0
+    if graph.vcount() == 0 or graph.ecount() == 0:
+        return None
+    comp = graph.components()
+    gcc_baseline = max(comp.sizes())
+
+    # Set state
+    if state is None:
+        state = 'state'
+        graph = setRoadState(graph, p)
+    
+    # Set distance
+    if distance is None:
+        distance = 'distance'
+        graph = generateWeight(graph, edge=True, vertex=False, name=distance)
+    edges_to_add = []
+    # Identify closed/disrupted edges
+    for e in graph.es:
+        if e[state] != 'open':
+            edge = (e.source, e.target)
+            edges_to_add.append(edge)
+    # There is no edge to delete
+    if t >= len(edges_to_add):
+        return 1.0
+    
+    else:
+        # Rank closed/disrupted edges
+        rank_graph = graph.copy()
+        rank_graph.delete_edges(edges_to_add)
+        shortestDistanceToEdge = []
+        for pair in edges_to_add:
+            v1 = pair[0]
+            v2 = pair[1]
+            d1 = rank_graph.shortest_paths_dijkstra(resourceCenter, v1, weights=distance)[0][0]
+            d2 = rank_graph.shortest_paths_dijkstra(resourceCenter, v2, weights=distance)[0][0]
+            shortestDistanceToEdge.append(min(d1, d2))
+        argsorted_distances = np.argsort(shortestDistanceToEdge)
+        sorted_edges_to_add = list()
+        for i in argsorted_distances:
+            sorted_edges_to_add.append(edges_to_add[i])
+
+        # delete closed/disrupted edges
+        edges_to_delete = sorted_edges_to_add[t:]
+        aux_graph = graph.copy()
+        aux_graph.delete_edges(edges_to_delete)
+        comp_aux = aux_graph.components()
+        gcc_t = max(comp_aux.sizes())
+        return gcc_t / gcc_baseline
+
 def splittingNumber(g, k=2, numOfLoops=1, seed=1, dev= 1):
     """
     g: Graph
