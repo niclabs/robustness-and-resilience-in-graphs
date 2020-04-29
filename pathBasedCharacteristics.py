@@ -125,18 +125,14 @@ def vertexResilience(g, l=None):
     for sj in s:
         aux_g = auxGraphj(g, l, sj , True)
         dj = computedj(l,sj) #List of nodes that needs service sj
-        Tj = []
+        sigma_j = []
         for v in dj:
-            n_j = providesSj(l, sj)
-            n_j = onlyReachableNodes(aux_g, v, n_j)
-            result = []
-            getNodeCutset(v, n_j, aux_g, result, partial=0)
-            gamma_vj = np.min(result)
-            Tj.append(gamma_vj)
-        T.append(np.min(Tj))
+            alpha_vj = minumimCutset(v, aux_g)
+            sigma_j.append(alpha_vj)
+        T.append(np.min(sigma_j))
     if len(T) == 0:
-        return None, l
-    return np.min(T) - 1, l
+        return None
+    return np.min(T) - 1
 
 
 def kEdgeFailureResilience(g, l=None, k=None):

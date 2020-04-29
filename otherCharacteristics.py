@@ -101,3 +101,25 @@ def viralConductance(g):
         acc += y(g, s) 
     mean = acc / (max_e + 1)  
     return max_e * mean
+
+def RCB(g):
+    """
+    """
+    # Check connected graph
+    comp = g.components()
+    if len(comp) > 1:
+        return None
+    m = g.ecount()
+    n = g.vcount()
+    cospanning_trees = cospanningTrees(g)
+    n_t = len(cospanning_trees)
+    acc = 0
+    for i in range(m):
+        n_t_e = 0
+        for cosp_tree in cospanning_trees:
+            if i in cosp_tree:
+                n_t_e += 1
+        CB_e_i = n_t_e / ((n - 1) * n_t)
+        if CB_e_i != 0:
+            acc += CB_e_i * math.log2(CB_e_i)
+    return -acc / math.log2(m)
