@@ -125,9 +125,10 @@ def vertexResilience(g, l=None):
     for sj in s:
         aux_g = auxGraphj(g, l, sj , True)
         dj = computedj(l,sj) #List of nodes that needs service sj
+        prov_sj = providesSj(l, sj) #List of nodes that provides service dj
         sigma_j = []
         for v in dj:
-            alpha_vj = minumimCutset(v, aux_g)
+            alpha_vj = minimumWeightstNodeCutset(v, prov_sj, aux_g)
             sigma_j.append(alpha_vj)
         T.append(np.min(sigma_j))
     if len(T) == 0:
@@ -176,19 +177,15 @@ def edgeResilience(g, l=None):
     for sj in s:
         aux_g = auxGraphj(g, l, sj)
         dj = computedj(l, sj) #List of nodes that needs service sj
-        Oj = []
-        for v in dj: #v is a node
-            n_j = providesSj(l, sj) #List of nodes that provides service dj
-            n_j = onlyReachableNodes(aux_g, v, n_j)
-            result = []
-            getEdgeCutset(v, n_j, aux_g, result, partial = 0)
-            alpha_vj = np.min(result)
-            Oj.append(alpha_vj)
-        O.append(np.min(Oj))
+        prov_sj = providesSj(l, sj) #List of nodes that provides service dj
+        gamma_j = []
+        for v in dj: #v is a node            
+            alpha_vj = minimumWeightstEdgeCutset(v, prov_sj, aux_g)
+            gamma_j.append(alpha_vj)
+        O.append(np.min(gamma_j))
     if len(O) == 0:
-        return None, l
-    return np.min(O) - 1, l
-
+        return None
+    return np.min(O) - 1
 
 def pathDiversity(g, d= 1, s=0,  seed=1):
     """

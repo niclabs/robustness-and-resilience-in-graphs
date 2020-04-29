@@ -316,85 +316,73 @@ def onlyReachableNodes(g, v, l):
             result.append(n)
     return result
 
-def getEdgeCutset(v, sj, g, result, partial = 0):
-    """
-    v: Vertex
-    sj: List of nodes that provides service j
-    g: weighted graph in edges or nodes
-    result: List where the results will be saved
-    partial: Partial result for an iteration
-    returns: The weights of each s-v edge/node cutset
-    """
-    elem = g.ecount()
-    for e in range(elem):
-        aux_graph = g.copy()
-
-        w = g.es[e].attributes()['weight']
-        aux_graph.delete_edges([e])
-
-        partial += w
-        if(noPath(aux_graph, v, sj)):           
-            result.append(partial)
-        else:
-            getEdgeCutset(v, sj, aux_graph, result, partial)
-
-def getNodeCutset(v, sj, g, result, partial = 0):
-    e = g.ecount()
-    if e != 0:
-        for v_i in range(g.vcount()):           
-            n_v = g.neighbors(v_i) #Neighbors of v
-            if(len(n_v) != 0):
-                aux_graph = g.copy()
-                #Delete all edges of v
-                for n in n_v:
-                    aux_graph.delete_edges([(v_i, n)])
-                w = aux_graph.vs[v_i].attributes()['weight']
-                partial += w
-                if(noPath(aux_graph, v, sj)):
-                    result.append(partial)
-                else:
-                    getNodeCutset(v, sj, aux_graph, result, partial)
-
-def minimumWeightstNodeCutset(s, t, g):
+def minimumWeightstNodeCutset(s, nodes, g):
     """
     s: Vertex
-    t: Vertex
+    nodes: List of nodes
     g: Graph
-    return: Minumin weight node cutset between v and t
+    return: Minumin weight node cutset between v and the noeds in 'nodes'
     """
     v = g.vcount()
-    nodes = list(range(v))
-    for i in range(1, v+1): #For each length of set of vertices
-        groups = list(combinations(nodes, i)) #Make all posible groups of length i
+    all_nodes = list(range(v))
+    graph = g.copy()
+    #Delete edges between s and nodes in 'nodes'
+    for node in nodes:
+        if graph.are_connected(s, node):
+            graph.delete_edges([(s, node)])
+    #Compute minumum weight node cutset
+    for i in range(1, v): #For each length of set of vertices
+        groups = list(combinations(all_nodes, i)) #Make all posible groups of length i
         for group in groups:
             group = list(group)
-            if s in group or t in group:
+            #Valid group
+            if s in group:
                 continue
-            remain_nodes = nodes.copy()
-            aux_graph = g.copy()
+            valid_group = True
+            for node in nodes:
+                valid_group = valid_group and node not in group
+            if not valid_group:
+                continue
+            #Check if group is a cutset
+            remain_nodes = all_nodes.copy()
+            aux_graph = graph.copy()
             aux_graph.delete_vertices(group)
             for v in group:
                 remain_nodes.remove(v)
             s_index = remain_nodes.index(s)
-            t_index = remain_nodes.index(t)
-            if aux_graph.vertex_disjoint_paths(s_index, t_index, neighbors = "ignore") == 0: #There is no path between s and t
+            cut_set = True
+            for node in nodes:            
+                node_index = remain_nodes.index(node)
+                cut_set = cut_set and aux_graph.vertex_disjoint_paths(s_index, node_index, neighbors = "ignore") == 0 #There is no path between s and node               
+            if cut_set:
+                print(group)
                 return i
-    return float('inf')
+    return v
 
-def minumimCutset(v, g):
+def minimumWeightstEdgeCutset(s, nodes, g):
     """
-    v: Vertex
+    s: Vertex
+    nodes: List of nodes
     g: Graph
-    return: Minumin weight node cutset between v and all the other nodes
+    return: Minumin weight node cutset between v and the noeds in 'nodes'
     """
-    minumum = float('inf')
-    n = g.vcount()
-    for i in range(n):
-        if i != v:
-            cutset = minimumWeightstNodeCutset(v, i, g)
-            if cutset < minumum:
-                minumum = cutset
-    return minumum
+    e = g.ecount()
+    all_edges = g.get_edgelist()
+    #Compute minumum weight node cutset
+    for i in range(1, e): #For each length of set of vertices
+        groups = list(combinations(all_edges, i)) #Make all posible groups of length i
+        for group in groups:
+            group = list(group) #List of tuples
+            #Check if group is a cutset
+            aux_graph = g.copy()
+            aux_graph.delete_edges(group)
+            cut_set = True
+            for node in nodes:
+                cut_set = cut_set and aux_graph.vertex_disjoint_paths(s, node, neighbors = "ignore") == 0 #There is no path between s and node               
+            if cut_set:
+                return i
+    return e
+
 
 def getProbabilityDegree(g, k, myMode='ALL'):
     """
