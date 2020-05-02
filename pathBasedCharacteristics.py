@@ -161,7 +161,7 @@ def kEdgeFailureResilience(g, l=None, k=None):
                 auxGraph.delete_edges(edge)
             if (not selfSufficiency(auxGraph, auxList)):
                 return False, l
-    return True, l
+    return True
 
 def edgeResilience(g, l=None):
     """

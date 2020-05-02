@@ -9,6 +9,11 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
     y_pos: Parameter that indicates the name attribute for y position of vertices
     If x_pos and y_pos are not indicated will be set randomly and returned with the final result
     """
+    #Check connected graph
+    components = graph.components()
+    if len(components) > 1:
+        return None 
+    #Set positions of nodes
     if x_pos is None or y_pos is None:
         x_pos = np.random.rand(graph.vcount())
         y_pos = np.random.rand(graph.vcount())    
@@ -40,8 +45,13 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
         acc = 0
         for j in range(graph.vcount()):
             if i!= j:
-                distance = 0 #TODO: Calculate
-                acc += 1 / distance
+                x_comp = (x_pos[i] - x_pos[j])**2
+                y_comp = (y_pos[i] - y_pos[j])**2
+                distance = math.sqrt(x_comp + y_comp)
+                try:
+                    acc += 1 / distance
+                except ZeroDivisionError:
+                    pass
         average_transmission_efficiency[i] = (2 * acc) / (graph.vcount() * (graph.vcount() - 1))
     
     # Average transmission efficiency matrix
