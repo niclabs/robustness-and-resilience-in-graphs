@@ -54,7 +54,7 @@ def fragmentation(g, strategy=perturbationFunction, args=1):
     """
     N = g.vcount()
     if(N == 1):
-        return -1 #error
+        return None
     removed = strategy(g, args)
     clusters = removed.components()
     sum = 0
@@ -81,8 +81,8 @@ def selfSufficiency(g, l=None):
                             cond= True
                             break
                 if (not cond):
-                    return False, l
-    return True, l
+                    return False
+    return True
 
 def kVertexFailureResilience(g, l=None, k= None):
     """
@@ -98,7 +98,7 @@ def kVertexFailureResilience(g, l=None, k= None):
         return selfSufficiency(g, l)
     v = g.vcount()
     if k > v:
-        return None, l
+        return None
     nodes = list(range(v))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(nodes, i))
@@ -109,8 +109,8 @@ def kVertexFailureResilience(g, l=None, k= None):
             for vertex in sorted(comb, reverse= True):
                 del auxList[vertex]
             if (not selfSufficiency(auxGraph, auxList)):
-                return False, l
-    return True, l
+                return False
+    return True
 
 def vertexResilience(g, l=None):
     """
@@ -150,7 +150,7 @@ def kEdgeFailureResilience(g, l=None, k=None):
         return selfSufficiency(g, l)
     e = g.ecount()
     if k > e:
-        return None, l
+        return None
     edges = list(range(e))
     for i in range(1, k+1):
         combinations = list(itertools.permutations(edges, i))
@@ -160,7 +160,7 @@ def kEdgeFailureResilience(g, l=None, k=None):
             for edge in sorted(comb, reverse= True):
                 auxGraph.delete_edges(edge)
             if (not selfSufficiency(auxGraph, auxList)):
-                return False, l
+                return False
     return True
 
 def edgeResilience(g, l=None):
