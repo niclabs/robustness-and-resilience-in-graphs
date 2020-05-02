@@ -34,6 +34,8 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Perturbation score
 - [x] Preferential perturbation
 - [x] Maximun perturbation score
+- [x] Robustness index
+- [x] Robustness measure R 
 
 5.2 Path-based characteristic
 - [x] Local connectivity
@@ -101,8 +103,4 @@ Executing the experiments additionally requires networkx, and the generation of 
 - [x] Entropy
 - [x] Effective graph resistence, graph needs 'weight' attribute on edges
 - [x] Viral conductance
-
-New Metrics:
-- [x] Robustness index
-- [x] Robustness measure R 
 - [x] RCB
