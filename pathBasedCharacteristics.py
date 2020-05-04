@@ -267,11 +267,11 @@ def percolationCentrality(g, v=False, state=False):
 
     return (1 / (n - 2)) * sum
 
-def percentageOfNoncriticalNodes(CN, PG, interdep= None, p=0.85, admittance = None, voltage = None, tolerance = 0.5, a_t = 0.2, a_p = 0.2):
+def percentageOfNoncriticalNodes(CN, g2, interdep= None, p=0.85, admittance = None, voltage = None, tolerance = 0.5, a_t = 0.2, a_p = 0.2):
     """
     Note: CN and PG must be the same number of nodes
     CN: Communication network
-    PG: Power grid network
+    g2: Power grid network
     interdep: List of interdependencies, format [(CN, PG)], each node can have at most one interdependent link
     p: Percentage of interdependent nodes, only used when interdep is None
     admittance: Edge attribute for admittance
@@ -282,6 +282,7 @@ def percentageOfNoncriticalNodes(CN, PG, interdep= None, p=0.85, admittance = No
     a_p: Tolerance parameter of nodes in power grid network
 
     """
+    PG = g2
     #Check graphs
     if CN.vcount() != PG.vcount():
         return None
