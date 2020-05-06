@@ -773,8 +773,10 @@ def H_f(g):
 
     for vi in M:
         acc += h_vi(vi, paths)
-
-    return acc / len(M)
+    try:
+        return acc / len(M)
+    except ZeroDivisionError:
+        return float('inf')
 
 def criticality(graph, n):
     """

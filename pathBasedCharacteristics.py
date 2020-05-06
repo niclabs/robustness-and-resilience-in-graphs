@@ -374,4 +374,10 @@ def treeness(g):
     Gc_r = getDAG(g, reverse=True)
     hf = H_f(Gc)
     hb = H_f(Gc_r)
-    return hf- hb / max(hf, hb)
+    m = max(hf, hb)
+    if m == float('inf'):
+        return 0
+    try:
+        return (hf - hb) / m
+    except ZeroDivisionError:
+        return None

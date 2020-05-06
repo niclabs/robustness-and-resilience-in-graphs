@@ -75,7 +75,7 @@ def entropy(graph, gamma= 0.5, x_pos=None, y_pos=None):
     # Calculate critical coefficient of nodes
     S = CS / np.sum(CS)
     result = - np.sum( S * np.log(S))
-    return result, x_pos, y_pos
+    return result
 
 def effectiveGraphResistance(g, weight=False):
     """
