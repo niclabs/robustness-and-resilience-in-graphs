@@ -130,7 +130,8 @@ def vertexResilience(g, l=None):
         for v in dj:
             alpha_vj = minimumWeightstNodeCutset(v, prov_sj, aux_g)
             sigma_j.append(alpha_vj)
-        T.append(np.min(sigma_j))
+        if len(sigma_j) != 0:
+            T.append(np.min(sigma_j))
     if len(T) == 0:
         return None
     return np.min(T) - 1
@@ -182,7 +183,8 @@ def edgeResilience(g, l=None):
         for v in dj: #v is a node            
             alpha_vj = minimumWeightstEdgeCutset(v, prov_sj, aux_g)
             gamma_j.append(alpha_vj)
-        O.append(np.min(gamma_j))
+        if len(gamma_j) != 0:
+            O.append(np.min(gamma_j))
     if len(O) == 0:
         return None
     return np.min(O) - 1
