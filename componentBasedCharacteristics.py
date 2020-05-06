@@ -309,12 +309,17 @@ def robustnessMeasureR(graph, ranking_function=None):
         ranking = ranking_function(graph)
     acc = 0
     n = graph.vcount()
+    vertex_id = list(range(n))
     for vertex in ranking:
         # Delete vertex
-        graph.delete_vertices(vertex)
+        id = vertex_id.index(vertex)
+        graph.delete_vertices(id)
+        vertex_id.remove(vertex)
         # Calculate the size of giant connected component
         comp = graph.components()
-        acc += max(comp.sizes())
+        sizes = comp.sizes()
+        if len(sizes) != 0:
+            acc += max(sizes)
     try:
         result = acc / n
     except ZeroDivisionError:
