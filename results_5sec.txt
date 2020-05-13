@@ -6670,100 +6670,68 @@ wheel_graph 32 normalizedLocalNaturalConnectivity 3.269315771686241 0.000878 7
 0.16551443847757333
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000714 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000756 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.8125 0.910360 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000714 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000791 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.875 0.875788 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000711 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000756 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.65625 0.858580 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000710 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000763 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.65625 0.953682 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000709 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000807 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.8125 0.946808 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000727 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000776 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.8125 0.850384 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000710 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000769 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.71875 0.863176 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000738 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000786 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.8125 0.877628 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000758 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000766 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.875 0.942261 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000712 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000747 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.6875 0.888832 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000743 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000780 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.71875 0.878510 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000714 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000761 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.8125 0.895701 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000737 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000765 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.59375 0.903465 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000714 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000756 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.71875 0.887587 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000714 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000793 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.84375 0.879072 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 preferentialPerturbation 0.000000 (avg) 0.000714 0
 connected_watts_strogatz_graph connected_watts_strogatz_graph 16 maximumPerturbationScore 1.0 0.000774 0
-connected_watts_strogatz_graph connected_watts_strogatz_graph 16 percentageOfNoncriticalNodes 0.71875 0.913420 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000762 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000793 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.875 0.954809 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000759 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000783 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.90625 0.904777 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000737 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000788 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.65625 0.902371 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000731 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000794 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.90625 0.890112 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000754 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000811 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.84375 0.867857 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000748 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000803 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.96875 0.928370 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000750 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000791 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.875 0.915573 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000769 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000791 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.875 0.892187 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000762 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000789 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.9375 0.935453 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000763 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000785 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.71875 0.901525 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000760 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000821 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.84375 0.898992 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000746 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000794 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.90625 0.914131 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000755 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000788 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.90625 0.923620 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000766 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000802 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.90625 0.897871 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000745 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000802 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.875 0.899689 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 preferentialPerturbation 0.000000 (avg) 0.000747 0
 connected_watts_strogatz_graph barabasi_albert_graph 16 maximumPerturbationScore 4.0 0.000828 0
-connected_watts_strogatz_graph barabasi_albert_graph 16 percentageOfNoncriticalNodes 0.90625 0.977077 0
 connected_watts_strogatz_graph barbell_graph 16 preferentialPerturbation 0.000000 (avg) 0.000548 0
 connected_watts_strogatz_graph barbell_graph 16 maximumPerturbationScore 3.666666666666667 0.000579 0
 connected_watts_strogatz_graph barbell_graph 16 preferentialPerturbation 0.000000 (avg) 0.000537 0
@@ -6854,52 +6822,36 @@ connected_watts_strogatz_graph circular_ladder_graph 16 preferentialPerturbation
 connected_watts_strogatz_graph circular_ladder_graph 16 maximumPerturbationScore 4.5 0.000907 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000764 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000845 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.84375 0.927202 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000909 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000836 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.905635 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000795 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000819 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.96875 0.920904 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000770 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000858 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.90625 0.924969 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000757 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000819 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.90625 0.951222 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000789 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000823 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.910440 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000795 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000840 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.96875 0.928420 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000769 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000842 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.908237 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000782 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000818 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.90625 0.957118 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000785 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000840 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.90625 0.919067 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000773 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000825 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.962020 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000781 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000826 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.898293 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000795 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000816 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.922908 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000796 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000834 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.875 0.916177 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000770 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000816 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.9375 0.978473 0
 connected_watts_strogatz_graph complete_graph 16 preferentialPerturbation 0.000000 (avg) 0.000772 0
 connected_watts_strogatz_graph complete_graph 16 maximumPerturbationScore 4.0 0.000820 0
-connected_watts_strogatz_graph complete_graph 16 percentageOfNoncriticalNodes 0.875 0.882818 0
 connected_watts_strogatz_graph gnm_random_graph 16 preferentialPerturbation 0.000000 (avg) 0.000207 0
 connected_watts_strogatz_graph gnm_random_graph 16 maximumPerturbationScore 1.0 0.000253 0
 connected_watts_strogatz_graph gnm_random_graph 16 preferentialPerturbation 0.000000 (avg) 0.000210 0

@@ -145,7 +145,7 @@ from spectralCharacteristics import normalizedLocalNaturalConnectivity
 # <import2.lst>
 from componentBasedCharacteristics import preferentialPerturbation
 from componentBasedCharacteristics import maximumPerturbationScore
-from pathBasedCharacteristics import percentageOfNoncriticalNodes
+from pathBasedCharacteristics import percentageOfNoncriticalNodes # incompatible with the experimentation
 # </import2.lst>
 
 import igraph as ig
@@ -254,6 +254,7 @@ def run(permitted = 1):
         percentageOfNoncriticalNodes
     ]
     # </char2.lst>
+    comparative.pop() # the last one (percentageOfNoncriticalNodes) is incompatible with the experimentation
     for power in range(5, 10):
         n = 2**power
         k = int(floor(sqrt(n)))
