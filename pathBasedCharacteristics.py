@@ -6,7 +6,9 @@ from auxiliaryFunctions import *
 def localConnectivity(graph):
     giant_component = getGiantComponent(graph)
     try:
-        result = localConnectivityAux(graph) / localConnectivityAux(giant_component)
+        connectivity_graph = localConnectivityAux(graph)
+        connectivity_subgraph = localConnectivityAux(giant_component)
+        result = connectivity_graph / connectivity_subgraph
     except ZeroDivisionError:
         result = None
     return result

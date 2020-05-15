@@ -10,19 +10,20 @@ def reconstructabilityCoefficient(g):
     g: Graph
     """
     A = np.array(g.get_adjacency().data)
+    A = A.astype(float)
     eigenvalues, eigenvectors = np.linalg.eigh(A) #Eigen values are not necessarily ordered, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
-    eigenvalues, eigenvectors = sortEigenValuesVectors(eigenvalues, eigenvectors)
     eigenvectors = normalize(eigenvectors)
     result = 0
-
+    A_i = eigenvectors * np.diag(eigenvalues) * np.transpose(eigenvectors)
+    A_i = np.heaviside(A_i, 0.5)
     for j in range(len(eigenvalues)):
         result += 1
         eigenvalues[j] = 0
         new_a = eigenvectors * np.diag(eigenvalues) * np.transpose(eigenvectors)
-        new_a -= 0.5
+        #new_a -= 0.5
         new_a = np.heaviside(new_a, 0.5)
-        if not np.array_equal(new_a, A): #Compare
-            return result      
+        if not np.array_equal(new_a, A_i): #Compare
+            return result
     return result
 
 def normalizedSubgraphCentrality(g, v= 0, k=1):

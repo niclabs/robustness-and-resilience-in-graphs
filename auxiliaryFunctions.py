@@ -355,7 +355,6 @@ def minimumWeightstNodeCutset(s, nodes, g):
                 node_index = remain_nodes.index(node)
                 cut_set = cut_set and aux_graph.vertex_disjoint_paths(s_index, node_index, neighbors = "ignore") == 0 #There is no path between s and node               
             if cut_set:
-#                print(group)
                 return i
     return v
 
@@ -525,24 +524,22 @@ def sortEigenValuesVectors(eigenvalues, eigenvectors, desc=False,absValue= True)
     abs: Take tha absolute value to compare
     return: Sorted eigen values and eigen vectors, eigenvectors[:,i] is the eigenvector corresponding to the eigenvalues[i]
     """
+    tuples = [] #Abs value/real value, eigenvector, real_value
+    n = len(eigenvalues)
+    for i in range(n):
+        if absValue:
+            t = (abs(eigenvalues[i]), eigenvectors[i], eigenvalues[i])
+        else:
+            t = (eigenvalues[i], eigenvectors[i], eigenvalues[i])
+        tuples.append(t)
 
-    map_values = {}
-    for value in eigenvalues:       
-        map_values[abs(value)] = value
-    if absValue:
-        eigenvalues = np.abs(eigenvalues)  
-    eigenvalues = list(eigenvalues)
-    eigenvectors = list(eigenvectors)
-
-    pairs = list(zip(eigenvalues, eigenvectors))
-    pairs = sorted(pairs, reverse=desc, key=lambda x: x[0])
-    unzip = list(zip(*pairs))
-    eigenvalues = np.array(unzip[0])
-    eigenvectors = np.array(unzip[1])
-    real_eigenvalues = []
-    for value in eigenvalues:
-        real_eigenvalues.append(map_values[value])
-    return real_eigenvalues, eigenvectors
+    tuples = sorted(tuples, reverse=desc)
+    sorted_eigenvalues = []
+    sorted_eigenvectors = []
+    for t in tuples:
+        sorted_eigenvalues.append(t[2])
+        sorted_eigenvectors.append(t[1])
+    return sorted_eigenvalues, sorted_eigenvectors
 
 def naturalConAux(m):
     """
@@ -697,13 +694,20 @@ def setStates(g):
     g.vs['state'] = s
     return g
 
-def normalize(v):
+def normalize(vectors):
     """
     v: List of eigenvectors
     return: Normalized eigenvectors
     """
-    n = np.linalg.norm(v, axis=1)
-    return v/n
+    n = len(vectors)
+    for i in range(n):
+        s = np.sum(vectors[i])
+        if s == 0:
+            continue
+        n_i = len(vectors[i])
+        for j in range(n_i):
+            vectors[i][j] /= s
+    return vectors
 
 def getDAG(g, reverse = False):
     """
