@@ -59,9 +59,11 @@ ss$value = as.numeric(ss$value)
 
 clusters = cutree(groups, k = 4)
 A = clusters["vertexLoad"]
-B = clusters["fragility"]
+B = clusters["robustnessIndex"]
+C = clusters["fragility"]
 group1 = which(clusters == A)
 group2 = which(clusters == B)
+group3 = which(clusters == C)
 
 cat('Median runtime', median(ss$t), '\n')
 rf = ss[ss$measure == 'resilienceFactor',]
@@ -77,6 +79,17 @@ cat('A',  la, dim(g1)[1], '\n')
 g2 = ss[ss$measure %in% names(group2),]
 lb = length(levels(droplevels(g2)$measure))
 cat('B', lb, dim(g2)[1], '\n')
+
+
+g3 = ss[ss$measure %in% names(group3),]
+lc = length(levels(droplevels(g3)$measure))
+cat('C', lc, dim(g3)[1], '\n')
+
+
+cat(c('A', names(group1)), sep = '\n')
+cat(c('B', names(group2)), sep = '\n')
+cat(c('C', names(group3)), sep = '\n')
+
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -94,7 +107,6 @@ p = ggplot(g1, aes(x = measure, y = t, fill = measure)) +
                                         #    guides(fill = guide_legend(ncol = 2))
                                         #           axis.ticks.x=element_blank(),
                                         #           axis.text.x=element_blank(),
-
 ggsave('poscor_g1.png', unit='cm', width=la, height=16)
 
 fontsize = 15
@@ -111,6 +123,23 @@ p = ggplot(g2, aes(x = measure, y = t, fill = measure)) +
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
 ggsave('poscor_g2.png', unit='cm', width=lb, height=14)
+
+
+fontsize = 15
+yrange = c(0.08, 1200)
+ybreaks = c(0.1, 1, 10, 100, 1000)
+ylabels = c('0.1 ms', '1 ms', '10 ms', '100 ms', '1 s')
+p = ggplot(g3, aes(x = measure, y = t, fill = measure)) +
+    geom_boxplot(width=0.5) +
+    scale_y_continuous(trans='log2',
+                       limits = yrange, breaks = ybreaks,
+                       labels = ylabels, name = 'Runtime') +
+    theme(axis.title.x=element_blank(),
+          axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
+          legend.position = "none") +
+    scale_fill_discrete(name = "Measure")
+ggsave('poscor_g3.png', unit='cm', width=lc, height=14)
+
 
 palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
 fontsize = 17

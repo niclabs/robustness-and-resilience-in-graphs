@@ -355,7 +355,7 @@ def minimumWeightstNodeCutset(s, nodes, g):
                 node_index = remain_nodes.index(node)
                 cut_set = cut_set and aux_graph.vertex_disjoint_paths(s_index, node_index, neighbors = "ignore") == 0 #There is no path between s and node               
             if cut_set:
-                print(group)
+#                print(group)
                 return i
     return v
 
