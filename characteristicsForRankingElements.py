@@ -154,16 +154,18 @@ def coveringIndex(g, v=0):
 def sensitivity(g, s=0, d=0, f=centralityFunction, w=False):
     """
     g: Graph
+    s: Node
+    d: Node
     f: Centrality function: f(M), where M is the adjacency matrix, returns an array of size n, with n number of vertices
     w: Name of the weight edge attribute in the graph g, default=False, if false, random weights are set
     return: Sensitivity of node s with respect to node d
     """
     if not w:
-        g = generateWeight(g, edge=True)
+        g = generateWeight(g, edge=True, integer=True)
         w= 'weight'
-    M = weightedMatrix(g, w)
+    M = np.array(g.get_adjacency(attribute=w).data)
     f_M = f(M)
-    n = len(M)
+    n = g.vcount()
     dfdA = np.gradient(f_M)
     dAdt = np.zeros([n,n])
     h = sym.Symbol('h')
@@ -175,5 +177,5 @@ def sensitivity(g, s=0, d=0, f=centralityFunction, w=False):
                 value = sym.limit((Mij * (1 + (h / deg)) - Mij) / h, h, 0)
             else:
                 value = sym.limit((Mij- Mij) / h, h, 0)
-            dAdt[i][j] = value  
+            dAdt[i][j] = value
     return np.matmul(dfdA, dAdt)[s]

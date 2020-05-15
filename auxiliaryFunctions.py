@@ -633,10 +633,10 @@ def centralityFunction(M):
     n = len(M)
     res = np.zeros(n)
     for i in range(n):
-        res[i] = M[i][i] ** 2
+        res[i] = np.sum(M[i]) / n
     return res
 
-def generateWeight(g, edge =True, vertex=False, name= 'weight', negative = False):
+def generateWeight(g, edge =True, vertex=False, name= 'weight', negative = False, integer=False):
     """
     g: Graph
     negative: Set negative values
@@ -644,11 +644,17 @@ def generateWeight(g, edge =True, vertex=False, name= 'weight', negative = False
     """
     if edge:
         w = np.random.rand(g.ecount())
+        if integer:
+            w = w * 100
+            w = w.astype(int)
         if negative:
             w = -w
         g.es[name] = w
     if vertex: 
         w = np.random.rand(g.vcount())
+        if integer:
+            w = w * 1000
+            w = w.astype(int)
         if negative:
             w = -w
         g.vs[name] = w
