@@ -20,6 +20,8 @@ variable = d[, -which(names(d) %in% omit)]
 cat('kept', dim(variable)[1], '\n')
 cm = cor(variable, method = 'pearson', use = 'pairwise.complete.obs')
 groups = hclust(dist(abs(cm))) # groups from corr_single_scalar.png
+ordering = rev(groups$order)
+cm = cm[ordering, ordering] # reorder
 
 suppressMessages(suppressWarnings(library(dendextend)))
 d = as.dendrogram(groups)
@@ -28,14 +30,12 @@ dl = color_labels(db, k = 4)
 # bottom left top right
 png('clust_single_scalar.png', width = 800, height = 1000)
 par(mar = c(0,18,0,0))
-plot_horiz.dendrogram(dl, side = TRUE, sub="", main="", axes=F)
+plot_horiz.dendrogram(rev(dl), side = TRUE, sub="", main="", axes=F) # reverse order
 # plot(groups, xlab="", sub="", main="", axes=F, ylab="")
 invisible(dev.off())
 png('corr_single_scalar.png', width = 1000, height = 1000)
 par(mar = c(0,0,0,0))
-co = rev(groups$order)
-ocm = cm[co, co]
-corrplot(ocm, type = 'upper', sig.level = 0.01, tl.cex = 0.9, tl.col = "black")
+corrplot(cm, type = 'upper', sig.level = 0.01, tl.cex = 0.9, tl.col = "black")
 invisible(dev.off())
 
 suppressMessages(suppressWarnings(require(ggplot2)))
