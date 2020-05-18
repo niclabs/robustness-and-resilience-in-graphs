@@ -243,4 +243,26 @@ for (row in 1:nrow(counts)) {
 }
 ggsave(paste('double_avg_', dur, 'sec.png', sep = ''), width = 7, height = 7)
 
+eff = c('closedWalkNumber',
+        'normalizedSubgraphCentrality',
+        'redundancyOfAlternativePaths',
+        'fragmentation',
+        'relativeEntropy',
+        'pathDiversity',
+        'percolatedPath',
+        'perturbationScore')
 
+fontsize = 20
+xlab = c('BA', 'BB', 'CL', 'CG', 'ER', 'SL', 'HL', 'LG', 'PG', 'RG', 'HG', 'TL', 'WG')
+for (char in eff) {
+    ms = ss[ss$measure == char,]
+#    print(levels(ms$generator))
+    p = ggplot(ms, aes(x = generator, y = value, fill = generator)) +
+        geom_boxplot(width=0.5, lwd=2) +
+        scale_y_continuous(name = 'Value') +
+        scale_x_discrete(name = 'Generation model', labels  = xlab) +
+        theme_classic(base_size = fontsize) +
+        theme(legend.position="none") +
+        theme(axis.text.x = element_text(angle=90, hjust=1))
+    ggsave(paste('values_', char, '_', dur, 'sec.png', sep = ''), width = 12, height = 5)
+}
