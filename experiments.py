@@ -277,37 +277,37 @@ def run(permitted = 1):
                         if proc.is_alive():
                             proc.terminate()
                             proc.join()
-        for power in range(4, 9, 2):
-            n = 2**power
-            k = int(floor(sqrt(n)))
-            h = int(ceil(sqrt(k)))
-            for (m1, p1) in models:
-                for r in range(10 - power // 2): # less replicas for larger graphs
-                    G1 = create(m1, n, p1, k, h)
-                    if G1 is not None:
-                        G1 = nx.convert_node_labels_to_integers(G1)
-                        for vertex in G1:
-                            if 'pos' in G1.nodes[vertex]:
-                                del G1.nodes[vertex]['pos']
-                        nx.write_graphml(G1, 'G1.graphml')
-                        g1 = ig.read('G1.graphml', format="graphml")
-                        for (m2, p2) in models:
-                            G2 = create(m2, n, p2, k, h)
-                            if G2 is not None:
-                                G2 = nx.convert_node_labels_to_integers(G2)
+    for power in range(4, 9, 2):
+        n = 2**power
+        k = int(floor(sqrt(n)))
+        h = int(ceil(sqrt(k)))
+        for (m1, p1) in models:
+            for r in range(10 - power // 2): # less replicas for larger graphs
+                G1 = create(m1, n, p1, k, h)
+                if G1 is not None:
+                    G1 = nx.convert_node_labels_to_integers(G1)
+                    for vertex in G1:
+                        if 'pos' in G1.nodes[vertex]:
+                            del G1.nodes[vertex]['pos']
+                    nx.write_graphml(G1, 'G1.graphml')
+                    g1 = ig.read('G1.graphml', format="graphml")
+                    for (m2, p2) in models:
+                        G2 = create(m2, n, p2, k, h)
+                        if G2 is not None:
+                            G2 = nx.convert_node_labels_to_integers(G2)
                             for vertex in G2:
                                 if 'pos' in G2.nodes[vertex]:
                                     del G2.nodes[vertex]['pos']
-                                nx.write_graphml(G2, 'G2.graphml')
-                                g2 = ig.read('G2.graphml', format="graphml")
-                                d = '{:s} {:s} {:d} '.format(m1.__name__ , m2.__name__, n)
-                                for c in comparative:
-                                    p = Process(target=measure, args=(r, c, d + c.__name__, g1, g2))
-                                    p.start()
-                                    p.join(permitted)
-                                    if p.is_alive():
-                                        p.terminate()
-                                        p.join()
+                            nx.write_graphml(G2, 'G2.graphml')
+                            g2 = ig.read('G2.graphml', format="graphml")
+                            d = '{:s} {:s} {:d} '.format(m1.__name__ , m2.__name__, n)
+                            for c in comparative:
+                                p = Process(target=measure, args=(r, c, d + c.__name__, g1, g2))
+                                p.start()
+                                p.join(permitted)
+                                if p.is_alive():
+                                    p.terminate()
+                                    p.join()
                             
 if __name__ == '__main__':    
     permitted = None
