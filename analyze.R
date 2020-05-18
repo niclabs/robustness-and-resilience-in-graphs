@@ -93,8 +93,8 @@ cat(c('C', names(group3)), sep = '\n')
 
 fontsize = 15
 yrange = c(0.08, 1200)
-ybreaks = c(0.1, 1, 10, 100, 1000)
-ylabels = c('0.1 ms', '1 ms', '10 ms', '100 ms', '1 s')
+ybreaks = c(0.1, 1, 10, 100, 1000, 10000)
+ylabels = c('0.1 ms', '1 ms', '10 ms', '100 ms', '1 s', '10 s')
 p = ggplot(g1, aes(x = measure, y = t, fill = measure)) +
     geom_boxplot(width=0.5) +
     scale_y_continuous(trans='log2',
@@ -252,14 +252,14 @@ eff = c('closedWalkNumber',
         'percolatedPath',
         'perturbationScore')
 
-fontsize = 20
+fontsize = 30
 xlab = c('BA', 'BB', 'CL', 'CG', 'ER', 'SL', 'HL', 'LG', 'PG', 'RG', 'HG', 'TL', 'WG')
 for (char in eff) {
     ms = ss[ss$measure == char,]
 #    print(levels(ms$generator))
     p = ggplot(ms, aes(x = generator, y = value, fill = generator)) +
         geom_boxplot(width=0.5, lwd=2) +
-        scale_y_continuous(name = 'Value') +
+        scale_y_continuous(name = 'Reported value') +
         scale_x_discrete(name = 'Generation model', labels  = xlab) +
         theme_classic(base_size = fontsize) +
         theme(legend.position="none") +
