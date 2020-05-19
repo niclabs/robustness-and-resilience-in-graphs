@@ -253,11 +253,43 @@ eff = c('closedWalkNumber',
         'perturbationScore')
 
 fontsize = 30
-xlab = c('BA', 'BB', 'CL', 'CG', 'ER', 'SL', 'HL', 'LG', 'PG', 'RG', 'HG', 'TL', 'WG')
+
+genorder = c('complete_graph',
+             'triangular_lattice_graph',
+             'lattice.grid_2d_graph',
+             'hexagonal_lattice_graph',
+             'connected_watts_strogatz_graph',
+             'random_regular_graph',
+             'gnm_random_graph',
+             'circular_ladder_graph',
+             'ladder_graph',
+             'barabasi_albert_graph',
+             'random_powerlaw_tree',
+             'star_graph',
+             'barbell_graph',
+             'wheel_graph',
+             'path_graph')
+
+xlab = c('CG',
+         'TL',
+         'SL',
+         'HL',
+         'WS',
+         'RR',
+         'ER',
+         'LL',
+         'CL',
+         'BA',
+         'PT',
+         'HG',
+         'BB',
+         'WG',
+         'PG')
 for (char in eff) {
     ms = ss[ss$measure == char,]
-#    print(levels(ms$generator))
-    p = ggplot(ms, aes(x = generator, y = value, fill = generator)) +
+    ms$gen = factor(ms$generator, levels = genorder)
+    print(levels(ms$gen))
+    p = ggplot(ms, aes(x = gen, y = value, fill = gen)) +
         geom_boxplot(width=0.5, lwd=2) +
         scale_y_continuous(name = 'Reported value') +
         scale_x_discrete(name = 'Generation model', labels  = xlab) +
