@@ -191,15 +191,20 @@ def edgeResilience(g, l=None):
         return None
     return np.min(O) - 1
 
-def pathDiversity(g, d= 1, s=0,  seed=1):
+def pathDiversity(g, d=None, s=0,  seed=1):
     """
     g: Graph  
     d: Destination vertex
     s: Source vertex, default=0
     seed: Seed for randomize, default = 0
     """
+    if d is None:
+        n= g.vcount()
+        d = random.randint(0, n-1)
+
     if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
-        raise Exception('There is no path between s and d')
+        return None
+          
     L0 = g.get_shortest_paths(s, d, output="epath")[0]
     N0 = g.get_shortest_paths(s, d)[0]
     Nk, Lk = getSimplePath(g, s, d, seed)
