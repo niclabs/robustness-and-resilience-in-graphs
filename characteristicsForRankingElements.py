@@ -7,7 +7,7 @@ import sys
 import sympy as sym
 from auxiliaryFunctions import *
 
-def vertexLoad(g, v=0, n=1):
+def vertexLoad(g, v=0, n=1): # auxiliary
     """
     g: Graph
     v: Vertex, default=0
@@ -20,7 +20,7 @@ def vertexLoad(g, v=0, n=1):
     s = sum(nDegree)
     return (s * g.degree(v)) ** n
 
-def randomWalkBetweenness(g, edge = False, seed = 0):
+def randomWalkBetweenness(g, edge = False, seed = 0): # auxiliary
     """
     g: Graph
     edge: Boolean that indicates if we count edges
@@ -44,7 +44,7 @@ def randomWalkBetweenness(g, edge = False, seed = 0):
                             sum[v] += walk.count(v)
     return sum
 
-def criticality(g, v=False, w=False, edge = False, s = 0):
+def criticality(g, v=False, w=False, edge = False, s = 0):  # auxiliary
     """
     g: Graph
     v: Vertex or edge for criticality, default=False, if false takes a random vertex
@@ -67,7 +67,7 @@ def criticality(g, v=False, w=False, edge = False, s = 0):
         return 0
     return betweenness[v] / weight
 
-def entropyRank(g , i=0):
+def entropyRank(g , i=0): # auxiliary
     """
     g: Graph
     i: vertex, defualt=0
@@ -76,7 +76,7 @@ def entropyRank(g , i=0):
     m = np.array(g.get_adjacency().data)
     return entropyRankFromMatrix(m, i)
 
-def freeEnergyRank(g, i=0, e=0.01):
+def freeEnergyRank(g, i=0, e=0.01): # auxiliary
     """
     g: Graph
     i: verterx, default = 0
@@ -87,7 +87,7 @@ def freeEnergyRank(g, i=0, e=0.01):
     m[m == 0] = e
     return entropyRankFromMatrix(m, i)
 
-def bridgeness(g, i=False, j=False):
+def bridgeness(g, i=False, j=False): # auxiliary
     """
     g: Graph
     i: First component of the edge, default=False
@@ -123,7 +123,7 @@ def bridgeness(g, i=False, j=False):
 
     return math.sqrt(Si * Sj) / Se
 
-def coveringDegree(g, v=0):
+def coveringDegree(g, v=0): # auxiliary
     """
     g: Graph
     v: Vertex, defualt = 0
@@ -136,7 +136,7 @@ def coveringDegree(g, v=0):
             result += 1
     return result
 
-def coveringIndex(g, v=0):
+def coveringIndex(g, v=0): # auxiliary
     """
     g: Graph
     v: Vertex, default=0
@@ -151,7 +151,7 @@ def coveringIndex(g, v=0):
     b = coveringDegree(g, v)
     return a + b/c
 
-def sensitivity(g, s=0, d=0, f=centralityFunction, w=False):
+def sensitivity(g, s=0, d=0, f=centralityFunction, w=False): # auxiliary
     """
     g: Graph
     s: Node

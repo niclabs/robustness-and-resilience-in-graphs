@@ -64,7 +64,7 @@ def fragmentation(g, strategy=perturbationFunction, args=1):
         sum+= len(comp)
     return sum / (N * (N - 1))
 
-def selfSufficiency(g, l=None):
+def selfSufficiency(g, l=None): # auxiliary measure
     """
     g: Graph
     l: the set of services available locally  the set of nonlocal services for each vertex. List = [[[A(v_0)], [N(v_0)]], ... , [[A(v_n-1)], [N(v_n-1)]]]

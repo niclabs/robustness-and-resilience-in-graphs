@@ -104,7 +104,7 @@ def compensatedTotalGeographicalGraphDiversity(g, l=1, x_position=None, y_positi
     e = g.ecount()
     return totalGraphGeographicalDiversity(g, l, x_position=x_position, y_position=y_position) * e
 
-def functionality(g, attack=None, v = None, l = None):
+def functionality(g, attack=None, v = None, l = None): # auxiliary measure
     """
     g: Graph
     attack: Sequence of vertices that represents the attack, this list must contain at least one vertex
@@ -141,7 +141,7 @@ def functionality(g, attack=None, v = None, l = None):
         k += 1
     return result[l]
 
-def functionalityLoss(g, attack=None, v=None, m=None):
+def functionalityLoss(g, attack=None, v=None, m=None): # auxiliary measure
     """
     g: Graph
     attack: Attack sequence, this list must contain at least one vertex
@@ -232,7 +232,7 @@ def deltaEfficiency(graph, k=None):
     except ZeroDivisionError:
         return None
 
-def fragility(g):
+def fragility(g): # auxiliary
     """
     g: Graph
     return: The average delta efficiency over single-vertex removals
