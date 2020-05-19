@@ -533,7 +533,7 @@ def sortEigenValuesVectors(eigenvalues, eigenvectors, desc=False,absValue= True)
             t = (eigenvalues[i], eigenvectors[i], eigenvalues[i])
         tuples.append(t)
 
-    tuples = sorted(tuples, reverse=desc)
+    tuples = sorted(tuples, reverse=desc, key=lambda x: x[0])
     sorted_eigenvalues = []
     sorted_eigenvectors = []
     for t in tuples:
