@@ -222,7 +222,7 @@ def perturbationScore(g, p=perturbationFunction):
     aux = p(g)
     return perturbationScoreTwo(g, aux)
 
-def preferentialPerturbation(g1, g2):
+def preferentialPerturbation(g1, g2): # auxiliary
     """
     g1: Graph
     g2: Graph

@@ -69,7 +69,7 @@ def generalizedRobustnessIndex(g, k= 1):
     r_k = (np.sum(d ** 2) / len(A)) ** 0.5
     return r_k
 
-def localNaturalConnectivity(g):
+def localNaturalConnectivity(g): # auxiliary measure
     """
     g: Graph
     """
@@ -78,7 +78,7 @@ def localNaturalConnectivity(g):
     n = len(eigenvalues)
     return np.log(closedWalkNumber(g)/n)
 
-def closedWalkNumber(g):
+def closedWalkNumber(g): # auxiliary
     """
     g: Graph
     return: A weighted sum of the number of closed walks in a graph
