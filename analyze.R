@@ -28,7 +28,7 @@ d = as.dendrogram(groups)
 db = color_branches(d, k = 4)
 dl = color_labels(db, k = 4)
 # bottom left top right
-png('clust_single_scalar.png', width = 800, height = 1000)
+png('clust_single_scalar.png', width = 600, height = 1000)
 par(mar = c(0,18,0,0))
 plot_horiz.dendrogram(rev(dl), side = TRUE, sub="", main="", axes=F) # reverse order
 # plot(groups, xlab="", sub="", main="", axes=F, ylab="")
@@ -148,7 +148,7 @@ eff = c('normalizedSubgraphCentrality',
         'percolatedPath',
         'perturbationScore')
 
-fontsize = 30
+fontsize = 26
 
 genorder = c('complete_graph',
              'triangular_lattice_graph',
@@ -196,7 +196,7 @@ for (char in eff) {
 }
 
 palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
-fontsize = 17
+fontsize = 12
 offset = 0.3
 yrange = c(0.01, 1200)
 ybreaks = c(0.1, 1, 10, 100, 1000)
