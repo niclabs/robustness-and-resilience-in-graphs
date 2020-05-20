@@ -58,9 +58,9 @@ ss$t = ss$runtime * 1000
 ss$value = as.numeric(ss$value)
 
 clusters = cutree(groups, k = 4)
-A = clusters["vertexLoad"]
+A = clusters["normalizedSubgraphCentrality"]
 B = clusters["robustnessIndex"]
-C = clusters["fragility"]
+C = clusters["dynamicFragility"]
 group1 = which(clusters == A)
 group2 = which(clusters == B)
 group3 = which(clusters == C)
@@ -140,111 +140,7 @@ p = ggplot(g3, aes(x = measure, y = t, fill = measure)) +
     scale_fill_discrete(name = "Measure")
 ggsave('poscor_g3.png', unit='cm', width=lc, height=14)
 
-
-palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
-fontsize = 17
-offset = 0.3
-yrange = c(0.01, 1200)
-ybreaks = c(0.1, 1, 10, 100, 1000)
-ylabels = c('0.1 ms', '1 ms', '10 ms', '100 ms', '1 s')
-p = ggplot(ss, aes(x = n, y = t, fill = n)) +
-    geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
-    scale_y_continuous(trans='log2',
-                       limits = yrange, breaks = ybreaks,
-                       labels = ylabels, name = 'Runtime') +
-    scale_x_discrete(name = 'Graph order') +
-    theme_classic(base_size = fontsize) + theme(legend.position="none")
-counts = as.data.frame(table(ss$n))
-names(counts) = c('n', 'actual')
-k = length(levels(ss$generator))
-h = length(levels(ss$measure))
-counts$x = unfactor(counts$n)
-counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
-counts$expected = counts$replicas * k * h
-counts$perc = 100 * counts$actual / counts$expected
-for (row in 1:nrow(counts)) {
-    p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
-                     x = row + offset, y = 1100, label.size = 1, color = "black")
-}
-ggsave(paste('single_scalar_', dur, 'sec.png', sep=""), width = 7, height = 7)
-
-sa = read.csv(paste('single_avg_', dur, 'sec.dat', sep=""), sep=' ', header=FALSE)
-names(sa) = c('generator', 'order', 'measure', 'value', 'runtime')
-sa$generator = as.factor(sa$generator)
-sa$measure = as.factor(sa$measure)
-sa$n = as.factor(sa$order)
-sa$t = sa$runtime * 1000
-p = ggplot(sa, aes(x = n, y = t, fill = n)) +
-    geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
-    scale_y_continuous(trans='log2', labels = ylabels, limits = yrange, breaks = ybreaks, name = 'Runtime') +
-    scale_x_discrete(name = 'Graph order') +
-    theme_classic(base_size = fontsize) + theme(legend.position="none")
-counts = as.data.frame(table(sa$n))
-names(counts) = c('n', 'actual')
-k = length(levels(sa$generator))
-h = length(levels(sa$measure))
-counts$x = unfactor(counts$n)
-counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
-counts$expected = counts$replicas * k * h
-counts$perc = 100 * counts$actual / counts$expected
-for (row in 1:nrow(counts)) {
-    p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
-                     x = row + offset, y = 1100, label.size = 1, color = "black")
-}
-ggsave(paste('single_avg_', dur, 'sec.png', sep=""), width = 7, height = 7)
-
-ds = read.csv(paste('double_scalar_', dur, 'sec.dat', sep=""), sep=' ', header=FALSE)
-names(ds) = c('first', 'second', 'order', 'measure', 'value', 'runtime')
-ds$measure = as.factor(ds$measure)
-ds$n = as.factor(ds$order)
-ds$t = ds$runtime * 1000
-p = ggplot(ds, aes(x = n, y = t, fill = n)) +
-    geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
-    scale_y_continuous(trans='log2', labels = ylabels, limits = yrange, breaks = ybreaks, name = 'Runtime') +
-    scale_x_discrete(name = 'Graph order') +
-     theme_classic(base_size = fontsize) + theme(legend.position="none")
-counts = as.data.frame(table(ds$n))
-names(counts) = c('n', 'actual')
-k1 = length(levels(ds$first))
-k2 = length(levels(ds$second))
-h = length(levels(ds$measure))
-counts$x = unfactor(counts$n)
-counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
-counts$expected = counts$replicas * k1 * k2 * h
-counts$perc = 100 * counts$actual / counts$expected
-for (row in 1:nrow(counts)) {
-    p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
-                     x = row + offset, y = 1100, label.size = 1, color = "black")
-}
-ggsave(paste('double_scalar_',  dur, 'sec.png', sep=""), width = 7, height = 7)
-
-da = read.csv(paste('double_avg_', dur, 'sec.dat', sep=""), sep=' ', header=FALSE)
-names(da) = c('first', 'second', 'order', 'measure', 'value', 'runtime')
-da$measure = as.factor(da$measure)
-da$n = as.factor(da$order)
-da$t = da$runtime * 1000
-p = ggplot(da, aes(x = n, y = t, fill = n)) +
-    geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
-    scale_y_continuous(trans='log2', labels = ylabels, limits = yrange, breaks = ybreaks, name = 'Runtime') +
-    scale_x_discrete(name = 'Graph order') +
-    theme_classic(base_size = fontsize) + theme(legend.position="none")
-counts = as.data.frame(table(da$n))
-names(counts) = c('n', 'actual')
-k1 = length(levels(da$first))
-k1 = length(levels(da$second))
-h = length(levels(da$measure))
-counts$x = unfactor(counts$n)
-counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
-counts$expected = counts$replicas * k1 * k2 * h
-counts$perc = 100 * counts$actual / counts$expected
-for (row in 1:nrow(counts)) {
-    p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
-                     x = row + offset, y = 1100, label.size = 1, color = "black")
-}
-ggsave(paste('double_avg_', dur, 'sec.png', sep = ''), width = 7, height = 7)
-
-eff = c('closedWalkNumber',
-        'normalizedSubgraphCentrality',
+eff = c('normalizedSubgraphCentrality',
         'redundancyOfAlternativePaths',
         'fragmentation',
         'relativeEntropy',
@@ -288,13 +184,127 @@ xlab = c('CG',
 for (char in eff) {
     ms = ss[ss$measure == char,]
     ms$gen = factor(ms$generator, levels = genorder)
-    print(levels(ms$gen))
+#    print(levels(ms$gen))
     p = ggplot(ms, aes(x = gen, y = value, fill = gen)) +
-        geom_boxplot(width=0.5, lwd=2) +
+        geom_boxplot(width=0.5, lwd=1.5) +
         scale_y_continuous(name = 'Reported value') +
         scale_x_discrete(name = 'Generation model', labels  = xlab) +
         theme_classic(base_size = fontsize) +
         theme(legend.position="none") +
         theme(axis.text.x = element_text(angle=90, hjust=1))
     ggsave(paste('values_', char, '_', dur, 'sec.png', sep = ''), width = 12, height = 5)
+}
+
+palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
+fontsize = 17
+offset = 0.3
+yrange = c(0.01, 1200)
+ybreaks = c(0.1, 1, 10, 100, 1000)
+ylabels = c('0.1 ms', '1 ms', '10 ms', '100 ms', '1 s')
+p = ggplot(ss, aes(x = n, y = t, fill = n)) +
+    geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
+    scale_y_continuous(trans='log2',
+                       limits = yrange, breaks = ybreaks,
+                       labels = ylabels, name = 'Runtime') +
+    scale_x_discrete(name = 'Graph order') +
+    theme_classic(base_size = fontsize) + theme(legend.position="none")
+counts = as.data.frame(table(ss$n))
+names(counts) = c('n', 'actual')
+k = length(levels(ss$generator))
+h = length(levels(ss$measure))
+counts$x = unfactor(counts$n)
+counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
+counts$expected = counts$replicas * k * h
+counts$perc = 100 * counts$actual / counts$expected
+for (row in 1:nrow(counts)) {
+    p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
+                     x = row + offset, y = 1100, label.size = 1, color = "black")
+}
+ggsave(paste('single_scalar_', dur, 'sec.png', sep=""), width = 7, height = 7)
+
+print('single-graph multi-valued characteristics, if any')
+filename = paste('single_avg_', dur, 'sec.dat', sep="")
+if (file.exists(filename)) {
+    sa = read.csv(filename, sep=' ', header=FALSE)
+    names(sa) = c('generator', 'order', 'measure', 'value', 'runtime')
+    sa$generator = as.factor(sa$generator)
+    sa$measure = as.factor(sa$measure)
+    sa$n = as.factor(sa$order)
+    sa$t = sa$runtime * 1000
+    p = ggplot(sa, aes(x = n, y = t, fill = n)) +
+        geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
+        scale_y_continuous(trans='log2', labels = ylabels, limits = yrange, breaks = ybreaks, name = 'Runtime') +
+        scale_x_discrete(name = 'Graph order') +
+        theme_classic(base_size = fontsize) + theme(legend.position="none")
+    counts = as.data.frame(table(sa$n))
+    names(counts) = c('n', 'actual')
+    k = length(levels(sa$generator))
+    h = length(levels(sa$measure))
+    counts$x = unfactor(counts$n)
+    counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
+    counts$expected = counts$replicas * k * h
+    counts$perc = 100 * counts$actual / counts$expected
+    for (row in 1:nrow(counts)) {
+        p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
+                         x = row + offset, y = 1100, label.size = 1, color = "black")
+    }
+    ggsave(paste('single_avg_', dur, 'sec.png', sep=""), width = 7, height = 7)
+}
+
+print('two-graph single-valued characteristics, if any')
+filename = paste('double_scalar_', dur, 'sec.dat', sep="")
+if (file.exists(filename)) {
+    ds = read.csv(filename, sep=' ', header=FALSE)
+    names(ds) = c('first', 'second', 'order', 'measure', 'value', 'runtime')
+    ds$measure = as.factor(ds$measure)
+    ds$n = as.factor(ds$order)
+    ds$t = ds$runtime * 1000
+    p = ggplot(ds, aes(x = n, y = t, fill = n)) +
+        geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
+        scale_y_continuous(trans='log2', labels = ylabels, limits = yrange, breaks = ybreaks, name = 'Runtime') +
+        scale_x_discrete(name = 'Graph order') +
+        theme_classic(base_size = fontsize) + theme(legend.position="none")
+    counts = as.data.frame(table(ds$n))
+    names(counts) = c('n', 'actual')
+    k1 = length(levels(ds$first))
+    k2 = length(levels(ds$second))
+    h = length(levels(ds$measure))
+    counts$x = unfactor(counts$n)
+    counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
+    counts$expected = counts$replicas * k1 * k2 * h
+    counts$perc = 100 * counts$actual / counts$expected
+    for (row in 1:nrow(counts)) {
+        p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
+                         x = row + offset, y = 1100, label.size = 1, color = "black")
+    }
+    ggsave(paste('double_scalar_',  dur, 'sec.png', sep=""), width = 7, height = 7)
+}
+
+print('two-graph double-valued characteristics, if any')
+filename = paste('double_avg_', dur, 'sec.dat', sep="")
+if (file.exists(filename)) {
+    da = read.csv(filename, sep=' ', header=FALSE)
+    names(da) = c('first', 'second', 'order', 'measure', 'value', 'runtime')
+    da$measure = as.factor(da$measure)
+    da$n = as.factor(da$order)
+    da$t = da$runtime * 1000
+    p = ggplot(da, aes(x = n, y = t, fill = n)) +
+        geom_violin(trim = TRUE) + geom_boxplot(width=0.1) + scale_fill_manual(values = palette) +
+        scale_y_continuous(trans='log2', labels = ylabels, limits = yrange, breaks = ybreaks, name = 'Runtime') +
+        scale_x_discrete(name = 'Graph order') +
+        theme_classic(base_size = fontsize) + theme(legend.position="none")
+    counts = as.data.frame(table(da$n))
+    names(counts) = c('n', 'actual')
+    k1 = length(levels(da$first))
+    k1 = length(levels(da$second))
+    h = length(levels(da$measure))
+    counts$x = unfactor(counts$n)
+    counts$replicas = 10 - ceiling(log(counts$x, 2) / 2) + 1
+    counts$expected = counts$replicas * k1 * k2 * h
+    counts$perc = 100 * counts$actual / counts$expected
+    for (row in 1:nrow(counts)) {
+        p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
+                         x = row + offset, y = 1100, label.size = 1, color = "black")
+    }
+    ggsave(paste('double_avg_', dur, 'sec.png', sep = ''), width = 7, height = 7)
 }

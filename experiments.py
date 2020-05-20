@@ -31,7 +31,7 @@ models = [ (nx.generators.random_graphs.connected_watts_strogatz_graph, 3),
            (nx.generators.classic.barbell_graph, 2),
            (nx.generators.classic.circular_ladder_graph, 1),
            (nx.generators.classic.complete_graph, 1),
-           (nx.generators.random_graphs.gnm_random_graph, 2),
+           (nx.generators.random_graphs.gnm_random_graph, -3),
            (nx.generators.lattice.hexagonal_lattice_graph, 2),
            (nx.generators.classic.ladder_graph, 1),
            (nx.generators.classic.path_graph, 1),
@@ -47,21 +47,22 @@ from math import floor, ceil, sqrt, log
 def create(m, n, pr, k = None, h = None):
     G = None
     try:
-        if pr == 1:
-            G =  m(n)
-        elif pr == 2:
+        if pr == 1: # models that take only the graph order
+            G = m(n)
+        elif pr == 2: # models that are k by k 
             if k * k % 2 == 0:
                 G = m(k, k)
             else:
                 G = m(k, k + 1)                    
-        elif pr == 3: # only the WS
+        elif pr == 3: #  WS
             p = log(1 + (11 - h) / 50)
-#            print(p)
             G =  m(n, k // 2, p)
+        elif pr == -1: # regular random 
+            G =  m(h, n)
         elif pr == -2: # BA
             G = m(n, h)
-        elif pr == -1: # regular
-            G =  m(h, n)                
+        elif pr == -3: # ER
+            G = m(n, 2 * n)
     except Exception as e:
         print('# ERROR', m.__name__, 'failed to create a graph:', e)        
         pass

@@ -35,4 +35,5 @@ grep "(avg)" single_${dur}sec.dat | awk '{print $3}' | sort  | uniq
 echo 'AVG DOUBLE'
 grep "(avg)" double_${dur}sec.dat | awk '{print $4}' | sort  | uniq 
 python3 filter.py $dur > cor.dat
+find . -size 0 -delete # clear empty files, if any
 Rscript analyze.R $dur
