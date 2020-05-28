@@ -201,6 +201,9 @@ def pathDiversity(g, d=None, s=0,  seed=1):
     if d is None:
         n= g.vcount()
         d = random.randint(0, n-1)
+    
+    if s == d:
+        return 0
 
     if(g.vertex_disjoint_paths(s,d, neighbors = "ignore") == 0):
         return None
