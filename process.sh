@@ -7,8 +7,9 @@ dur=$1
 echo "Analyzing experiments with a ${dur}-second cut-off."
 if [ ! -f results_${dur}sec.txt ]; then
     echo "Results for the specified duration of $dur seconds do not yet exist; executing..."
-    python3 experiments.py $dur > results_${dur}sec.txt
+    touch results_${dur}sec.txt
 fi
+python3 experiments.py $dur >> results_${dur}sec.txt # appending any missing cases and replicas
 wc -l results_${dur}sec.txt
 awk -F ' *' '$2 ~ /^[0-9]+$/ { print $0 }' results_${dur}sec.txt > single_${dur}sec.dat
 awk -F ' *' '$3 ~ /^[0-9]+$/ { print $0 }' results_${dur}sec.txt > double_${dur}sec.dat
