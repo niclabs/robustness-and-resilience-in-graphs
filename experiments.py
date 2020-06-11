@@ -230,16 +230,19 @@ def run(permitted = 1):
     if path.isfile(filename):
         with open(filename) as data:
             for line in data:
-                case = ' '.join(line.split()[:2]) # order and model only
+                fields = line.split() # order and model and replica
+                keep = fields[:2] + [fields[-1]]
+                case = ' '.join(keep)
                 executed.add(case)
     for power in range(5, 10):
         n = 2**power
         k = int(floor(sqrt(n)))
         h = int(ceil(sqrt(k)))
         for (m, p) in models:
-            d = '{:s} {:d}'.format(m.__name__, n)
-            if d not in executed:
-                for r in range(10 - power // 2):
+            for r in range(10 - power // 2):
+                d = '{:s} {:d}'.format(m.__name__, n)
+                case = f'{d} {r}'
+                if case not in executed:
                     G = create(m, n, p, k, h)
                     if G is not None:
                         G = nx.convert_node_labels_to_integers(G)
@@ -260,9 +263,10 @@ def run(permitted = 1):
         k = int(floor(sqrt(n)))
         h = int(ceil(sqrt(k)))
         for (m1, p1) in models:
-            d = '{:s} {:s} {:d}'.format(m1.__name__ , m2.__name__, n)
-            if d not in executed:
-                for r in range(10 - power // 2): # less replicas for larger graphs
+            for r in range(10 - power // 2): # less replicas for larger graphs
+                d = '{:s} {:s} {:d}'.format(m1.__name__ , m2.__name__, n)
+                case = f'{d} {r}'
+                if case not in executed:
                     G1 = create(m1, n, p1, k, h)
                     if G1 is not None:
                         G1 = nx.convert_node_labels_to_integers(G1)
