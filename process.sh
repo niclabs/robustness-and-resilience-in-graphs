@@ -10,7 +10,7 @@ if [ ! -f results_${dur}sec.txt ]; then
     touch results_${dur}sec.txt
 fi
 python3 experiments.py $dur >> results_${dur}sec.txt # appending any missing cases and replicas
-wc -l results_${dur}sec.txt
+grep -v WARNING results_${dur}sec.txt | wc -l
 awk -F ' *' '$2 ~ /^[0-9]+$/ { print $0 }' results_${dur}sec.txt > single_${dur}sec.dat
 awk -F ' *' '$3 ~ /^[0-9]+$/ { print $0 }' results_${dur}sec.txt > double_${dur}sec.dat
 grep avg single_${dur}sec.dat | sed 's/(avg) //g' > single_avg_${dur}sec.dat

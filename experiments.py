@@ -223,7 +223,6 @@ def run(permitted = 1):
         maximumPerturbationScore
     ]
     # </char2.lst> do not forget to remove the last comma
-    comparative.pop() # the last one (percentageOfNoncriticalNodes) is incompatible with the experimentation
 
     executed = set()
     filename = f'results_{permitted}sec.txt'
@@ -263,19 +262,19 @@ def run(permitted = 1):
         k = int(floor(sqrt(n)))
         h = int(ceil(sqrt(k)))
         for (m1, p1) in models:
-            for r in range(10 - power // 2): # less replicas for larger graphs
-                d = '{:s} {:s} {:d}'.format(m1.__name__ , m2.__name__, n)
-                case = f'{d} {r}'
-                if case not in executed:
-                    G1 = create(m1, n, p1, k, h)
-                    if G1 is not None:
-                        G1 = nx.convert_node_labels_to_integers(G1)
-                        for vertex in G1:
-                            if 'pos' in G1.nodes[vertex]:
-                                del G1.nodes[vertex]['pos']
-                        nx.write_graphml(G1, 'G1.graphml')
-                        g1 = ig.read('G1.graphml', format="graphml")
-                        for (m2, p2) in models:
+            for (m2, p2) in models:
+                for r in range(10 - power // 2): # less replicas for larger graphs
+                    d = '{:s} {:s} {:d}'.format(m1.__name__ , m2.__name__, n)
+                    case = f'{d} {r}'
+                    if case not in executed:
+                        G1 = create(m1, n, p1, k, h)
+                        if G1 is not None:
+                            G1 = nx.convert_node_labels_to_integers(G1)
+                            for vertex in G1:
+                                if 'pos' in G1.nodes[vertex]:
+                                    del G1.nodes[vertex]['pos']
+                            nx.write_graphml(G1, 'G1.graphml')
+                            g1 = ig.read('G1.graphml', format="graphml")
                             G2 = create(m2, n, p2, k, h)
                             if G2 is not None:
                                 G2 = nx.convert_node_labels_to_integers(G2)
