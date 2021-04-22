@@ -20,12 +20,17 @@ examples = [(nx.generators.random_graphs.barabasi_albert_graph(15, 3), 'nxba'),
             (nx.generators.random_graphs.powerlaw_cluster_graph(20, 4, 0.15), 'nxtree'),
             (nx.generators.classic.wheel_graph(12), 'nxwheel')]
 
-redraw_examples = False
+redraw_examples = True
+EPS = True
 if redraw_examples:
     for (G, label) in examples:
         fig = figure()
         nx.draw(G)
-        savefig(label + '.png', width = 1000)
+        if EPS:
+            savefig(label + '.eps')
+        else:
+            savefig(label + '.png', width = 1000)
+    quit()
 
 models = [ (nx.generators.random_graphs.connected_watts_strogatz_graph, 3),
            (nx.generators.random_graphs.barabasi_albert_graph, -2),

@@ -19,7 +19,7 @@ cat('omitted', length(omit), '\n')
 variable = d[, -which(names(d) %in% omit)]
 cat('kept', dim(variable)[1], '\n')
 cm = cor(variable, method = 'pearson', use = 'pairwise.complete.obs')
-groups = hclust(dist(abs(cm))) # groups from corr_single_scalar.png
+groups = hclust(dist(abs(cm))) # groups from corr_single_scalar
 ordering = rev(groups$order)
 cm = cm[ordering, ordering] # reorder
 
@@ -28,12 +28,12 @@ d = as.dendrogram(groups)
 db = color_branches(d, k = 4)
 dl = color_labels(db, k = 4)
 # bottom left top right
-png('clust_single_scalar.png', width = 600, height = 1000)
+png('clust_single_scalar.eps', device='eps', width = 600, height = 1000)
 par(mar = c(0,18,0,0))
 plot_horiz.dendrogram(rev(dl), side = TRUE, sub="", main="", axes=F) # reverse order
 # plot(groups, xlab="", sub="", main="", axes=F, ylab="")
 invisible(dev.off())
-png('corr_single_scalar.png', width = 1000, height = 1000)
+png('corr_single_scalar.eps', device='eps', width = 1000, height = 1000)
 par(mar = c(0,0,0,0))
 corrplot(cm, type = 'upper', sig.level = 0.01, tl.cex = 0.9, tl.col = "black")
 invisible(dev.off())
@@ -59,11 +59,13 @@ ss$value = as.numeric(ss$value)
 
 clusters = cutree(groups, k = 4)
 A = clusters["normalizedSubgraphCentrality"]
-B = clusters["robustnessIndex"]
-C = clusters["dynamicFragility"]
+B = clusters["randomRobustnessIndex"]
+C = clusters["RCB"]
+D = clusters["fragmentation"]
 group1 = which(clusters == A)
 group2 = which(clusters == B)
 group3 = which(clusters == C)
+group4 = which(clusters == D)
 
 cat('Median runtime', median(ss$t), '\n')
 rf = ss[ss$measure == 'resilienceFactor',]
@@ -80,16 +82,18 @@ g2 = ss[ss$measure %in% names(group2),]
 lb = length(levels(droplevels(g2)$measure))
 cat('B', lb, dim(g2)[1], '\n')
 
-
 g3 = ss[ss$measure %in% names(group3),]
 lc = length(levels(droplevels(g3)$measure))
 cat('C', lc, dim(g3)[1], '\n')
 
+g4 = ss[ss$measure %in% names(group4),]
+lc = length(levels(droplevels(g4)$measure))
+cat('DX', lc, dim(g4)[1], '\n')
 
 cat(c('A', names(group1)), sep = '\n')
 cat(c('B', names(group2)), sep = '\n')
 cat(c('C', names(group3)), sep = '\n')
-
+cat(c('D', names(group4)), sep = '\n')
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -107,7 +111,7 @@ p = ggplot(g1, aes(x = measure, y = t, fill = measure)) +
                                         #    guides(fill = guide_legend(ncol = 2))
                                         #           axis.ticks.x=element_blank(),
                                         #           axis.text.x=element_blank(),
-ggsave('poscor_g1.png', unit='cm', width=la, height=16)
+ggsave('poscor_g1.eps', device='eps', unit='cm', width=la, height=16)
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -122,8 +126,7 @@ p = ggplot(g2, aes(x = measure, y = t, fill = measure)) +
           axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g2.png', unit='cm', width=lb, height=14)
-
+ggsave('poscor_g2.eps', device='eps', unit='cm', width=lb, height=14)
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -138,15 +141,29 @@ p = ggplot(g3, aes(x = measure, y = t, fill = measure)) +
           axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g3.png', unit='cm', width=lc, height=14)
+ggsave('poscor_g3.eps', device='eps', unit='cm', width=lc, height=14)
 
-eff = c('normalizedSubgraphCentrality',
-        'redundancyOfAlternativePaths',
-        'fragmentation',
-        'relativeEntropy',
-        'pathDiversity',
-        'percolatedPath',
-        'perturbationScore')
+fontsize = 15
+yrange = c(0.08, 1200)
+ybreaks = c(0.1, 1, 10, 100, 1000)
+ylabels = c('0.1 ms', '1 ms', '10 ms', '100 ms', '1 s')
+p = ggplot(g4, aes(x = measure, y = t, fill = measure)) +
+    geom_boxplot(width=0.5) +
+    scale_y_continuous(trans='log2',
+                       limits = yrange, breaks = ybreaks,
+                       labels = ylabels, name = 'Runtime') +
+    theme(axis.title.x=element_blank(),
+          axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
+          legend.position = "none") +
+    scale_fill_discrete(name = "Measure")
+ggsave('poscor_g4.eps', device='eps', unit='cm', width=lc, height=14)
+
+eff = c('splittingNumber',
+        'RCB',
+        'hubDensity',
+        'connectivityRobustnessFunction',
+        'electricalNodalRobustness',
+        'percolatedPath')
 
 fontsize = 26
 
@@ -192,7 +209,7 @@ for (char in eff) {
         theme_classic(base_size = fontsize) +
         theme(legend.position="none") +
         theme(axis.text.x = element_text(angle=90, hjust=1))
-    ggsave(paste('values_', char, '_', dur, 'sec.png', sep = ''), width = 12, height = 5)
+    ggsave(paste('values_', char, '_', dur, 'sec.eps', device='eps', sep = ''), width = 12, height = 5)
 }
 
 palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
@@ -220,7 +237,7 @@ for (row in 1:nrow(counts)) {
     p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
-ggsave(paste('single_scalar_', dur, 'sec.png', sep=""), width = 7, height = 7)
+ggsave(paste('single_scalar_', dur, 'sec.eps', device='eps', sep=""), width = 7, height = 7)
 
 print('single-graph multi-valued characteristics, if any')
 filename = paste('single_avg_', dur, 'sec.dat', sep="")
@@ -248,7 +265,7 @@ if (file.exists(filename)) {
         p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                          x = row + offset, y = 1100, label.size = 1, color = "black")
     }
-    ggsave(paste('single_avg_', dur, 'sec.png', sep=""), width = 7, height = 7)
+    ggsave(paste('single_avg_', dur, 'sec.eps', device='eps', sep=""), width = 7, height = 7)
 }
 
 print('two-graph single-valued characteristics, if any')
@@ -277,7 +294,7 @@ if (file.exists(filename)) {
         p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                          x = row + offset, y = 1100, label.size = 1, color = "black")
     }
-    ggsave(paste('double_scalar_',  dur, 'sec.png', sep=""), width = 7, height = 7)
+    ggsave(paste('double_scalar_',  dur, 'sec.eps', device='eps', sep=""), width = 7, height = 7)
 }
 
 print('two-graph double-valued characteristics, if any')
@@ -306,5 +323,5 @@ if (file.exists(filename)) {
         p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                          x = row + offset, y = 1100, label.size = 1, color = "black")
     }
-    ggsave(paste('double_avg_', dur, 'sec.png', sep = ''), width = 7, height = 7)
+    ggsave(paste('double_avg_', dur, 'sec.eps', device='eps', sep = ''), width = 7, height = 7)
 }
