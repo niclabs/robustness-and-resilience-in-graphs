@@ -1,3 +1,4 @@
+# some of the less common packages to install: corrplot, dendextend, tidyverse, FSA, varhandle
 DEBUG = FALSE
 if (!DEBUG) {
     options(warn=-1)
@@ -28,12 +29,12 @@ d = as.dendrogram(groups)
 db = color_branches(d, k = 4)
 dl = color_labels(db, k = 4)
 # bottom left top right
-png('clust_single_scalar.eps', device='eps', width = 600, height = 1000)
+postscript('clust_single_scalar.eps')
 par(mar = c(0,18,0,0))
-plot_horiz.dendrogram(rev(dl), side = TRUE, sub="", main="", axes=F) # reverse order
+g = plot_horiz.dendrogram(rev(dl), side = TRUE, sub="", main="", axes=F) # reverse order
 # plot(groups, xlab="", sub="", main="", axes=F, ylab="")
 invisible(dev.off())
-png('corr_single_scalar.eps', device='eps', width = 1000, height = 1000)
+postscript('corr_single_scalar.eps', horizontal = FALSE, onefile = FALSE, paper = "special", height = 15, width = 15, colormodel="rgb")
 par(mar = c(0,0,0,0))
 corrplot(cm, type = 'upper', sig.level = 0.01, tl.cex = 0.9, tl.col = "black")
 invisible(dev.off())
@@ -111,7 +112,7 @@ p = ggplot(g1, aes(x = measure, y = t, fill = measure)) +
                                         #    guides(fill = guide_legend(ncol = 2))
                                         #           axis.ticks.x=element_blank(),
                                         #           axis.text.x=element_blank(),
-ggsave('poscor_g1.eps', device='eps', unit='cm', width=la, height=16)
+ggsave(plot = p, device='eps', filename = 'poscor_g1.eps', units='cm', width = la, height = 16)
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -126,7 +127,7 @@ p = ggplot(g2, aes(x = measure, y = t, fill = measure)) +
           axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g2.eps', device='eps', unit='cm', width=lb, height=14)
+ggsave(plot = p, filename = 'poscor_g2.eps', device='eps', unit='cm', width=lb, height=14)
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -141,7 +142,7 @@ p = ggplot(g3, aes(x = measure, y = t, fill = measure)) +
           axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g3.eps', device='eps', unit='cm', width=lc, height=14)
+ggsave(plot = p, filename = 'poscor_g3.eps', device='eps', unit='cm', width=lc, height=14)
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -156,7 +157,7 @@ p = ggplot(g4, aes(x = measure, y = t, fill = measure)) +
           axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1),
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
-ggsave('poscor_g4.eps', device='eps', unit='cm', width=lc, height=14)
+ggsave(plot = p, filename = 'poscor_g4.eps', device='eps', unit='cm', width=lc, height=14)
 
 eff = c('splittingNumber',
         'RCB',
@@ -209,7 +210,7 @@ for (char in eff) {
         theme_classic(base_size = fontsize) +
         theme(legend.position="none") +
         theme(axis.text.x = element_text(angle=90, hjust=1))
-    ggsave(paste('values_', char, '_', dur, 'sec.eps', device='eps', sep = ''), width = 12, height = 5)
+    ggsave(plot = p, filename = paste('values_', char, '_', dur, 'sec.eps', sep = ''), device = 'eps', width = 12, height = 5)
 }
 
 palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
@@ -237,7 +238,7 @@ for (row in 1:nrow(counts)) {
     p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
-ggsave(paste('single_scalar_', dur, 'sec.eps', device='eps', sep=""), width = 7, height = 7)
+ggsave(plot = p, filename = paste('single_scalar_', dur, 'sec.eps', sep=""), device = 'eps', width = 7, height = 7)
 
 print('single-graph multi-valued characteristics, if any')
 filename = paste('single_avg_', dur, 'sec.dat', sep="")
@@ -265,7 +266,7 @@ if (file.exists(filename)) {
         p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                          x = row + offset, y = 1100, label.size = 1, color = "black")
     }
-    ggsave(paste('single_avg_', dur, 'sec.eps', device='eps', sep=""), width = 7, height = 7)
+    ggsave(plot = p, filename = paste('single_avg_', dur, 'sec.eps', sep=""), device = eps, width = 7, height = 7)
 }
 
 print('two-graph single-valued characteristics, if any')
@@ -294,7 +295,7 @@ if (file.exists(filename)) {
         p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                          x = row + offset, y = 1100, label.size = 1, color = "black")
     }
-    ggsave(paste('double_scalar_',  dur, 'sec.eps', device='eps', sep=""), width = 7, height = 7)
+    ggsave(plot = p, filename = paste('double_scalar_',  dur, 'sec.eps', sep=""), device = 'eps', width = 7, height = 7)
 }
 
 print('two-graph double-valued characteristics, if any')
@@ -323,5 +324,5 @@ if (file.exists(filename)) {
         p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
                          x = row + offset, y = 1100, label.size = 1, color = "black")
     }
-    ggsave(paste('double_avg_', dur, 'sec.eps', device='eps', sep = ''), width = 7, height = 7)
+    ggsave(plot = p, filename = paste('double_avg_', dur, 'sec.eps', sep = ''), device = 'eps', width = 7, height = 7)
 }
