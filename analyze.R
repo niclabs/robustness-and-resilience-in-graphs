@@ -163,10 +163,10 @@ p = ggplot(g4, aes(x = measure, y = t, fill = measure)) +
 ggsave(plot = p, filename = 'poscor_g4.eps', device='eps', unit='cm', width=lc, height=14)
 pc4 = p
 
-fig5a = pc1 + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
-fig5b = pc2 + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
-fig5c = pc3 + ggtitle("C") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
-fig5d = pc4 + ggtitle("D") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig5a = pc1 + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 10))
+fig5b = pc2 + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 10))
+fig5c = pc3 + ggtitle("C") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 10))
+fig5d = pc4 + ggtitle("D") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 10))
 fig5 = grid.arrange(fig5a, fig5b, fig5c, fig5d, nrow = 2, ncol = 2)
 ggsave(plot = fig5, filename = "fig5.eps", device = 'eps', width = 12, height = 12)
 
@@ -244,12 +244,12 @@ for (char in eff) {
     }
 }
 
-fig6a = v1 + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
-fig6b = v2 + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
-fig6c = v3 + ggtitle("C") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
-fig6d = v4 + ggtitle("D") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
-fig6e = v5 + ggtitle("E") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
-fig6f = v6 + ggtitle("F") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6a = v1 + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 45))
+fig6b = v2 + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 45))
+fig6c = v3 + ggtitle("C") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 45))
+fig6d = v4 + ggtitle("D") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 45))
+fig6e = v5 + ggtitle("E") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 45))
+fig6f = v6 + ggtitle("F") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 45))
 fig6 = grid.arrange(fig6a, fig6b, fig6c, fig6d, fig6e, fig6f, nrow = 3, ncol = 2)
 ggsave(plot = fig6, filename = "fig6.eps", device = 'eps', width = 20, height = 30)
 
@@ -346,8 +346,8 @@ if (file.exists(filename)) {
 #library(cowplot)
 #fig2a = fig2a + draw_text("A", x = 1, y = 80, hjust = 0, vjust = 1, size = 25)
                                         #fig2b = fig2b + draw_text("B", x = 1, y = 80, hjust = 0, vjust = 1, size = 25)
-fig2a = fig2a + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
-fig2b = fig2b + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig2a = fig2a + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 15))
+fig2b = fig2b + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 15))
 fig2 = grid.arrange(fig2a, fig2b, nrow = 1)
 ggsave(plot = fig2, filename = "fig2.eps", device = 'eps', width = 14, height = 7)
 
