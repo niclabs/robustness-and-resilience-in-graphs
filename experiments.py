@@ -1,35 +1,69 @@
 from os import path
+import string
 import networkx as nx
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 mpl.use('Agg') # disable pylab's attempt to open a window
+from matplotlib.gridspec import GridSpec
 from matplotlib.pylab import figure, savefig
 
-examples = [(nx.generators.random_graphs.barabasi_albert_graph(15, 3), 'nxba'),
-            (nx.generators.classic.barbell_graph(6, 2), 'nxbarbell'),
-            (nx.generators.classic.circular_ladder_graph(12), 'nxcirc'),
-            (nx.generators.classic.complete_graph(12), 'nxcomplete'),
-            (nx.generators.random_graphs.gnm_random_graph(20, 30), 'nxerdos'),
-            (nx.generators.lattice.hexagonal_lattice_graph(3, 3), 'nxhex'),
-            (nx.generators.classic.ladder_graph(12), 'nxladder'),
-            (nx.generators.classic.path_graph(12), 'nxpath'),
-            (nx.generators.random_graphs.random_regular_graph(3, 16), 'nxregular'),
-            (nx.generators.classic.star_graph(20), 'nxstar'),
-            (nx.generators.lattice.grid_2d_graph(5, 4), 'nxsquare'),
-            (nx.generators.lattice.triangular_lattice_graph(5, 4), 'nxtri'),
-            (nx.generators.random_graphs.connected_watts_strogatz_graph(20, 4, 0.15), 'nxws'),
-            (nx.generators.random_graphs.powerlaw_cluster_graph(20, 4, 0.15), 'nxtree'),
-            (nx.generators.classic.wheel_graph(12), 'nxwheel')]
+examples = [ (nx.generators.classic.complete_graph(12), 'nxcomplete'),
+             (nx.generators.lattice.triangular_lattice_graph(5, 4), 'nxtri'),
+             (nx.generators.lattice.grid_2d_graph(5, 4), 'nxsquare'),
+             (nx.generators.lattice.hexagonal_lattice_graph(3, 3), 'nxhex'),
+             (nx.generators.random_graphs.connected_watts_strogatz_graph(20, 4, 0.15), 'nxws'),
+             (nx.generators.random_graphs.random_regular_graph(3, 16), 'nxregular'),
+             (nx.generators.random_graphs.gnm_random_graph(20, 35), 'nxerdos'),             
+             (nx.generators.classic.circular_ladder_graph(12), 'nxcirc'),
+             (nx.generators.classic.ladder_graph(12), 'nxladder'),
+             (nx.generators.random_graphs.barabasi_albert_graph(15, 3), 'nxba'),
+             (nx.generators.random_graphs.powerlaw_cluster_graph(20, 4, 0.15), 'nxtree'),
+             (nx.generators.classic.star_graph(20), 'nxstar'),             
+             (nx.generators.classic.barbell_graph(6, 2), 'nxbarbell'),
+             (nx.generators.classic.wheel_graph(12), 'nxwheel'),
+             (nx.generators.classic.path_graph(12), 'nxpath')]
 
 redraw_examples = True
 EPS = True
+labels = True
+single = True
 if redraw_examples:
+    pos = 0
+    if single: 
+        fig = plt.figure(constrained_layout = False, figsize = (50, 30))
+        gs = GridSpec(3, 5, figure = fig, wspace = 0.2, hspace = 0.2)
+        plt.gca().set_axis_off()
+        plt.subplots_adjust(top = 0.95, bottom = 0, right = 1, left = 0.02, 
+                            hspace = 0, wspace = 0)
+        plt.margins(0,0)
+        plt.gca().xaxis.set_major_locator(plt.NullLocator())
+        plt.gca().yaxis.set_major_locator(plt.NullLocator())
     for (G, label) in examples:
-        fig = figure()
-        nx.draw(G)
-        if EPS:
-            savefig(label + '.eps')
+        if not single:
+            plt.figure(figsize = (10, 10))
+            ax = plt.gca()
         else:
-            savefig(label + '.png', width = 1000)
+            row = pos // 5
+            col = pos % 5
+            ax = fig.add_subplot(gs[row, col])
+            
+        if labels:
+            l = string.ascii_uppercase[pos]
+            pos += 1
+            plt.title(l, loc = 'left', fontsize = 50)
+            # ax.text(0.9, 0.9, l, fontsize = 50)
+        nx.draw(G, ax = ax)
+        _ = ax.axis('off')
+        if not single:
+            if EPS:
+                savefig(label + '.eps', bbox_inches = 'tight', pad_inches = 0)
+            else:
+                savefig(label + '.png', width = 1000, bbox_inches = 'tight', pad_inches = 0)
+    if single:
+        if EPS:
+            savefig('examples.eps')                
+        else:
+            savefig('examples.eps')                
     quit()
 
 models = [ (nx.generators.random_graphs.connected_watts_strogatz_graph, 3),

@@ -29,7 +29,7 @@ d = as.dendrogram(groups)
 db = color_branches(d, k = 4)
 dl = color_labels(db, k = 4)
 # bottom left top right
-postscript('clust_single_scalar.eps')
+postscript('clust_single_scalar.eps', horizontal = TRUE, onefile = FALSE, paper = "special", height = 15, width = 20, colormodel="rgb")
 par(mar = c(0,18,0,0))
 g = plot_horiz.dendrogram(rev(dl), side = TRUE, sub="", main="", axes=F) # reverse order
 # plot(groups, xlab="", sub="", main="", axes=F, ylab="")
@@ -113,6 +113,7 @@ p = ggplot(g1, aes(x = measure, y = t, fill = measure)) +
                                         #           axis.ticks.x=element_blank(),
                                         #           axis.text.x=element_blank(),
 ggsave(plot = p, device='eps', filename = 'poscor_g1.eps', units='cm', width = la, height = 16)
+pc1 = p
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -128,6 +129,7 @@ p = ggplot(g2, aes(x = measure, y = t, fill = measure)) +
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
 ggsave(plot = p, filename = 'poscor_g2.eps', device='eps', unit='cm', width=lb, height=14)
+pc2 = p
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -143,6 +145,7 @@ p = ggplot(g3, aes(x = measure, y = t, fill = measure)) +
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
 ggsave(plot = p, filename = 'poscor_g3.eps', device='eps', unit='cm', width=lc, height=14)
+pc3 = p
 
 fontsize = 15
 yrange = c(0.08, 1200)
@@ -158,6 +161,14 @@ p = ggplot(g4, aes(x = measure, y = t, fill = measure)) +
           legend.position = "none") +
     scale_fill_discrete(name = "Measure")
 ggsave(plot = p, filename = 'poscor_g4.eps', device='eps', unit='cm', width=lc, height=14)
+pc4 = p
+
+fig5a = pc1 + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig5b = pc2 + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig5c = pc3 + ggtitle("C") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig5d = pc4 + ggtitle("D") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig5 = grid.arrange(fig5a, fig5b, fig5c, fig5d, nrow = 2, ncol = 2)
+ggsave(plot = fig5, filename = "fig5.eps", device = 'eps', width = 12, height = 12)
 
 eff = c('splittingNumber',
         'RCB',
@@ -167,6 +178,13 @@ eff = c('splittingNumber',
         'percolatedPath')
 
 fontsize = 26
+
+v1 = 1
+v2 = 1
+v3 = 1
+v4 = 1
+v5 = 1
+v6 = 1
 
 genorder = c('complete_graph',
              'triangular_lattice_graph',
@@ -211,7 +229,30 @@ for (char in eff) {
         theme(legend.position="none") +
         theme(axis.text.x = element_text(angle=90, hjust=1))
     ggsave(plot = p, filename = paste('values_', char, '_', dur, 'sec.eps', sep = ''), device = 'eps', width = 12, height = 5)
+    if (char == "splittingNumber") {
+        v1 = p
+    } else if (char == "connectivityRobustnessFunction") {
+        v2 = p
+    } else if (char == "electricalNodalRobustness") {
+        v3 = p
+    } else if (char == "percolatedPath") {
+        v4 = p
+    } else if (char == "RCB") {
+        v5 = p
+    } else if (char == "hubDensity") {
+        v6 = p
+    }
 }
+
+fig6a = v1 + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6b = v2 + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6c = v3 + ggtitle("C") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6d = v4 + ggtitle("D") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6e = v5 + ggtitle("E") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6f = v6 + ggtitle("F") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 30))
+fig6 = grid.arrange(fig6a, fig6b, fig6c, fig6d, fig6e, fig6f, nrow = 3, ncol = 2)
+ggsave(plot = fig6, filename = "fig6.eps", device = 'eps', width = 20, height = 30)
+
 
 palette = c("#8bbd8b","#c1cc99","#f5a65b","#5b8266","#b0daf1")
 fontsize = 12
@@ -239,6 +280,7 @@ for (row in 1:nrow(counts)) {
                      x = row + offset, y = 1100, label.size = 1, color = "black")
 }
 ggsave(plot = p, filename = paste('single_scalar_', dur, 'sec.eps', sep=""), device = 'eps', width = 7, height = 7)
+fig2a = p
 
 print('single-graph multi-valued characteristics, if any')
 filename = paste('single_avg_', dur, 'sec.dat', sep="")
@@ -292,11 +334,22 @@ if (file.exists(filename)) {
     counts$expected = counts$replicas * k1 * k2 * h
     counts$perc = 100 * counts$actual / counts$expected
     for (row in 1:nrow(counts)) {
-        p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
-                         x = row + offset, y = 1100, label.size = 1, color = "black")
+        if (is.finite(counts[row, "perc"])) {
+            p = p + annotate(geom = "label", label=sprintf("%.0f %%", counts[row, "perc"]),
+                             x = row + offset, y = 1100, label.size = 1, color = "black")
+        }
     }
     ggsave(plot = p, filename = paste('double_scalar_',  dur, 'sec.eps', sep=""), device = 'eps', width = 7, height = 7)
+    fig2b = p
 }
+
+#library(cowplot)
+#fig2a = fig2a + draw_text("A", x = 1, y = 80, hjust = 0, vjust = 1, size = 25)
+                                        #fig2b = fig2b + draw_text("B", x = 1, y = 80, hjust = 0, vjust = 1, size = 25)
+fig2a = fig2a + ggtitle("A") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig2b = fig2b + ggtitle("B") + theme(plot.title = element_text(hjust = 0)) + theme(plot.title = element_text(size = 20))
+fig2 = grid.arrange(fig2a, fig2b, nrow = 1)
+ggsave(plot = fig2, filename = "fig2.eps", device = 'eps', width = 14, height = 7)
 
 print('two-graph double-valued characteristics, if any')
 filename = paste('double_avg_', dur, 'sec.dat', sep="")

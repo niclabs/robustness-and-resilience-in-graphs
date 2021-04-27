@@ -1,5 +1,5 @@
 target='/Users/elisa/Dropbox/Research/Topics/Resilience/survey/actual/ComNet/'
-# python3 experiments.py 
+# python3 experiments.py
 cp nxcomplete.eps ${target}/fig1a.eps
 cp nxtri.eps ${target}/fig1b.eps
 cp nxsquare.eps ${target}/fig1c.eps
@@ -22,7 +22,7 @@ cp corr_single_scalar.eps ${target}/fig3.eps
 cp clust_single_scalar.eps ${target}/fig4.eps
 cp poscor_g1.eps ${target}/fig5a.eps
 cp poscor_g2.eps ${target}/fig5b.eps
-cp poscor_g3.eps ${target}/fig45c.eps
+cp poscor_g3.eps ${target}/fig5c.eps
 cp poscor_g4.eps ${target}/fig5d.eps
 cp values_splittingNumber_10sec.eps ${target}/fig6a.eps
 cp values_connectivityRobustnessFunction_10sec.eps ${target}/fig6b.eps
@@ -30,5 +30,13 @@ cp values_electricalNodalRobustness_10sec.eps ${target}/fig6c.eps
 cp values_percolatedPath_10sec.eps ${target}/fig6d.eps
 cp values_RCB_10sec.eps ${target}/fig6e.eps
 cp values_hubDensity_10sec.eps ${target}/fig6f.eps
-cd ${target}
+# the journal wants the panels combined
+echo "Combined"
+cp examples.eps ${target}/final/fig1.eps
+cp fig2.eps ${target}/final
+cp corr_single_scalar.eps ${target}/final/fig3.eps
+cp clust_single_scalar.eps ${target}/final/fig4.eps
+cp fig5.eps ${target}/final
+cp fig6.eps ${target}/final
+cd ${target}/final
 pdflatex schaeffer
